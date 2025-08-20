@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-ink text-white">
+  <div class="max-w-7xl mx-auto px-4 py-12">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold">Contact Submissions</h1>
+        <p class="text-slate-300 mt-2">Review and manage inbound contact requests</p>
+      </div>
+      <a href="/admin" class="inline-flex items-center gap-2 text-slate-300 hover:text-white transition">
+        ← Back to Admin
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-12">
+  {% if contacts %}
+  <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+    <div class="px-6 py-4 bg-slate-50 border-b border-slate-200">
+      <h2 class="text-lg font-semibold text-ink">
+        Contact Submissions ({{ contacts|length }})
+      </h2>
+    </div>
+    
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-slate-50 border-b border-slate-200">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Name</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Email</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Company</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Message</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-slate-200">
+          {% for contact in contacts %}
+          <tr class="hover:bg-slate-50">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-muted">
+              {{ contact.timestamp }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-ink">
+              {{ contact.name }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-ink">
+              <a href="mailto:{{ contact.email }}" class="text-accent hover:underline">
+                {{ contact.email }}
+              </a>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-ink">
+              {{ contact.company }}
+            </td>
+            <td class="px-6 py-4 text-sm text-ink max-w-xs">
+              <div class="truncate" title="{{ contact.message }}">
+                {{ contact.message }}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Export Options -->
+  <div class="mt-8 flex items-center justify-between bg-slate-50 rounded-lg p-4">
+    <div>
+      <h3 class="font-medium text-ink">Export Data</h3>
+      <p class="text-sm text-muted">Download contact submissions for external processing</p>
+    </div>
+    <div class="flex gap-3">
+      <span class="inline-flex items-center px-3 py-2 border border-slate-300 rounded-md text-sm font-medium text-slate-700 bg-white">
+        Export CSV (Coming Soon)
+      </span>
+    </div>
+  </div>
+  
+  {% else %}
+  <div class="text-center py-12">
+    <div class="max-w-md mx-auto">
+      <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-slate-100 mb-4">
+        <svg class="h-6 w-6 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+        </svg>
+      </div>
+      <h3 class="text-lg font-medium text-ink mb-2">No Contact Submissions</h3>
+      <p class="text-muted">There are no contact form submissions to display yet.</p>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

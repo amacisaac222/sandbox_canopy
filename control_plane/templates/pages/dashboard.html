@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CanopyIQ - Dashboard</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🔒 CanopyIQ</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/approvals">Approvals</a></li>
+                    <li><a href="/docs">API Docs</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1 class="page-title">Agent Security Dashboard</h1>
+                <p class="page-subtitle">Real-time monitoring and policy enforcement</p>
+            </div>
+            <button id="refresh-btn" class="btn btn-primary">
+                🔄 Refresh
+            </button>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">System Status</span>
+                    <span id="system-health" class="status-indicator status-success">
+                        <span class="status-dot success"></span>
+                        Healthy
+                    </span>
+                </div>
+                <div class="card-value" style="color: var(--primary-indigo);" id="total-decisions">0</div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem;">Total Policy Decisions</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Pending Approvals</span>
+                    <span id="system-status" class="status-indicator status-warning">
+                        <span class="status-dot warning"></span>
+                        Action Required
+                    </span>
+                </div>
+                <div class="card-value" style="color: var(--primary-amber);" id="pending-approvals">0</div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                    <a href="/approvals" style="color: var(--primary-indigo); text-decoration: none;">
+                        Review Pending →
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Approved Today</span>
+                    <span class="status-indicator status-success">
+                        <span class="status-dot success"></span>
+                        Secure
+                    </span>
+                </div>
+                <div class="card-value" style="color: var(--primary-indigo);" id="approved-count">0</div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem;">Human-Reviewed Actions</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Threats Blocked</span>
+                    <span class="status-indicator status-danger">
+                        <span class="status-dot danger"></span>
+                        Protected
+                    </span>
+                </div>
+                <div class="card-value" style="color: var(--primary-amber);" id="denied-count">0</div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem;">Policy Violations Stopped</div>
+            </div>
+        </div>
+
+        <!-- Real-time Metrics -->
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-title">Agent Activity</div>
+                <div style="display: flex; justify-content: space-between; margin-top: 1rem;">
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: 600;" id="requests-per-second">24</div>
+                        <div style="font-size: 0.875rem; color: var(--text-secondary);">Requests/sec</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: 600;" id="response-time">45ms</div>
+                        <div style="font-size: 0.875rem; color: var(--text-secondary);">Avg Response</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: 600;" id="error-rate">0.1%</div>
+                        <div style="font-size: 0.875rem; color: var(--text-secondary);">Error Rate</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Policy Enforcement</div>
+                <div style="margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-size: 0.875rem;">Tool Restrictions</span>
+                        <span style="font-size: 0.875rem; font-weight: 600;">Active</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-size: 0.875rem;">Network Controls</span>
+                        <span style="font-size: 0.875rem; font-weight: 600;">Enforced</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-size: 0.875rem;">Schema Validation</span>
+                        <span style="font-size: 0.875rem; font-weight: 600;">Enabled</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="font-size: 0.875rem;">Audit Logging</span>
+                        <span style="font-size: 0.875rem; font-weight: 600;">100%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Agent Fleet Status</div>
+                <div style="margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <span style="font-size: 0.875rem;">sales_assistant</span>
+                        <span class="status-indicator status-success" style="padding: 0.25rem 0.5rem;">Active</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <span style="font-size: 0.875rem;">support_bot</span>
+                        <span class="status-indicator status-warning" style="padding: 0.25rem 0.5rem;">Pending</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.875rem;">data_processor</span>
+                        <span class="status-indicator status-success" style="padding: 0.25rem 0.5rem;">Active</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="table-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3>Recent Policy Decisions</h3>
+                <a href="/v1/audit/export?frm=0&to=9999999999" class="btn btn-sm" style="background: var(--gray-100); color: var(--text-primary);">
+                    📊 Export Audit
+                </a>
+            </div>
+            
+            <table class="table" id="recent-activity">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Agent</th>
+                        <th>Action</th>
+                        <th>Decision</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2024-08-20 09:45:23</td>
+                        <td>sales_assistant</td>
+                        <td>email.send</td>
+                        <td><span class="status-indicator status-warning">Pending Approval</span></td>
+                        <td>External recipient requires review</td>
+                    </tr>
+                    <tr>
+                        <td>2024-08-20 09:44:12</td>
+                        <td>sales_assistant</td>
+                        <td>crm.read</td>
+                        <td><span class="status-indicator status-success">Allowed</span></td>
+                        <td>Policy permits CRM access</td>
+                    </tr>
+                    <tr>
+                        <td>2024-08-20 09:43:45</td>
+                        <td>sales_assistant</td>
+                        <td>payments.charge</td>
+                        <td><span class="status-indicator status-danger">Denied</span></td>
+                        <td>Payment operations blocked by policy</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="/static/js/dashboard.js"></script>
+    <script>
+        // Start real-time metrics simulation
+        if (window.dashboard) {
+            window.dashboard.simulateRealTimeMetrics();
+        }
+    </script>
+</body>
+</html>

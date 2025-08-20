@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ meta.title }}</title>
+  <meta name="description" content="{{ meta.desc }}">
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/static/logo.svg" />
+  <!-- Tailwind (CDN build for simplicity) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: "#1A2E1A",
+            accent: "#D97706",
+            surface: "#F8FAF6",
+            muted: "#6B7280",
+            success:"#16A34A",
+            warn:"#D97706",
+            danger:"#DC2626",
+            primary: "#1A2E1A",
+            secondary: "#D97706",
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+            mono: ['JetBrains Mono','ui-monospace','SFMono-Regular'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <meta property="og:title" content="{{ meta.title }}">
+  <meta property="og:description" content="{{ meta.desc }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://canopyiq.ai{{ meta.url_path }}">
+  <meta property="og:image" content="https://canopyiq.ai/static/og.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ meta.title }}">
+  <meta name="twitter:description" content="{{ meta.desc }}">
+  <meta name="twitter:image" content="https://canopyiq.ai/static/og.svg">
+</head>
+<body class="bg-white text-ink antialiased">
+  <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-accent text-white px-3 py-2 rounded">Skip to content</a>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2">
+        <img src="/static/logo.svg?v={{ asset_ver }}" alt="CanopyIQ logo" class="h-7 w-7">
+        <span class="font-semibold tracking-tight text-primary">CanopyIQ</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-6 text-sm">
+        <a class="hover:text-secondary transition" href="/product">Product</a>
+        <a class="hover:text-secondary transition" href="/security">Security</a>
+        <a class="hover:text-secondary transition" href="/pricing">Pricing</a>
+        <a class="hover:text-secondary transition" href="/documentation">Docs</a>
+        <a class="hover:text-secondary transition" href="/contact">Contact</a>
+        
+        {% if user %}
+          <!-- Authenticated user menu -->
+          <div class="flex items-center gap-3 ml-2 pl-2 border-l border-slate-200">
+            <span class="text-muted">{{ user.name }}</span>
+            {% if user.is_admin() %}
+              <a href="/admin" class="hover:text-secondary transition" title="Admin Dashboard">Admin</a>
+            {% endif %}
+            <a href="/auth/logout" class="inline-flex items-center rounded-lg border border-slate-300 text-slate-700 px-3 py-1.5 hover:bg-slate-50 transition text-xs">Sign Out</a>
+          </div>
+        {% else %}
+          <!-- Unauthenticated menu -->
+          <div class="flex items-center gap-3 ml-2">
+            <a href="/auth/login" class="inline-flex items-center rounded-lg border border-slate-300 text-slate-700 px-3 py-1.5 hover:bg-slate-50 transition text-xs">Sign In</a>
+            <a href="/contact" class="inline-flex items-center rounded-lg bg-primary text-white px-4 py-2 hover:bg-secondary transition font-medium">Book a Demo</a>
+          </div>
+        {% endif %}
+      </nav>
+      <button id="mnav" class="md:hidden inline-flex items-center p-2 rounded border border-slate-200" aria-label="Menu">
+        <svg width="20" height="20" fill="none" stroke="currentColor"><path d="M3 6h14M3 12h14M3 18h14"/></svg>
+      </button>
+    </div>
+    <div id="mnav-panel" class="hidden md:hidden border-t border-slate-200 px-4 pb-3">
+      <div class="flex flex-col gap-3 pt-3 text-sm">
+        <a class="hover:text-secondary transition" href="/product">Product</a>
+        <a class="hover:text-secondary transition" href="/security">Security</a>
+        <a class="hover:text-secondary transition" href="/pricing">Pricing</a>
+        <a class="hover:text-secondary transition" href="/documentation">Docs</a>
+        <a class="hover:text-secondary transition" href="/contact">Contact</a>
+        
+        {% if user %}
+          <!-- Authenticated mobile menu -->
+          <div class="pt-2 border-t border-slate-100 flex flex-col gap-3">
+            <div class="text-muted text-xs">Signed in as {{ user.name }}</div>
+            {% if user.is_admin() %}
+              <a class="hover:text-secondary transition" href="/admin">Admin Dashboard</a>
+            {% endif %}
+            <a href="/auth/logout" class="inline-flex items-center rounded-lg border border-slate-300 text-slate-700 px-3 py-2 w-max hover:bg-slate-50 transition text-xs">Sign Out</a>
+          </div>
+        {% else %}
+          <!-- Unauthenticated mobile menu -->
+          <div class="pt-2 border-t border-slate-100 flex flex-col gap-3">
+            <a href="/auth/login" class="inline-flex items-center rounded-lg border border-slate-300 text-slate-700 px-3 py-2 w-max hover:bg-slate-50 transition text-xs">Sign In</a>
+            <a href="/contact" class="inline-flex items-center rounded-lg bg-primary text-white px-4 py-2 w-max hover:bg-secondary transition font-medium">Book a Demo</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="min-h-[70vh]">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 py-10 grid gap-6 md:grid-cols-4">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2">
+          <img src="/static/logo.svg?v={{ asset_ver }}" alt="" class="h-6 w-6">
+          <span class="font-semibold text-primary">CanopyIQ</span>
+        </div>
+        <p class="text-sm text-muted">Run AI agents safely. At scale.</p>
+      </div>
+      <div>
+        <div class="font-medium mb-2">Product</div>
+        <ul class="space-y-1 text-sm">
+          <li><a class="hover:text-secondary transition" href="/product">Overview</a></li>
+          <li><a class="hover:text-secondary transition" href="/security">Security</a></li>
+          <li><a class="hover:text-secondary transition" href="/documentation">Docs</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="font-medium mb-2">Company</div>
+        <ul class="space-y-1 text-sm">
+          <li><a class="hover:text-secondary transition" href="/pricing">Pricing</a></li>
+          <li><a class="hover:text-secondary transition" href="/contact">Contact</a></li>
+          <li><a class="hover:text-secondary transition" href="/legal/terms">Terms</a></li>
+          <li><a class="hover:text-secondary transition" href="/legal/privacy">Privacy</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="font-medium mb-2">Newsletter</div>
+        <form class="flex gap-2">
+          <input class="border border-slate-300 rounded px-3 py-2 text-sm w-full" placeholder="you@company.com" disabled>
+          <button class="bg-slate-200 text-slate-600 rounded px-3 py-2 text-sm" disabled>Soon</button>
+        </form>
+      </div>
+    </div>
+    <div class="text-xs text-center text-muted py-4 border-t border-slate-200">© {{ 2025 }} CanopyIQ — All rights reserved.</div>
+  </footer>
+
+  <script>
+    const btn = document.getElementById('mnav');
+    const panel = document.getElementById('mnav-panel');
+    if (btn && panel) btn.onclick = () => panel.classList.toggle('hidden');
+  </script>
+</body>
+</html>

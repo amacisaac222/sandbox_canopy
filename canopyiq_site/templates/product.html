@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="max-w-7xl mx-auto px-4 py-14">
+  <h1 class="text-3xl font-semibold mb-6">Product</h1>
+  <div class="space-y-8 text-muted">
+    <div>
+      <h2 class="text-xl text-ink font-medium">Runtime Guardrails</h2>
+      <p>Allow/deny lists, JSON Schema validation, budgets, loop/chain guards.</p>
+    </div>
+    <div>
+      <h2 class="text-xl text-ink font-medium">Human-in-the-Loop</h2>
+      <p>Approval queues for sensitive actions; Slack/Teams integrations (roadmap).</p>
+    </div>
+    <div>
+      <h2 class="text-xl text-ink font-medium">Cross-Vendor Policies</h2>
+      <p>One policy language across AWS AgentCore/Strands, OpenAI, Anthropic, Azure.</p>
+    </div>
+    <div>
+      <h2 class="text-xl text-ink font-medium">Observability & Audit</h2>
+      <p>Lineage, redacted logs, SIEM exports, compliance-friendly reports.</p>
+    </div>
+    <div>
+      <h2 class="text-xl text-ink font-medium">Scale</h2>
+      <p>Local signed policy bundles for sub-10ms decisions at fleet scale.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

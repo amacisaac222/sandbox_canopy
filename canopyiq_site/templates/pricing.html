@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="max-w-7xl mx-auto px-4 py-14">
+  <h1 class="text-3xl font-semibold mb-10">Pricing</h1>
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="border border-slate-200 rounded-2xl p-6">
+      <div class="text-lg font-medium">Starter</div>
+      <ul class="mt-3 text-sm text-muted space-y-2">
+        <li>Up to 200 agents</li><li>Guardrails + Approvals</li><li>Basic audit export</li>
+      </ul>
+      <a href="/contact" class="mt-5 inline-flex px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition font-medium">Talk to Sales</a>
+    </div>
+    <div class="border border-slate-200 rounded-2xl p-6">
+      <div class="text-lg font-medium">Growth</div>
+      <ul class="mt-3 text-sm text-muted space-y-2">
+        <li>Up to 5,000 agents</li><li>SIEM export</li><li>Multi-tenant policies</li>
+      </ul>
+      <a href="/contact" class="mt-5 inline-flex px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition font-medium">Talk to Sales</a>
+    </div>
+    <div class="border border-slate-200 rounded-2xl p-6">
+      <div class="text-lg font-medium">Enterprise</div>
+      <ul class="mt-3 text-sm text-muted space-y-2">
+        <li>10,000+ agents</li><li>Compliance packs</li><li>Premium support</li>
+      </ul>
+      <a href="/contact" class="mt-5 inline-flex px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition font-medium">Talk to Sales</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

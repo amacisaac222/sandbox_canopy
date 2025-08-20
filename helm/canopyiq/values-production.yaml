@@ -1,0 +1,203 @@
+# Production Values for CanopyIQ Helm Chart
+# This file contains production-ready configuration
+
+# Image configuration
+image:
+  repository: canopyiq/canopyiq
+  tag: "v1.0.0"  # Use specific version in production
+  pullPolicy: IfNotPresent
+
+# High availability setup
+replicaCount: 3
+
+# Production resource allocation
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+# Auto scaling for production load
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+# Production ingress with TLS
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+    - host: canopyiq.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: canopyiq-tls
+      hosts:
+        - canopyiq.example.com
+
+# Production environment variables
+env:
+  ENVIRONMENT: production
+  PORT: "8080"
+  BASE_URL: https://canopyiq.example.com
+  SESSION_DURATION_HOURS: "8"
+
+# Security configuration
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+podSecurityContext:
+  fsGroup: 2000
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+# Pod disruption budget for high availability
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2
+
+# Monitoring configuration
+monitoring:
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    path: /metrics
+    labels:
+      prometheus: kube-prometheus
+    annotations:
+      prometheus.io/scrape: "true"
+
+# Network security
+networkPolicy:
+  enabled: true
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: ingress-nginx
+      ports:
+      - protocol: TCP
+        port: 8080
+  egress:
+    # Allow DNS resolution
+    - to: []
+      ports:
+      - protocol: UDP
+        port: 53
+    # Allow HTTPS to external services
+    - to: []
+      ports:
+      - protocol: TCP
+        port: 443
+    # Allow database connection
+    - to:
+      - namespaceSelector:
+          matchLabels:
+            name: database
+      ports:
+      - protocol: TCP
+        port: 5432
+
+# Production-grade health checks
+healthChecks:
+  liveness:
+    enabled: true
+    path: /healthz
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 3
+  
+  readiness:
+    enabled: true
+    path: /readyz
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 3
+    successThreshold: 1
+    failureThreshold: 3
+
+# Deployment strategy
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 25%
+    maxSurge: 25%
+
+# Node placement
+nodeSelector:
+  node-type: application
+
+# Tolerations for dedicated nodes
+tolerations:
+  - key: "application"
+    operator: "Equal"
+    value: "canopyiq"
+    effect: "NoSchedule"
+
+# Anti-affinity for better availability
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: canopyiq
+        topologyKey: kubernetes.io/hostname
+
+# Service account with minimal permissions
+serviceAccount:
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::ACCOUNT:role/canopyiq-pod-role"
+
+# Pod annotations for monitoring and logging
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8080"
+  prometheus.io/path: "/metrics"
+  fluentd.io/include: "true"
+
+# Additional labels for organization
+labels:
+  environment: production
+  team: platform
+  application: canopyiq
+
+# Resource quotas and limits
+# Note: Set these in a separate ResourceQuota object
+
+# Persistence (if needed)
+persistence:
+  enabled: false  # Use external storage in production
+  storageClass: "fast-ssd"
+  accessMode: ReadWriteOnce
+  size: 10Gi
+
+# Secrets reference (create externally)
+secrets:
+  secretName: "canopyiq-prod-secret"  # Created by external secret management

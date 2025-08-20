@@ -1,0 +1,24 @@
+apiVersion: v2
+name: canopyiq
+description: A Helm chart for CanopyIQ - Runtime sandbox & policy control plane for AI agents
+type: application
+version: 0.1.0
+appVersion: "latest"
+home: https://canopyiq.ai
+sources:
+  - https://github.com/canopyiq/canopy
+maintainers:
+  - name: CanopyIQ Team
+    email: support@canopyiq.ai
+keywords:
+  - ai
+  - agents
+  - sandbox
+  - policy
+  - control-plane
+  - security
+  - runtime
+annotations:
+  category: Security
+  licenses: Apache-2.0
+dependencies: []

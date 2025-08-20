@@ -1,0 +1,19 @@
+agent: "sales_assistant"
+api_key: "DEV-AGENT-KEY-123"
+tools:
+  allow: ["crm.read", "email.draft", "email.send"]
+  deny: ["payments.*", "prod_db.write"]
+  approvals:
+    - tool: "email.send"
+      condition: "recipient not endswith('@company.com')"
+      require: "human"
+network:
+  deny_all_others: true
+  allow_domains: ["api.company.com", "outlook.office365.com"]
+budgets:
+  max_requests_per_day: 3000
+  max_usd_per_day: 25
+  max_chain_depth: 4
+logging:
+  sample_rate: 0.02
+  redact: ["EMAIL","PHONE","CREDIT_CARD","API_KEY"]

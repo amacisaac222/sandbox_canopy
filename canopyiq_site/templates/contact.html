@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="max-w-3xl mx-auto px-4 py-14">
+  <h1 class="text-3xl font-semibold mb-6">Book a Demo</h1>
+  {% if request.query_params.get("success") %}
+    <div class="mb-4 rounded bg-green-50 text-green-700 px-4 py-3">Thanks! We'll be in touch shortly.</div>
+  {% elif request.query_params.get("error") %}
+    <div class="mb-4 rounded bg-red-50 text-red-600 px-4 py-3">Please check the form and try again.</div>
+  {% endif %}
+  <form method="post" action="/contact" class="grid gap-4">
+    <div>
+      <label class="block text-sm font-medium">Name</label>
+      <input name="name" required class="mt-1 w-full border border-slate-300 rounded px-3 py-2" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium">Email</label>
+      <input name="email" type="email" required class="mt-1 w-full border border-slate-300 rounded px-3 py-2" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium">Company</label>
+      <input name="company" required class="mt-1 w-full border border-slate-300 rounded px-3 py-2" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium">Message</label>
+      <textarea name="message" rows="5" required class="mt-1 w-full border border-slate-300 rounded px-3 py-2"></textarea>
+    </div>
+    <button class="mt-2 inline-flex items-center rounded-lg bg-primary text-white px-4 py-2 hover:bg-secondary transition font-medium">Send</button>
+  </form>
+</section>
+{% endblock %}

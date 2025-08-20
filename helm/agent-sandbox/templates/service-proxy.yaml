@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "agent-sandbox.fullname" . }}-proxy
+spec:
+  type: {{ .Values.proxyService.type }}
+  selector: 
+    app: {{ include "agent-sandbox.name" . }}
+    comp: proxy
+  ports:
+    - name: http
+      port: {{ .Values.proxyService.port }}
+      targetPort: 80

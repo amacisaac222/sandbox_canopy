@@ -1,0 +1,27 @@
+# Example terraform.tfvars for CanopyIQ deployment
+# Copy this file to terraform.tfvars and update the values
+
+# Required: Your domain name (must be managed by Route53)
+domain_name = "canopyiq-dev.yourdomain.com"
+
+# Optional: AWS region
+aws_region = "us-west-2"
+
+# Optional: Environment name
+environment = "dev"
+
+# Optional: Container image
+# Use this if you have your own Docker registry or ECR repository
+# container_image = "your-account.dkr.ecr.us-west-2.amazonaws.com/canopyiq:latest"
+container_image = "canopyiq/canopyiq:latest"
+
+# Example for different environments:
+# 
+# Development:
+# environment = "dev"
+# 
+# Staging:
+# environment = "staging"
+# 
+# Production:
+# environment = "prod"

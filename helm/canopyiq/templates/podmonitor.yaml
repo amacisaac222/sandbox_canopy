@@ -1,0 +1,44 @@
+{{- if .Values.monitoring.podMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "canopyiq.fullname" . }}
+  namespace: {{ include "canopyiq.podMonitorNamespace" . }}
+  labels:
+    {{- include "canopyiq.labels" . | nindent 4 }}
+    {{- with .Values.monitoring.podMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.monitoring.podMonitor.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with include "canopyiq.annotations" . }}
+    {{- . | nindent 4 }}
+  {{- end }}
+spec:
+  podMetricsEndpoints:
+  - port: http
+    path: {{ .Values.monitoring.podMonitor.path }}
+    interval: {{ .Values.monitoring.podMonitor.interval }}
+    {{- if .Values.monitoring.podMonitor.scrapeTimeout }}
+    scrapeTimeout: {{ .Values.monitoring.podMonitor.scrapeTimeout }}
+    {{- end }}
+    {{- if .Values.monitoring.podMonitor.honorLabels }}
+    honorLabels: {{ .Values.monitoring.podMonitor.honorLabels }}
+    {{- end }}
+    {{- if .Values.monitoring.podMonitor.metricRelabelings }}
+    metricRelabelings:
+      {{- toYaml .Values.monitoring.podMonitor.metricRelabelings | nindent 6 }}
+    {{- end }}
+    {{- if .Values.monitoring.podMonitor.relabelings }}
+    relabelings:
+      {{- toYaml .Values.monitoring.podMonitor.relabelings | nindent 6 }}
+    {{- end }}
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      {{- include "canopyiq.selectorLabels" . | nindent 6 }}
+{{- end }}

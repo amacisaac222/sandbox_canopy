@@ -1,0 +1,134 @@
+🚀 CanopyIQ has been deployed successfully!
+
+{{- if .Values.ingress.enabled }}
+{{- range $host := .Values.ingress.hosts }}
+  {{- range .paths }}
+Your application is available at:
+  {{- if $.Values.ingress.tls }}
+  https://{{ $host.host }}{{ .path }}
+  {{- else }}
+  http://{{ $host.host }}{{ .path }}
+  {{- end }}
+  {{- end }}
+{{- end }}
+
+Admin Panel:
+  {{- if $.Values.ingress.tls }}
+  https://{{ include "canopyiq.ingressHost" . }}/admin
+  {{- else }}
+  http://{{ include "canopyiq.ingressHost" . }}/admin
+  {{- end }}
+
+Setup Wizard (if no admin users exist):
+  {{- if $.Values.ingress.tls }}
+  https://{{ include "canopyiq.ingressHost" . }}/setup
+  {{- else }}
+  http://{{ include "canopyiq.ingressHost" . }}/setup
+  {{- end }}
+
+{{- else if contains "NodePort" .Values.service.type }}
+Get the application URL by running these commands:
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "canopyiq.fullname" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+
+{{- else if contains "LoadBalancer" .Values.service.type }}
+Get the application URL by running these commands:
+     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+           You can watch the status of by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "canopyiq.fullname" . }}'
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "canopyiq.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
+  echo http://$SERVICE_IP:{{ .Values.service.port }}
+
+{{- else if contains "ClusterIP" .Values.service.type }}
+Get the application URL by running these commands:
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "{{ include "canopyiq.selectorLabels" . }}" -o jsonpath="{.items[0].metadata.name}")
+  export CONTAINER_PORT=$(kubectl get pod --namespace {{ .Release.Namespace }} $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+  echo "Visit http://127.0.0.1:8080 to use your application"
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
+
+Admin Panel: http://127.0.0.1:8080/admin
+Setup Wizard: http://127.0.0.1:8080/setup
+{{- end }}
+
+🔧 NEXT STEPS:
+
+{{- if not (.Values.secrets.secretName | default false) }}
+
+1. 📝 CREATE KUBERNETES SECRET:
+   You need to create a secret with your configuration values:
+
+   kubectl create secret generic {{ include "canopyiq.secretName" . }} \
+     --from-literal={{ .Values.secrets.keys.dbUrl }}="postgresql://username:password@hostname:5432/database" \
+     --from-literal={{ .Values.secrets.keys.oidcIssuer }}="https://your-identity-provider.com" \
+     --from-literal={{ .Values.secrets.keys.oidcClientId }}="your-client-id" \
+     --from-literal={{ .Values.secrets.keys.oidcClientSecret }}="your-client-secret" \
+     --from-literal={{ .Values.secrets.keys.slackWebhookUrl }}="https://hooks.slack.com/services/YOUR/WEBHOOK/URL" \
+     --from-literal={{ .Values.secrets.keys.slackSigningSecret }}="your-slack-signing-secret" \
+     --from-literal={{ .Values.secrets.keys.sessionSecret }}="$(openssl rand -base64 32)" \
+     --namespace={{ .Release.Namespace }}
+
+   Then restart the deployment:
+   kubectl rollout restart deployment/{{ include "canopyiq.fullname" . }} --namespace={{ .Release.Namespace }}
+
+{{- end }}
+
+2. 🏗️  COMPLETE INITIAL SETUP:
+   - Visit the setup wizard to create your first admin user
+   - Configure basic settings (site title, Slack webhook, etc.)
+
+3. 🔐 CONFIGURE AUTHENTICATION:
+   - For OIDC: Update the secret with your identity provider details
+   - For local auth: Use the setup wizard to create local admin accounts
+
+4. 📊 MONITORING (optional):
+{{- if .Values.monitoring.serviceMonitor.enabled }}
+   ✅ ServiceMonitor enabled - Prometheus should discover metrics at /metrics
+{{- else }}
+   Enable ServiceMonitor for Prometheus Operator:
+   helm upgrade {{ .Release.Name }} . --set monitoring.serviceMonitor.enabled=true
+{{- end }}
+
+5. 🔍 VIEW LOGS:
+   kubectl logs -f deployment/{{ include "canopyiq.fullname" . }} --namespace={{ .Release.Namespace }}
+
+6. 🧪 RUN TESTS:
+   helm test {{ .Release.Name }} --namespace={{ .Release.Namespace }}
+
+📖 USEFUL COMMANDS:
+
+Check pod status:
+  kubectl get pods -l "{{ include "canopyiq.selectorLabels" . }}" --namespace={{ .Release.Namespace }}
+
+View application logs:
+  kubectl logs -f deployment/{{ include "canopyiq.fullname" . }} --namespace={{ .Release.Namespace }}
+
+Scale the deployment:
+  kubectl scale deployment {{ include "canopyiq.fullname" . }} --replicas=3 --namespace={{ .Release.Namespace }}
+
+Update configuration:
+  helm upgrade {{ .Release.Name }} /path/to/chart --namespace={{ .Release.Namespace }}
+
+{{- if .Values.ingress.enabled }}
+Check ingress status:
+  kubectl get ingress {{ include "canopyiq.fullname" . }} --namespace={{ .Release.Namespace }}
+{{- end }}
+
+{{- if .Values.persistence.enabled }}
+Check persistent volume:
+  kubectl get pvc {{ include "canopyiq.fullname" . }}-data --namespace={{ .Release.Namespace }}
+{{- end }}
+
+📚 DOCUMENTATION:
+- Setup Guide: Visit /setup for initial configuration
+- Admin Documentation: Visit /admin for system management
+- API Docs: Visit /docs for API reference
+- Health Checks: /health, /healthz, /readyz
+- Metrics: /metrics (Prometheus format)
+
+🚨 SECURITY NOTES:
+- Ensure secrets are properly configured before production use
+- Review and customize security contexts, network policies, and RBAC
+- Use TLS/HTTPS for production deployments
+- Regularly update container images and dependencies
+
+Happy deploying! 🎉

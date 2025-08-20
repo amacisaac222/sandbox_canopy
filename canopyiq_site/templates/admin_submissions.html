@@ -1,0 +1,188 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Submissions{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+  <h1 class="text-3xl font-bold text-ink">Contact Submissions</h1>
+  <p class="text-muted mt-2">Manage contact form submissions from users</p>
+</div>
+
+<!-- Actions Bar -->
+<div class="flex items-center justify-between mb-6">
+  <div class="flex items-center gap-4">
+    <input type="text" id="search-input" placeholder="Search submissions..." 
+           class="block w-80 border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent">
+    <select id="time-filter" class="border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent">
+      <option value="">All Time</option>
+      <option value="24h">Last 24 Hours</option>
+      <option value="7d">Last 7 Days</option>
+      <option value="30d">Last 30 Days</option>
+    </select>
+  </div>
+  <div class="flex items-center gap-2">
+    <button onclick="exportSubmissions()" class="inline-flex items-center px-3 py-2 border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 transition text-sm font-medium">
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
+      </svg>
+      Export CSV
+    </button>
+    <div class="text-sm text-muted">
+      {{ submissions|length }} submissions
+    </div>
+  </div>
+</div>
+  {% if submissions %}
+  <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+    <div class="px-6 py-4 bg-slate-50 border-b border-slate-200">
+      <h2 class="text-lg font-semibold text-ink">
+        Latest {{ submissions|length }} Submissions
+      </h2>
+    </div>
+    
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-slate-50 border-b border-slate-200">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">ID</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Name</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Company</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Email</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Message</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">IP</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-slate-200">
+          {% for submission in submissions %}
+          <tr class="hover:bg-slate-50">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-ink">
+              #{{ submission.id }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-muted">
+              {{ submission.timestamp }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-ink">
+              {{ submission.name }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-ink">
+              {{ submission.company }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-ink">
+              <a href="mailto:{{ submission.email }}" class="text-accent hover:underline">
+                {{ submission.email }}
+              </a>
+            </td>
+            <td class="px-6 py-4 text-sm text-ink max-w-xs">
+              <div class="truncate" title="{{ submission.message }}">
+                {{ submission.message }}
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-xs text-muted font-mono">
+              {{ submission.source_ip or "N/A" }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  
+  {% else %}
+  <div class="text-center py-12">
+    <div class="max-w-md mx-auto">
+      <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-slate-100 mb-4">
+        <svg class="h-6 w-6 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+      </div>
+      <h3 class="text-lg font-medium text-ink mb-2">No Submissions</h3>
+      <p class="text-muted">There are no contact form submissions in the database yet.</p>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Search and filter functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('search-input');
+  const timeFilter = document.getElementById('time-filter');
+  const tableBody = document.querySelector('tbody');
+  
+  function filterTable() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const selectedTime = timeFilter.value;
+    const rows = tableBody ? tableBody.getElementsByTagName('tr') : [];
+    
+    Array.from(rows).forEach(row => {
+      const text = row.textContent.toLowerCase();
+      const timestampCell = row.querySelector('td:nth-child(2)');
+      
+      let matchesSearch = searchTerm === '' || text.includes(searchTerm);
+      let matchesTime = selectedTime === '' || isWithinTimeRange(timestampCell?.textContent, selectedTime);
+      
+      if (matchesSearch && matchesTime) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+  
+  function isWithinTimeRange(dateStr, range) {
+    if (!dateStr) return true;
+    
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diff = now - date;
+    
+    switch (range) {
+      case '24h': return diff <= 86400000;
+      case '7d': return diff <= 604800000;
+      case '30d': return diff <= 2592000000;
+      default: return true;
+    }
+  }
+  
+  if (searchInput) searchInput.addEventListener('input', filterTable);
+  if (timeFilter) timeFilter.addEventListener('change', filterTable);
+});
+
+// Export submissions
+async function exportSubmissions() {
+  const button = event.target;
+  setButtonLoading(button, true);
+  
+  try {
+    const response = await fetch('/admin/submissions/export', {
+      method: 'GET'
+    });
+    
+    if (response.ok) {
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'contact_submissions_' + new Date().toISOString().split('T')[0] + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      showToast('✅ Submissions exported successfully!', 'success');
+    } else {
+      const error = await response.text();
+      showToast('❌ Failed to export submissions: ' + error, 'error');
+    }
+  } catch (error) {
+    showToast('❌ Error: ' + error.message, 'error');
+  } finally {
+    setButtonLoading(button, false);
+  }
+}
+</script>
+{% endblock %}

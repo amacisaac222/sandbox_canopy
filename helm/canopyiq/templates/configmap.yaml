@@ -1,0 +1,15 @@
+{{- if .Values.configMap.data }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "canopyiq.configMapName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "canopyiq.labels" . | nindent 4 }}
+  {{- with include "canopyiq.annotations" . }}
+  annotations:
+    {{- . | nindent 4 }}
+  {{- end }}
+data:
+  {{- toYaml .Values.configMap.data | nindent 2 }}
+{{- end }}

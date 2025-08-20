@@ -1,0 +1,12 @@
+Agent Sandbox installed.
+
+Control plane Service:
+  kubectl get svc {{ include "agent-sandbox.fullname" . }}-cp
+
+Proxy Service (front door):
+  kubectl get svc {{ include "agent-sandbox.fullname" . }}-proxy
+
+If ingress enabled:
+  Open https://{{ (index .Values.ingress.hosts 0).host }}/healthz
+
+Set your CP_TENANT_SECRET securely (don't use the default in values.yaml) before going to production.

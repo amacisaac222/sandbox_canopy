@@ -1,0 +1,55 @@
+image:
+  repository: yourrepo/agent-sandbox-cp
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+proxyImage:
+  repository: yourrepo/agent-sandbox-proxy
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+replicaCount: 2
+
+service:
+  type: ClusterIP
+  port: 8080
+
+proxyService:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: nginx
+  hosts:
+    - host: sandbox.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []  # e.g. - secretName: sandbox-tls; hosts: [sandbox.example.com]
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+env:
+  CP_DB_URL: "sqlite+aiosqlite:///./sandbox.db"   # For demo only; use Postgres in prod
+  CP_BIND: "0.0.0.0"
+  CP_PORT: "8080"
+
+secretEnv:
+  CP_TENANT_SECRET: "change_me_in_values_or_use_external_secret"
+
+livenessProbe:
+  path: /health
+  initialDelaySeconds: 10
+  periodSeconds: 15
+
+readinessProbe:
+  path: /health
+  initialDelaySeconds: 5
+  periodSeconds: 10

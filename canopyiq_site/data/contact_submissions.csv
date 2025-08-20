@@ -1,0 +1,4 @@
+ts,name,email,company,message
+1755661778,John Doe,john@test.com,Test Corp,This is a test message
+1755699117,Test User,test@example.com,Test Corp,This is a test message
+1755701334,Test User,test@example.com,Test Corp,Testing observability metrics

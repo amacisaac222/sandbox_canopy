@@ -1,0 +1,44 @@
+{{- if .Values.monitoring.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "canopyiq.fullname" . }}
+  namespace: {{ include "canopyiq.serviceMonitorNamespace" . }}
+  labels:
+    {{- include "canopyiq.labels" . | nindent 4 }}
+    {{- with .Values.monitoring.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.monitoring.serviceMonitor.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with include "canopyiq.annotations" . }}
+    {{- . | nindent 4 }}
+  {{- end }}
+spec:
+  endpoints:
+  - port: http
+    path: {{ .Values.monitoring.serviceMonitor.path }}
+    interval: {{ .Values.monitoring.serviceMonitor.interval }}
+    {{- if .Values.monitoring.serviceMonitor.scrapeTimeout }}
+    scrapeTimeout: {{ .Values.monitoring.serviceMonitor.scrapeTimeout }}
+    {{- end }}
+    {{- if .Values.monitoring.serviceMonitor.honorLabels }}
+    honorLabels: {{ .Values.monitoring.serviceMonitor.honorLabels }}
+    {{- end }}
+    {{- if .Values.monitoring.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+      {{- toYaml .Values.monitoring.serviceMonitor.metricRelabelings | nindent 6 }}
+    {{- end }}
+    {{- if .Values.monitoring.serviceMonitor.relabelings }}
+    relabelings:
+      {{- toYaml .Values.monitoring.serviceMonitor.relabelings | nindent 6 }}
+    {{- end }}
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      {{- include "canopyiq.selectorLabels" . | nindent 6 }}
+{{- end }}

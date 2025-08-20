@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(python:*)",
+      "Bash(py:*)",
+      "Bash(.venvScriptsactivate)",
+      "Bash(pip install:*)",
+      "Bash(.venv/Scripts/activate)",
+      "Bash(chmod:*)",
+      "Bash(source:*)",
+      "Bash(export CP_DB_URL=sqlite+aiosqlite:///./sandbox.db)",
+      "Bash(export CP_TENANT_SECRET=devsecret_change_me)",
+      "Bash(export:*)",
+      "Bash(export CP_PORT=8080)",
+      "Bash(uvicorn:*)",
+      "Bash(curl:*)",
+      "Bash(npx create-next-app:*)",
+      "Bash(npm install)",
+      "Bash(rm:*)",
+      "Bash(cp:*)",
+      "Bash(true)",
+      "Bash(powershell.exe:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Bash(sed:*)",
+      "Bash(bash:*)",
+      "Bash(tree:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": [],
+    "additionalDirectories": [
+      "C:\\Users\\amaci\\Desktop",
+      "C:\\c\\Users\\amaci\\Desktop"
+    ]
+  }
+}

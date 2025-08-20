@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+pydantic
+pyyaml
+jsonschema
+httpx
+requests
+typer
+rich
+prometheus-client
+SQLAlchemy>=2.0
+aiosqlite
+jinja2
+python-multipart
+passlib[bcrypt]
+itsdangerous
+pytest

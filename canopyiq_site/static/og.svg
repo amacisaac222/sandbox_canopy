@@ -1,0 +1,16 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#1A2E1A"/>
+  
+  <!-- Large canopy/tree design -->
+  <circle cx="300" cy="200" r="60" fill="#D97706"/>
+  <path d="M150 300 Q300 150 450 300" stroke="#D97706" stroke-width="20" fill="none"/>
+  <path d="M180 380 Q300 250 420 380" stroke="#D97706" stroke-width="20" fill="none"/>
+  <rect x="285" y="420" width="30" height="120" fill="#D97706"/>
+  
+  <!-- Text -->
+  <text x="550" y="240" font-family="Inter, sans-serif" font-size="72" font-weight="600" fill="white">CanopyIQ</text>
+  <text x="550" y="320" font-family="Inter, sans-serif" font-size="36" fill="#D97706">Run AI agents safely. At scale.</text>
+  <text x="550" y="380" font-family="Inter, sans-serif" font-size="24" fill="#9CA3AF">Runtime sandbox & policy control plane</text>
+  <text x="550" y="420" font-family="Inter, sans-serif" font-size="24" fill="#9CA3AF">for enterprise AI agents</text>
+</svg>

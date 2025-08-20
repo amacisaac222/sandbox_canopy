@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Setup Wizard | CanopyIQ</title>
+  <meta name="description" content="Initial setup for CanopyIQ">
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <!-- Tailwind (CDN build for simplicity) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: "#1A2E1A",
+            accent: "#D97706",
+            surface: "#F8FAF6", 
+            muted: "#6B7280",
+            success:"#16A34A",
+            warn:"#D97706",
+            danger:"#DC2626",
+            primary: "#1A2E1A",
+            secondary: "#D97706",
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+            mono: ['JetBrains Mono','ui-monospace','SFMono-Regular'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-surface text-ink antialiased min-h-screen">
+  
+  <!-- Setup Header -->
+  <header class="bg-white shadow-sm">
+    <div class="max-w-3xl mx-auto px-4 py-6">
+      <div class="flex items-center gap-3">
+        <div class="p-2 bg-primary rounded-lg">
+          <svg class="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-primary">CanopyIQ Setup</h1>
+          <p class="text-muted text-sm">Welcome! Let's get your instance configured.</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Setup Content -->
+  <main class="max-w-3xl mx-auto px-4 py-8">
+    
+    <!-- Progress Steps -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center {{ 'text-primary' if step >= 1 else 'text-muted' }}">
+          <div class="flex items-center justify-center w-8 h-8 rounded-full {{ 'bg-primary text-white' if step >= 1 else 'bg-slate-200 text-slate-500' }}">
+            {% if step > 1 %}
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            {% else %}
+            1
+            {% endif %}
+          </div>
+          <span class="ml-2 text-sm font-medium">Admin Account</span>
+        </div>
+        
+        <div class="flex-1 h-0.5 mx-4 {{ 'bg-primary' if step > 1 else 'bg-slate-200' }}"></div>
+        
+        <div class="flex items-center {{ 'text-primary' if step >= 2 else 'text-muted' }}">
+          <div class="flex items-center justify-center w-8 h-8 rounded-full {{ 'bg-primary text-white' if step >= 2 else 'bg-slate-200 text-slate-500' }}">
+            {% if step > 2 %}
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            {% else %}
+            2
+            {% endif %}
+          </div>
+          <span class="ml-2 text-sm font-medium">Basic Settings</span>
+        </div>
+        
+        <div class="flex-1 h-0.5 mx-4 {{ 'bg-primary' if step > 2 else 'bg-slate-200' }}"></div>
+        
+        <div class="flex items-center {{ 'text-primary' if step >= 3 else 'text-muted' }}">
+          <div class="flex items-center justify-center w-8 h-8 rounded-full {{ 'bg-primary text-white' if step >= 3 else 'bg-slate-200 text-slate-500' }}">
+            3
+          </div>
+          <span class="ml-2 text-sm font-medium">Complete</span>
+        </div>
+      </div>
+    </div>
+
+    {% if step == 1 %}
+    <!-- Step 1: Create Admin Account -->
+    <div class="bg-white rounded-lg shadow-lg border border-slate-200 p-8">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-ink mb-2">Create Admin Account</h2>
+        <p class="text-muted">Create the first administrative user account for your CanopyIQ instance. This account will have full access to all admin features.</p>
+      </div>
+
+      {% if error %}
+      <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <div class="flex">
+          <svg class="w-5 h-5 text-red-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+          </svg>
+          <div class="ml-3">
+            <p class="text-sm text-red-800">{{ error }}</p>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <form method="post" action="/setup" class="space-y-6">
+        <input type="hidden" name="step" value="1">
+        
+        <div>
+          <label for="name" class="block text-sm font-medium text-ink mb-2">Full Name</label>
+          <input type="text" id="name" name="name" required
+                 value="{{ form_data.name or '' }}"
+                 class="block w-full border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent"
+                 placeholder="John Doe">
+        </div>
+        
+        <div>
+          <label for="email" class="block text-sm font-medium text-ink mb-2">Email Address</label>
+          <input type="email" id="email" name="email" required
+                 value="{{ form_data.email or '' }}"
+                 class="block w-full border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent"
+                 placeholder="admin@yourcompany.com">
+          <p class="mt-1 text-xs text-muted">This will be used to sign in to the admin panel</p>
+        </div>
+        
+        <div>
+          <label for="password" class="block text-sm font-medium text-ink mb-2">Password</label>
+          <input type="password" id="password" name="password" required minlength="8"
+                 class="block w-full border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent">
+          <p class="mt-1 text-xs text-muted">Minimum 8 characters required</p>
+        </div>
+        
+        <div>
+          <label for="confirm_password" class="block text-sm font-medium text-ink mb-2">Confirm Password</label>
+          <input type="password" id="confirm_password" name="confirm_password" required minlength="8"
+                 class="block w-full border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent">
+        </div>
+
+        <div class="flex items-center justify-between pt-4 border-t border-slate-200">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-sm text-muted">Local admin account (can switch to OIDC later)</span>
+          </div>
+          <button type="submit" class="inline-flex items-center px-6 py-3 bg-primary text-white rounded-md hover:bg-primary/90 transition font-medium">
+            Create Admin Account
+            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    {% elif step == 2 %}
+    <!-- Step 2: Basic Settings -->
+    <div class="bg-white rounded-lg shadow-lg border border-slate-200 p-8">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-ink mb-2">Basic Settings</h2>
+        <p class="text-muted">Configure basic settings for your CanopyIQ instance. You can change these later from the admin panel.</p>
+      </div>
+
+      <form method="post" action="/setup" class="space-y-6">
+        <input type="hidden" name="step" value="2">
+        
+        <div>
+          <label for="site_title" class="block text-sm font-medium text-ink mb-2">Site Title</label>
+          <input type="text" id="site_title" name="site_title"
+                 value="{{ form_data.site_title or 'CanopyIQ' }}"
+                 class="block w-full border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent"
+                 placeholder="CanopyIQ">
+          <p class="mt-1 text-xs text-muted">Displayed in page titles and headers</p>
+        </div>
+        
+        <div>
+          <label for="base_url" class="block text-sm font-medium text-ink mb-2">Base URL</label>
+          <input type="url" id="base_url" name="base_url"
+                 value="{{ form_data.base_url or 'http://localhost:8080' }}"
+                 class="block w-full border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent"
+                 placeholder="https://canopyiq.yourcompany.com">
+          <p class="mt-1 text-xs text-muted">Used for generating links in notifications and emails</p>
+        </div>
+        
+        <div>
+          <label for="slack_webhook_url" class="block text-sm font-medium text-ink mb-2">Slack Webhook URL (Optional)</label>
+          <input type="url" id="slack_webhook_url" name="slack_webhook_url"
+                 value="{{ form_data.slack_webhook_url or '' }}"
+                 class="block w-full border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent"
+                 placeholder="https://hooks.slack.com/services/...">
+          <p class="mt-1 text-xs text-muted">For receiving contact form notifications and approvals</p>
+        </div>
+
+        <div class="flex items-center justify-between pt-4 border-t border-slate-200">
+          <button type="button" onclick="goBack()" class="inline-flex items-center px-4 py-2 border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 transition">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Back
+          </button>
+          <div class="flex items-center gap-4">
+            <button type="button" onclick="skipStep()" class="text-sm text-muted hover:text-ink transition">
+              Skip for now
+            </button>
+            <button type="submit" class="inline-flex items-center px-6 py-3 bg-primary text-white rounded-md hover:bg-primary/90 transition font-medium">
+              Continue
+              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    {% elif step == 3 %}
+    <!-- Step 3: Setup Complete -->
+    <div class="bg-white rounded-lg shadow-lg border border-slate-200 p-8 text-center">
+      <div class="mb-6">
+        <div class="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+          <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-ink mb-2">Setup Complete!</h2>
+        <p class="text-muted">Your CanopyIQ instance is ready to use. You can now access the admin panel and start configuring your system.</p>
+      </div>
+
+      <div class="bg-slate-50 rounded-lg p-6 mb-6">
+        <h3 class="font-semibold text-ink mb-3">Next Steps:</h3>
+        <div class="text-left space-y-2 text-sm">
+          <div class="flex items-center">
+            <svg class="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            Admin account created ({{ admin_email }})
+          </div>
+          <div class="flex items-center">
+            <svg class="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            Basic configuration applied
+          </div>
+          <div class="flex items-center">
+            <svg class="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+            </svg>
+            Database initialized
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-center gap-4">
+        <a href="/admin" class="inline-flex items-center px-6 py-3 bg-primary text-white rounded-md hover:bg-primary/90 transition font-medium">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+          Go to Admin Panel
+        </a>
+        <a href="/" class="inline-flex items-center px-4 py-2 border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 transition">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+          </svg>
+          View Site
+        </a>
+      </div>
+    </div>
+    {% endif %}
+
+  </main>
+
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+    
+    function skipStep() {
+      const form = document.createElement('form');
+      form.method = 'post';
+      form.action = '/setup';
+      
+      const stepInput = document.createElement('input');
+      stepInput.type = 'hidden';
+      stepInput.name = 'step';
+      stepInput.value = '3';
+      form.appendChild(stepInput);
+      
+      const skipInput = document.createElement('input');
+      skipInput.type = 'hidden';
+      skipInput.name = 'skip';
+      skipInput.value = 'true';
+      form.appendChild(skipInput);
+      
+      document.body.appendChild(form);
+      form.submit();
+    }
+
+    // Password confirmation validation
+    document.addEventListener('DOMContentLoaded', function() {
+      const passwordInput = document.getElementById('password');
+      const confirmPasswordInput = document.getElementById('confirm_password');
+      
+      if (passwordInput && confirmPasswordInput) {
+        function validatePassword() {
+          if (confirmPasswordInput.value && passwordInput.value !== confirmPasswordInput.value) {
+            confirmPasswordInput.setCustomValidity('Passwords do not match');
+          } else {
+            confirmPasswordInput.setCustomValidity('');
+          }
+        }
+        
+        passwordInput.addEventListener('input', validatePassword);
+        confirmPasswordInput.addEventListener('input', validatePassword);
+      }
+    });
+  </script>
+</body>
+</html>

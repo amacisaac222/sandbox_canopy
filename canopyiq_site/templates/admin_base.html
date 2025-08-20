@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Admin{% endblock %} | CanopyIQ</title>
+  <meta name="description" content="CanopyIQ Administration Panel">
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <!-- Tailwind (CDN build for simplicity) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: "#1A2E1A",
+            accent: "#D97706",
+            surface: "#F8FAF6", 
+            muted: "#6B7280",
+            success:"#16A34A",
+            warn:"#D97706",
+            danger:"#DC2626",
+            primary: "#1A2E1A",
+            secondary: "#D97706",
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+            mono: ['JetBrains Mono','ui-monospace','SFMono-Regular'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-surface text-ink antialiased min-h-screen">
+  <!-- Admin Header -->
+  <header class="bg-ink text-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <a href="/admin" class="flex items-center gap-2">
+            <svg class="h-8 w-8 text-accent" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            <div>
+              <div class="font-semibold text-lg">CanopyIQ Admin</div>
+              <div class="text-xs text-slate-300">Administration Panel</div>
+            </div>
+          </a>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="text-sm text-slate-300">
+            {{ user.name if user else "Admin" }}
+          </div>
+          <a href="/" class="text-slate-300 hover:text-white transition text-sm">← Back to Site</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Navigation -->
+  <nav class="bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex space-x-8">
+        <a href="/admin" class="border-b-2 border-transparent hover:border-accent transition-colors px-1 py-4 text-sm font-medium text-gray-900 hover:text-accent {% if request.url.path == '/admin' %}border-accent text-accent{% endif %}">
+          Dashboard
+        </a>
+        <a href="/admin/submissions" class="border-b-2 border-transparent hover:border-accent transition-colors px-1 py-4 text-sm font-medium text-gray-500 hover:text-accent {% if '/admin/submissions' in request.url.path %}border-accent text-accent{% endif %}">
+          Submissions
+        </a>
+        <a href="/admin/audit" class="border-b-2 border-transparent hover:border-accent transition-colors px-1 py-4 text-sm font-medium text-gray-500 hover:text-accent {% if '/admin/audit' in request.url.path %}border-accent text-accent{% endif %}">
+          Audit Log
+        </a>
+        <a href="/admin/settings" class="border-b-2 border-transparent hover:border-accent transition-colors px-1 py-4 text-sm font-medium text-gray-500 hover:text-accent {% if '/admin/settings' in request.url.path %}border-accent text-accent{% endif %}">
+          Settings
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Toast Notifications -->
+  <div id="toast-container" class="fixed bottom-4 right-4 space-y-2 z-50">
+    <!-- Toasts will be inserted here -->
+  </div>
+
+  <!-- Common JavaScript -->
+  <script>
+    // Toast notification system
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const colors = {
+        success: 'bg-green-500',
+        error: 'bg-red-500', 
+        warning: 'bg-yellow-500',
+        info: 'bg-blue-500'
+      };
+      
+      toast.className = `${colors[type]} text-white px-4 py-2 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300`;
+      toast.textContent = message;
+      
+      container.appendChild(toast);
+      
+      // Slide in
+      setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+      
+      // Remove after 5 seconds
+      setTimeout(() => {
+        toast.classList.add('translate-x-full');
+        setTimeout(() => container.removeChild(toast), 300);
+      }, 5000);
+    }
+
+    // Loading state helper
+    function setButtonLoading(button, loading) {
+      if (loading) {
+        button.disabled = true;
+        button.dataset.originalText = button.textContent;
+        button.textContent = 'Loading...';
+      } else {
+        button.disabled = false;
+        button.textContent = button.dataset.originalText;
+      }
+    }
+
+    // CSRF token helper (if needed)
+    function getCsrfToken() {
+      return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    }
+  </script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,336 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+  <h1 class="text-3xl font-bold text-ink">Settings</h1>
+  <p class="text-muted mt-2">Configure your CanopyIQ system</p>
+</div>
+
+<!-- Settings Sections -->
+<div class="space-y-8">
+  <!-- Slack Integration -->
+  <div class="bg-white rounded-lg shadow border border-slate-200">
+    <div class="px-6 py-4 border-b border-slate-200">
+      <h2 class="text-lg font-semibold text-ink flex items-center gap-2">
+        <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+        </svg>
+        Slack Integration
+      </h2>
+      <p class="text-sm text-muted mt-1">Configure Slack notifications and interactive approvals</p>
+    </div>
+    <form class="p-6 space-y-4" id="slack-form">
+      <div>
+        <label for="slack-webhook" class="block text-sm font-medium text-ink">Webhook URL</label>
+        <input type="url" id="slack-webhook" name="slack_webhook_url" 
+               value="{{ settings.slack_webhook_url or '' }}"
+               placeholder="https://hooks.slack.com/services/..."
+               class="mt-1 block w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent">
+        <p class="mt-1 text-xs text-muted">Incoming webhook URL from your Slack app</p>
+      </div>
+      
+      <div>
+        <label for="slack-signing-secret" class="block text-sm font-medium text-ink">Signing Secret</label>
+        <input type="password" id="slack-signing-secret" name="slack_signing_secret"
+               value="{{ settings.slack_signing_secret or '' }}"
+               placeholder="1a2b3c4d5e6f..."
+               class="mt-1 block w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent font-mono">
+        <p class="mt-1 text-xs text-muted">Required for interactive buttons and security verification</p>
+      </div>
+
+      <div class="flex gap-3">
+        <button type="submit" class="inline-flex items-center px-4 py-2 bg-accent text-white rounded-md hover:bg-accent/90 transition text-sm font-medium">
+          Save Slack Settings
+        </button>
+        <button type="button" onclick="testSlackConnection()" class="inline-flex items-center px-4 py-2 border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 transition text-sm font-medium">
+          Test Connection
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- SMTP Configuration -->
+  <div class="bg-white rounded-lg shadow border border-slate-200">
+    <div class="px-6 py-4 border-b border-slate-200">
+      <h2 class="text-lg font-semibold text-ink flex items-center gap-2">
+        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+        </svg>
+        Email Configuration (SMTP)
+      </h2>
+      <p class="text-sm text-muted mt-1">Configure email delivery for notifications (Coming Soon)</p>
+    </div>
+    <form class="p-6 space-y-4" id="smtp-form">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="smtp-host" class="block text-sm font-medium text-ink">SMTP Host</label>
+          <input type="text" id="smtp-host" name="smtp_host" disabled
+                 placeholder="smtp.gmail.com"
+                 class="mt-1 block w-full border border-slate-300 rounded-md px-3 py-2 text-sm bg-slate-50 text-slate-500">
+        </div>
+        <div>
+          <label for="smtp-port" class="block text-sm font-medium text-ink">Port</label>
+          <input type="number" id="smtp-port" name="smtp_port" disabled
+                 placeholder="587"
+                 class="mt-1 block w-full border border-slate-300 rounded-md px-3 py-2 text-sm bg-slate-50 text-slate-500">
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="smtp-username" class="block text-sm font-medium text-ink">Username</label>
+          <input type="text" id="smtp-username" name="smtp_username" disabled
+                 placeholder="your-email@gmail.com"
+                 class="mt-1 block w-full border border-slate-300 rounded-md px-3 py-2 text-sm bg-slate-50 text-slate-500">
+        </div>
+        <div>
+          <label for="smtp-password" class="block text-sm font-medium text-ink">Password</label>
+          <input type="password" id="smtp-password" name="smtp_password" disabled
+                 placeholder="••••••••"
+                 class="mt-1 block w-full border border-slate-300 rounded-md px-3 py-2 text-sm bg-slate-50 text-slate-500">
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <input type="checkbox" id="smtp-tls" name="use_tls" disabled class="rounded">
+        <label for="smtp-tls" class="text-sm text-slate-500">Use TLS encryption</label>
+      </div>
+
+      <div class="flex gap-3">
+        <button type="button" disabled class="inline-flex items-center px-4 py-2 bg-slate-300 text-slate-500 rounded-md text-sm font-medium cursor-not-allowed">
+          Save SMTP Settings
+        </button>
+        <button type="button" disabled class="inline-flex items-center px-4 py-2 border border-slate-300 text-slate-500 rounded-md text-sm font-medium cursor-not-allowed">
+          Test Email
+        </button>
+      </div>
+      
+      <div class="text-xs text-muted bg-slate-50 p-3 rounded">
+        <strong>Coming Soon:</strong> SMTP configuration for email notifications when Slack is not available or as a backup delivery method.
+      </div>
+    </form>
+  </div>
+
+  <!-- Site Branding -->
+  <div class="bg-white rounded-lg shadow border border-slate-200">
+    <div class="px-6 py-4 border-b border-slate-200">
+      <h2 class="text-lg font-semibold text-ink flex items-center gap-2">
+        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"></path>
+        </svg>
+        Site Branding
+      </h2>
+      <p class="text-sm text-muted mt-1">Customize the appearance of your CanopyIQ instance</p>
+    </div>
+    <form class="p-6 space-y-4" id="branding-form">
+      <div>
+        <label for="site-title" class="block text-sm font-medium text-ink">Site Title</label>
+        <input type="text" id="site-title" name="site_title"
+               value="{{ settings.site_title or 'CanopyIQ' }}"
+               class="mt-1 block w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent">
+        <p class="mt-1 text-xs text-muted">Displayed in page titles and headers</p>
+      </div>
+      
+      <div>
+        <label for="site-description" class="block text-sm font-medium text-ink">Tagline</label>
+        <input type="text" id="site-description" name="site_description"
+               value="{{ settings.site_description or 'Run AI agents safely. At scale.' }}"
+               class="mt-1 block w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent">
+        <p class="mt-1 text-xs text-muted">Short description shown on the homepage</p>
+      </div>
+
+      <div>
+        <label for="base-url" class="block text-sm font-medium text-ink">Base URL</label>
+        <input type="url" id="base-url" name="base_url"
+               value="{{ settings.base_url or 'http://localhost:8080' }}"
+               placeholder="https://canopyiq.ai"
+               class="mt-1 block w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent">
+        <p class="mt-1 text-xs text-muted">Used for generating links in Slack notifications and emails</p>
+      </div>
+
+      <div class="flex gap-3">
+        <button type="submit" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition text-sm font-medium">
+          Save Branding
+        </button>
+        <button type="button" onclick="previewChanges()" class="inline-flex items-center px-4 py-2 border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 transition text-sm font-medium">
+          Preview Changes
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- System Configuration -->
+  <div class="bg-white rounded-lg shadow border border-slate-200">
+    <div class="px-6 py-4 border-b border-slate-200">
+      <h2 class="text-lg font-semibold text-ink flex items-center gap-2">
+        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+        System Configuration
+      </h2>
+      <p class="text-sm text-muted mt-1">Advanced system settings and environment variables</p>
+    </div>
+    <div class="p-6">
+      <div class="grid grid-cols-2 gap-6">
+        <div class="space-y-3">
+          <h3 class="font-medium text-ink">Environment Variables</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between items-center">
+              <span class="text-muted">SLACK_WEBHOOK_URL</span>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ 'bg-green-100 text-green-800' if settings.slack_webhook_url else 'bg-red-100 text-red-800' }}">
+                {{ '✓ Set' if settings.slack_webhook_url else '✗ Not Set' }}
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-muted">SLACK_SIGNING_SECRET</span>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ 'bg-green-100 text-green-800' if settings.slack_signing_secret else 'bg-red-100 text-red-800' }}">
+                {{ '✓ Set' if settings.slack_signing_secret else '✗ Not Set' }}
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-muted">OIDC_ISSUER</span>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ 'bg-green-100 text-green-800' if settings.oidc_issuer else 'bg-yellow-100 text-yellow-800' }}">
+                {{ '✓ Set' if settings.oidc_issuer else 'Optional' }}
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="space-y-3">
+          <h3 class="font-medium text-ink">System Status</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between items-center">
+              <span class="text-muted">Database</span>
+              <span class="text-ink font-medium">{{ settings.db_type or "SQLite" }}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-muted">Authentication</span>
+              <span class="text-ink font-medium">{{ "OIDC" if settings.oidc_issuer else "Local" }}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-muted">Observability</span>
+              <span class="text-ink font-medium">Prometheus + Logs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 p-4 bg-slate-50 rounded-lg">
+        <h4 class="font-medium text-ink mb-2">Configuration Tips</h4>
+        <ul class="text-xs text-muted space-y-1">
+          <li>• Environment variables take precedence over database settings</li>
+          <li>• Restart the application after changing environment variables</li>
+          <li>• Use the <code class="bg-slate-200 px-1 rounded">BASE_URL</code> setting for production deployments</li>
+          <li>• Enable OIDC for enterprise authentication and SSO</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Handle Slack settings form
+document.getElementById('slack-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  
+  setButtonLoading(submitBtn, true);
+  
+  try {
+    const response = await fetch('/admin/settings/slack', {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (response.ok) {
+      showToast('✅ Slack settings saved successfully!', 'success');
+    } else {
+      const error = await response.text();
+      showToast('❌ Failed to save Slack settings: ' + error, 'error');
+    }
+  } catch (error) {
+    showToast('❌ Error: ' + error.message, 'error');
+  } finally {
+    setButtonLoading(submitBtn, false);
+  }
+});
+
+// Handle branding form
+document.getElementById('branding-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  
+  setButtonLoading(submitBtn, true);
+  
+  try {
+    const response = await fetch('/admin/settings/branding', {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (response.ok) {
+      showToast('✅ Branding settings saved successfully!', 'success');
+    } else {
+      const error = await response.text();
+      showToast('❌ Failed to save branding settings: ' + error, 'error');
+    }
+  } catch (error) {
+    showToast('❌ Error: ' + error.message, 'error');
+  } finally {
+    setButtonLoading(submitBtn, false);
+  }
+});
+
+// Test Slack connection
+async function testSlackConnection() {
+  const webhookUrl = document.getElementById('slack-webhook').value;
+  
+  if (!webhookUrl) {
+    showToast('❌ Please enter a webhook URL first', 'error');
+    return;
+  }
+  
+  const button = event.target;
+  setButtonLoading(button, true);
+  
+  try {
+    const response = await fetch('/admin/test-slack', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        webhook_url: webhookUrl,
+        message: 'Test message from CanopyIQ admin settings'
+      })
+    });
+    
+    if (response.ok) {
+      showToast('✅ Slack test message sent successfully!', 'success');
+    } else {
+      const error = await response.text();
+      showToast('❌ Slack test failed: ' + error, 'error');
+    }
+  } catch (error) {
+    showToast('❌ Error: ' + error.message, 'error');
+  } finally {
+    setButtonLoading(button, false);
+  }
+}
+
+// Preview branding changes
+function previewChanges() {
+  const title = document.getElementById('site-title').value;
+  const description = document.getElementById('site-description').value;
+  
+  showToast(`Preview: "${title}" - "${description}"`, 'info');
+}
+</script>
+{% endblock %}

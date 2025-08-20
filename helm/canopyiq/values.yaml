@@ -1,0 +1,247 @@
+# CanopyIQ Helm Chart Values
+
+# Image configuration
+image:
+  repository: canopyiq/canopyiq
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# Image pull secrets for private registries
+imagePullSecrets: []
+# - name: myregistrykey
+
+# Number of replicas
+replicaCount: 1
+
+# Application configuration
+app:
+  # Port the container listens on
+  port: 8080
+  
+  # Environment name (dev, staging, prod)
+  environment: development
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+  annotations: {}
+
+# Ingress configuration
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: canopyiq.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+  #  - secretName: canopyiq-tls
+  #    hosts:
+  #      - canopyiq.local
+
+# Resource limits and requests
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Horizontal Pod Autoscaler
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+# Node selector, tolerations and affinity
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Pod security context
+podSecurityContext:
+  fsGroup: 2000
+
+# Container security context
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+# Health checks configuration
+healthChecks:
+  liveness:
+    enabled: true
+    path: /healthz
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 3
+  
+  readiness:
+    enabled: true
+    path: /readyz
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    successThreshold: 1
+    failureThreshold: 3
+
+# Environment variables (non-sensitive)
+env:
+  # Database configuration (use secret for actual URL with credentials)
+  CP_DB_TYPE: postgresql
+  
+  # Application configuration
+  ENVIRONMENT: development
+  PORT: "8080"
+  
+  # Base URL for the application
+  BASE_URL: http://localhost:8080
+  
+  # Session configuration
+  SESSION_DURATION_HOURS: "8"
+
+# Secrets configuration
+# Note: These values are placeholders. In production, create the secret manually
+# or use external secret management (e.g., External Secrets Operator, Vault)
+secrets:
+  # Name of the Kubernetes secret containing sensitive configuration
+  # If empty, will use the default secret name based on the release
+  secretName: ""
+  
+  # Keys in the secret for each configuration value
+  keys:
+    # Database connection URL with credentials
+    dbUrl: CP_DB_URL
+    
+    # OIDC configuration
+    oidcIssuer: OIDC_ISSUER
+    oidcClientId: OIDC_CLIENT_ID
+    oidcClientSecret: OIDC_CLIENT_SECRET
+    
+    # Slack configuration
+    slackWebhookUrl: SLACK_WEBHOOK_URL
+    slackSigningSecret: SLACK_SIGNING_SECRET
+    
+    # Session secret for JWT signing
+    sessionSecret: SESSION_SECRET
+
+# ConfigMap for non-sensitive configuration
+configMap:
+  # Additional non-sensitive configuration can be added here
+  data: {}
+
+# Service Account
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  
+  # Annotations to add to the service account
+  annotations: {}
+  
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# Pod annotations
+podAnnotations: {}
+
+# Pod labels
+podLabels: {}
+
+# Deployment strategy
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 25%
+    maxSurge: 25%
+
+# Persistent Volume Claims
+persistence:
+  enabled: false
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 1Gi
+  annotations: {}
+
+# Monitoring configuration
+monitoring:
+  # ServiceMonitor for Prometheus Operator
+  serviceMonitor:
+    enabled: false
+    namespace: ""
+    interval: 30s
+    path: /metrics
+    labels: {}
+    annotations: {}
+    
+  # PodMonitor for Prometheus Operator (alternative to ServiceMonitor)
+  podMonitor:
+    enabled: false
+    namespace: ""
+    interval: 30s
+    path: /metrics
+    labels: {}
+    annotations: {}
+
+# Network Policy
+networkPolicy:
+  enabled: false
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress: []
+  egress: []
+
+# Pod Disruption Budget
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1
+
+# Extra volumes and volume mounts
+extraVolumes: []
+# - name: extra-volume
+#   emptyDir: {}
+
+extraVolumeMounts: []
+# - name: extra-volume
+#   mountPath: /extra-volume
+
+# Extra containers (sidecars)
+extraContainers: []
+
+# Extra init containers
+initContainers: []
+
+# Custom labels to apply to all resources
+labels: {}
+
+# Custom annotations to apply to all resources
+annotations: {}
+
+# Tests
+tests:
+  enabled: true
+  image:
+    repository: busybox
+    tag: latest
+    pullPolicy: IfNotPresent

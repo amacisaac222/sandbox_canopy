@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  control_plane:
+    build: .
+    environment:
+      CP_DB_URL: sqlite+aiosqlite:///./sandbox.db
+      CP_TENANT_SECRET: devsecret_please_change
+      CP_BIND: 0.0.0.0
+      CP_PORT: "8080"
+    ports:
+      - "8080:8080"
+    volumes:
+      - cpdata:/app
+  proxy:
+    build: ./nginx
+    depends_on:
+      - control_plane
+    ports:
+      - "8081:80"
+volumes:
+  cpdata: {}

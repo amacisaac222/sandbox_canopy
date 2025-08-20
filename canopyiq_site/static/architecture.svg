@@ -1,0 +1,137 @@
+<svg width="1000" height="600" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .title { font: bold 18px Arial; fill: #1A2E1A; text-anchor: middle; }
+    .label { font: bold 12px Arial; fill: #1A2E1A; text-anchor: middle; }
+    .small { font: 10px Arial; fill: #6B7280; text-anchor: middle; }
+    .box { fill: #F8FAF6; stroke: #1A2E1A; stroke-width: 2; }
+    .highlight { fill: #D97706; opacity: 0.2; stroke: #D97706; stroke-width: 2; }
+    .success { fill: #16A34A; opacity: 0.2; stroke: #16A34A; stroke-width: 2; }
+    .data { fill: #E5E7EB; stroke: #6B7280; stroke-width: 1; }
+  </style>
+  
+  <!-- Title -->
+  <text x="500" y="25" class="title">CanopyIQ Architecture Overview</text>
+  
+  <!-- Agent Fleet -->
+  <rect x="50" y="60" width="140" height="80" rx="8" class="box"/>
+  <text x="120" y="80" class="label">Agent Fleet</text>
+  <text x="120" y="95" class="small">10,000+ Agents</text>
+  <circle cx="90" cy="115" r="8" fill="#D97706"/>
+  <circle cx="120" cy="115" r="8" fill="#D97706"/>
+  <circle cx="150" cy="115" r="8" fill="#D97706"/>
+  
+  <!-- Sidecar/SDK -->
+  <rect x="230" y="60" width="160" height="120" rx="8" class="highlight"/>
+  <text x="310" y="80" class="label">CanopyIQ SDK</text>
+  <text x="310" y="100" class="small">Local Policy Engine</text>
+  <text x="310" y="115" class="small">Budget Controls</text>
+  <text x="310" y="130" class="small">Schema Validation</text>
+  <text x="310" y="145" class="small">&lt;10ms Decisions</text>
+  <text x="310" y="165" class="small">Audit Generation</text>
+  
+  <!-- Approvals Queue -->
+  <rect x="430" y="80" width="120" height="60" rx="8" class="highlight"/>
+  <text x="490" y="100" class="label">Approvals</text>
+  <text x="490" y="115" class="small">Human Review</text>
+  <text x="490" y="130" class="small">Workflow</text>
+  
+  <!-- Allowed APIs -->
+  <rect x="590" y="80" width="120" height="60" rx="8" class="success"/>
+  <text x="650" y="100" class="label">Secure APIs</text>
+  <text x="650" y="115" class="small">Allowed Tools</text>
+  <text x="650" y="130" class="small">Monitored</text>
+  
+  <!-- Control Plane -->
+  <rect x="50" y="220" width="650" height="200" rx="8" class="box"/>
+  <text x="375" y="245" class="label">CanopyIQ Control Plane</text>
+  
+  <!-- Control Plane Services -->
+  <rect x="70" y="260" width="100" height="60" rx="4" fill="white" stroke="#D97706"/>
+  <text x="120" y="280" class="small">Policy</text>
+  <text x="120" y="295" class="small">Service</text>
+  <text x="120" y="310" class="small">Versioning</text>
+  
+  <rect x="190" y="260" width="100" height="60" rx="4" fill="white" stroke="#D97706"/>
+  <text x="240" y="280" class="small">Approvals</text>
+  <text x="240" y="295" class="small">Service</text>
+  <text x="240" y="310" class="small">Workflows</text>
+  
+  <rect x="310" y="260" width="100" height="60" rx="4" fill="white" stroke="#D97706"/>
+  <text x="360" y="280" class="small">Audit</text>
+  <text x="360" y="295" class="small">Service</text>
+  <text x="360" y="310" class="small">SIEM Export</text>
+  
+  <rect x="430" y="260" width="100" height="60" rx="4" fill="white" stroke="#D97706"/>
+  <text x="480" y="280" class="small">Metrics</text>
+  <text x="480" y="295" class="small">Service</text>
+  <text x="480" y="310" class="small">Prometheus</text>
+  
+  <rect x="550" y="260" width="100" height="60" rx="4" fill="white" stroke="#D97706"/>
+  <text x="600" y="280" class="small">Admin UI</text>
+  <text x="600" y="295" class="small">Dashboard</text>
+  <text x="600" y="310" class="small">Management</text>
+  
+  <!-- Data Layer -->
+  <rect x="70" y="340" width="140" height="50" rx="4" class="data"/>
+  <text x="140" y="360" class="small">PostgreSQL</text>
+  <text x="140" y="375" class="small">Primary + Replicas</text>
+  
+  <rect x="230" y="340" width="140" height="50" rx="4" class="data"/>
+  <text x="300" y="360" class="small">Object Storage</text>
+  <text x="300" y="375" class="small">Policy Bundles</text>
+  
+  <rect x="390" y="340" width="140" height="50" rx="4" class="data"/>
+  <text x="460" y="360" class="small">Redis Cache</text>
+  <text x="460" y="375" class="small">Rate Limiting</text>
+  
+  <!-- External Systems -->
+  <rect x="750" y="220" width="200" height="120" rx="8" class="data"/>
+  <text x="850" y="245" class="label">SIEM &amp; Observability</text>
+  
+  <rect x="770" y="260" width="60" height="30" rx="4" fill="white" stroke="#6B7280"/>
+  <text x="800" y="280" class="small">Splunk</text>
+  
+  <rect x="840" y="260" width="60" height="30" rx="4" fill="white" stroke="#6B7280"/>
+  <text x="870" y="280" class="small">Datadog</text>
+  
+  <rect x="770" y="300" width="60" height="30" rx="4" fill="white" stroke="#6B7280"/>
+  <text x="800" y="320" class="small">ELK</text>
+  
+  <rect x="840" y="300" width="60" height="30" rx="4" fill="white" stroke="#6B7280"/>
+  <text x="870" y="320" class="small">CloudWatch</text>
+  
+  <!-- Ingress -->
+  <rect x="50" y="460" width="650" height="40" rx="8" fill="#FEF3C7" stroke="#D97706"/>
+  <text x="375" y="485" class="label">Ingress &amp; WAF (Cloudflare/AWS ALB/Nginx)</text>
+  
+  <!-- Flow Arrows -->
+  <defs>
+    <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L6,3 z" fill="#1A2E1A"/>
+    </marker>
+  </defs>
+  
+  <!-- Agent to SDK -->
+  <path d="M 190 100 L 230 100" stroke="#1A2E1A" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- SDK to Approvals -->
+  <path d="M 390 110 L 430 110" stroke="#1A2E1A" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Approvals to APIs -->
+  <path d="M 550 110 L 590 110" stroke="#16A34A" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- SDK to Control Plane -->
+  <path d="M 310 180 L 310 220" stroke="#1A2E1A" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Control Plane to SIEM -->
+  <path d="M 700 280 L 750 280" stroke="#6B7280" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Ingress to Control Plane -->
+  <path d="M 375 460 L 375 420" stroke="#D97706" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Key Features -->
+  <text x="100" y="550" class="small">✓ Signed Policy Bundles</text>
+  <text x="300" y="550" class="small">✓ Sub-10ms Decisions</text>
+  <text x="500" y="550" class="small">✓ Air-Gap Capable</text>
+  <text x="700" y="550" class="small">✓ Multi-Cloud Ready</text>
+</svg>

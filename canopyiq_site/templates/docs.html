@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="max-w-5xl mx-auto px-4 py-14">
+  <h1 class="text-3xl font-semibold mb-8 text-primary">Documentation</h1>
+  
+  <!-- Reference Architecture Section -->
+  <div class="mb-12">
+    <h2 class="text-2xl font-semibold mb-6 text-primary">Reference Architecture</h2>
+    <div class="bg-white rounded-lg border border-slate-200 p-6">
+      <figure class="mb-4">
+        <div class="w-full overflow-x-auto">
+          <img src="/static/architecture.svg?v={{ asset_ver }}" 
+               alt="CanopyIQ Runtime Architecture Diagram" 
+               class="w-full h-auto max-w-none min-w-[800px] md:min-w-0"
+               style="max-height: 600px; object-fit: contain;">
+        </div>
+        <figcaption class="mt-4 text-center text-sm text-muted">
+          <strong>Figure 1:</strong> CanopyIQ runtime architecture showing agent fleet integration, 
+          local policy evaluation, human-in-the-loop approvals, and enterprise control plane services.
+          The system supports 10,000+ agents with sub-10ms decision times through signed local policy bundles.
+        </figcaption>
+      </figure>
+      
+      <div class="mt-6 grid md:grid-cols-2 gap-6 text-sm">
+        <div>
+          <h4 class="font-semibold text-primary mb-2">Key Components</h4>
+          <ul class="space-y-1 text-muted">
+            <li>• <strong>Sidecar/SDK:</strong> Local policy evaluation and budget enforcement</li>
+            <li>• <strong>Control Plane:</strong> Centralized policy management and approvals</li>
+            <li>• <strong>Data Layer:</strong> PostgreSQL cluster with read replicas</li>
+            <li>• <strong>SIEM Integration:</strong> Export to Splunk, Datadog, ELK, CloudWatch</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-primary mb-2">Enterprise Features</h4>
+          <ul class="space-y-1 text-muted">
+            <li>• <strong>Air-Gapped Deployment:</strong> Works offline with cached policies</li>
+            <li>• <strong>Multi-Cloud Ready:</strong> AWS, Azure, GCP, on-premises</li>
+            <li>• <strong>High Availability:</strong> Zero downtime deployments</li>
+            <li>• <strong>Compliance:</strong> SOC2, HIPAA, PCI-DSS ready</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security Whitepaper Section -->
+  <div class="mb-12">
+    <h2 class="text-2xl font-semibold mb-6 text-primary">Security Whitepaper</h2>
+    <div class="bg-white rounded-lg border border-slate-200 p-6">
+      <p class="text-muted mb-4">
+        Comprehensive security analysis covering threat modeling, data flows, encryption, 
+        RBAC/SSO, audit logging, observability, and air-gapped deployment scenarios.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a href="/static/docs/security-whitepaper.md" 
+           class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">
+          📄 View Markdown
+        </a>
+        <a href="/static/security-whitepaper.pdf" 
+           class="inline-flex items-center px-4 py-2 bg-accent text-white rounded-md hover:bg-accent/90 transition-colors">
+          📑 Download PDF
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deployment Guides Section -->
+  <div class="mb-12">
+    <h2 class="text-2xl font-semibold mb-6 text-primary">Deployment Guides</h2>
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- Helm Chart -->
+      <div class="bg-white rounded-lg border border-slate-200 p-6">
+        <h3 class="text-xl font-semibold mb-3 text-primary">Kubernetes (Helm)</h3>
+        <p class="text-muted mb-4">
+          Production-ready Helm chart with autoscaling, health checks, monitoring, 
+          and security best practices for Kubernetes deployment.
+        </p>
+        <div class="space-y-2 mb-4">
+          <div class="text-sm">
+            <span class="font-medium">Features:</span>
+            <span class="text-muted">ServiceMonitor, NetworkPolicy, PodDisruptionBudget</span>
+          </div>
+          <div class="text-sm">
+            <span class="font-medium">Security:</span>
+            <span class="text-muted">Non-root containers, read-only filesystem</span>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a href="https://github.com/canopyiq/canopy/tree/main/helm/canopyiq" 
+             class="inline-flex items-center px-3 py-1 bg-slate-100 text-slate-700 rounded text-sm hover:bg-slate-200 transition-colors">
+            📁 Chart Directory
+          </a>
+          <a href="https://github.com/canopyiq/canopy/blob/main/helm/canopyiq/README.md" 
+             class="inline-flex items-center px-3 py-1 bg-slate-100 text-slate-700 rounded text-sm hover:bg-slate-200 transition-colors">
+            📖 README
+          </a>
+          <a href="https://github.com/canopyiq/canopy/blob/main/helm/canopyiq/INSTALL.md" 
+             class="inline-flex items-center px-3 py-1 bg-slate-100 text-slate-700 rounded text-sm hover:bg-slate-200 transition-colors">
+            🚀 Quick Install
+          </a>
+        </div>
+      </div>
+
+      <!-- Terraform AWS -->
+      <div class="bg-white rounded-lg border border-slate-200 p-6">
+        <h3 class="text-xl font-semibold mb-3 text-primary">AWS (Terraform)</h3>
+        <p class="text-muted mb-4">
+          Complete AWS infrastructure module using ECS Fargate, ALB, RDS PostgreSQL, 
+          and AWS Secrets Manager for production deployments.
+        </p>
+        <div class="space-y-2 mb-4">
+          <div class="text-sm">
+            <span class="font-medium">Services:</span>
+            <span class="text-muted">ECS Fargate, ALB, RDS, Secrets Manager</span>
+          </div>
+          <div class="text-sm">
+            <span class="font-medium">Security:</span>
+            <span class="text-muted">VPC, Security Groups, IAM roles, ACM certificates</span>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a href="https://github.com/canopyiq/canopy/tree/main/deploy/terraform/aws" 
+             class="inline-flex items-center px-3 py-1 bg-slate-100 text-slate-700 rounded text-sm hover:bg-slate-200 transition-colors">
+            📁 Module Directory
+          </a>
+          <a href="https://github.com/canopyiq/canopy/blob/main/deploy/terraform/aws/README.md" 
+             class="inline-flex items-center px-3 py-1 bg-slate-100 text-slate-700 rounded text-sm hover:bg-slate-200 transition-colors">
+            📖 Documentation
+          </a>
+          <a href="https://github.com/canopyiq/canopy/tree/main/deploy/terraform/aws/examples" 
+             class="inline-flex items-center px-3 py-1 bg-slate-100 text-slate-700 rounded text-sm hover:bg-slate-200 transition-colors">
+            💡 Examples
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Documentation Sections -->
+  <div class="prose prose-slate max-w-none">
+    <h2>Quickstart</h2>
+  <pre><code># SDK init (pseudo)
+client = SandboxClient(...)
+client.tool_call("email.send", {...})
+</code></pre>
+  <h2>Policies</h2>
+  <pre><code>tools:
+  allow: ["crm.*"]
+  deny:  ["payments.*"]
+  approvals:
+    - tool: "email.send"
+      require: "human"
+</code></pre>
+  <h2>API</h2>
+  <ul>
+    <li>GET /v1/policies/{agent}</li>
+    <li>POST /v1/approvals</li>
+    <li>GET /v1/audit/export</li>
+  </ul>
+  </div>
+</section>
+{% endblock %}
