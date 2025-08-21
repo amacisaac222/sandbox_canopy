@@ -25,7 +25,7 @@ from sqlalchemy import select, desc
 # Import authentication modules  
 from auth.oidc import oidc_client, init_oidc
 # Import database
-from database import get_db, Submission, AuditLog, Approval, ApprovalStatus, init_db
+from database import get_db, Submission, AuditLog, Approval, ApprovalStatus, init_db, DATABASE_URL
 # Import Slack utilities
 from slack_utils import (
     send_slack_webhook, create_contact_notification, create_approval_notification,
@@ -154,6 +154,15 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+
+# Add custom Jinja2 filters
+def tojsonpretty(value):
+    """Convert value to pretty-printed JSON"""
+    if value is None:
+        return "null"
+    return json.dumps(value, indent=2, default=str)
+
+templates.env.filters["tojsonpretty"] = tojsonpretty
 
 @app.on_event("startup")
 async def startup_event():
@@ -1053,13 +1062,25 @@ async def slack_interactive_handler(
         "response_type": "ephemeral"
     }
 
-@app.get("/legal/privacy", response_class=HTMLResponse)
+@app.get("/faq", response_class=HTMLResponse)
+async def faq(request: Request):
+    return page(request, title="FAQ | CanopyIQ", desc="Frequently asked questions about CanopyIQ's AI agent security platform.", path="faq.html")
+
+@app.get("/privacy", response_class=HTMLResponse)
 async def privacy(request: Request):
-    return page(request, title="Privacy Policy | CanopyIQ", desc="Privacy policy.", path="legal_privacy.html")
+    return page(request, title="Privacy Policy | CanopyIQ", desc="Our commitment to protecting your privacy and data.", path="privacy.html")
+
+@app.get("/terms", response_class=HTMLResponse)
+async def terms(request: Request):
+    return page(request, title="Terms of Service | CanopyIQ", desc="Terms and conditions for using CanopyIQ's services.", path="terms.html")
+
+@app.get("/legal/privacy", response_class=HTMLResponse)
+async def privacy_legacy(request: Request):
+    return page(request, title="Privacy Policy | CanopyIQ", desc="Our commitment to protecting your privacy and data.", path="privacy.html")
 
 @app.get("/legal/terms", response_class=HTMLResponse)
-async def terms(request: Request):
-    return page(request, title="Terms of Service | CanopyIQ", desc="Terms of service.", path="legal_terms.html")
+async def terms_legacy(request: Request):
+    return page(request, title="Terms of Service | CanopyIQ", desc="Terms and conditions for using CanopyIQ's services.", path="terms.html")
 
 @app.get("/health")
 async def health():

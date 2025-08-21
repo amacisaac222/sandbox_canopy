@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-16">
+  <!-- Header -->
+  <div class="text-center mb-16">
+    <h1 class="text-4xl lg:text-5xl font-bold text-white mb-4">Frequently Asked Questions</h1>
+    <p class="text-dark-400 text-lg max-w-2xl mx-auto">
+      Everything you need to know about CanopyIQ's AI agent security platform
+    </p>
+  </div>
+
+  <!-- General Section -->
+  <section class="mb-12">
+    <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+      <span class="w-8 h-8 rounded-lg bg-gradient-canopy flex items-center justify-center mr-3">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </span>
+      General
+    </h2>
+    
+    <div class="space-y-4">
+      <!-- FAQ Item -->
+      <div class="bg-dark-900 border border-dark-700 rounded-lg overflow-hidden">
+        <button class="faq-toggle w-full text-left p-6 flex items-center justify-between hover:bg-dark-800 transition-colors" data-target="general-1">
+          <span class="text-white font-medium">What is CanopyIQ?</span>
+          <svg class="w-5 h-5 text-dark-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="general-1" class="faq-content hidden px-6 pb-6">
+          <p class="text-dark-300">CanopyIQ is a runtime security platform for AI agents that provides guardrails, approval workflows, and observability for enterprise AI workloads. We enable organizations to safely deploy AI agents at scale with comprehensive policy enforcement and audit capabilities.</p>
+        </div>
+      </div>
+
+      <div class="bg-dark-900 border border-dark-700 rounded-lg overflow-hidden">
+        <button class="faq-toggle w-full text-left p-6 flex items-center justify-between hover:bg-dark-800 transition-colors" data-target="general-2">
+          <span class="text-white font-medium">How does CanopyIQ differ from other AI security solutions?</span>
+          <svg class="w-5 h-5 text-dark-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="general-2" class="faq-content hidden px-6 pb-6">
+          <p class="text-dark-300">Unlike traditional AI security tools that focus on model training or inference protection, CanopyIQ operates at the runtime level where agents interact with tools and APIs. We provide real-time policy enforcement, human-in-the-loop approvals, and cross-vendor compatibility across all major AI platforms.</p>
+        </div>
+      </div>
+
+      <div class="bg-dark-900 border border-dark-700 rounded-lg overflow-hidden">
+        <button class="faq-toggle w-full text-left p-6 flex items-center justify-between hover:bg-dark-800 transition-colors" data-target="general-3">
+          <span class="text-white font-medium">What types of organizations use CanopyIQ?</span>
+          <svg class="w-5 h-5 text-dark-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="general-3" class="faq-content hidden px-6 pb-6">
+          <p class="text-dark-300">Enterprise organizations across finance, healthcare, government, and technology sectors use CanopyIQ to secure their AI agent deployments. Our platform is designed for teams running production AI workloads that require enterprise-grade security, compliance, and governance.</p>
+        </div>
+      </div>
+
+      <div class="bg-dark-900 border border-dark-700 rounded-lg overflow-hidden">
+        <button class="faq-toggle w-full text-left p-6 flex items-center justify-between hover:bg-dark-800 transition-colors" data-target="general-4">
+          <span class="text-white font-medium">How quickly can we get started with CanopyIQ?</span>
+          <svg class="w-5 h-5 text-dark-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="general-4" class="faq-content hidden px-6 pb-6">
+          <p class="text-dark-300">Most organizations can integrate CanopyIQ within days using our SDK or sidecar deployment. We provide comprehensive documentation, migration guides, and dedicated support to ensure smooth onboarding with minimal disruption to existing workflows.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security & Privacy Section -->
+  <section class="mb-12">
+    <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+      <span class="w-8 h-8 rounded-lg bg-gradient-canopy flex items-center justify-center mr-3">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+        </svg>
+      </span>
+      Security & Privacy
+    </h2>
+    
+    <div class="space-y-4">
+      <div class="bg-dark-900 border border-dark-700 rounded-lg overflow-hidden">
+        <button class="faq-toggle w-full text-left p-6 flex items-center justify-between hover:bg-dark-800 transition-colors" data-target="security-1">
+          <span class="text-white font-medium">How does CanopyIQ protect sensitive data?</span>
+          <svg class="w-5 h-5 text-dark-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="security-1" class="faq-content hidden px-6 pb-6">
+          <p class="text-dark-300">CanopyIQ employs end-to-end encryption, zero-trust architecture, and cryptographic policy signatures. We never store your proprietary data - our platform operates on metadata and policy decisions only. All sensitive information remains within your infrastructure.</p>
+        </div>
+      </div>
+
+      <div class="bg-dark-900 border border-dark-700 rounded-lg overflow-hidden">
+        <button class="faq-toggle w-full text-left p-6 flex items-center justify-between hover:bg-dark-800 transition-colors" data-target="security-2">
+          <span class="text-white font-medium">What security certifications does CanopyIQ have?</span>
+          <svg class="w-5 h-5 text-dark-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="security-2" class="faq-content hidden px-6 pb-6">
+          <p class="text-dark-300">We maintain SOC 2 Type II, ISO 27001, and FedRAMP compliance. Our platform is designed to meet the strictest enterprise security requirements with regular third-party security audits and penetration testing.</p>
+        </div>
+      </div>
+
+      <div class="bg-dark-900 border border-dark-700 rounded-lg overflow-hidden">
+        <button class="faq-toggle w-full text-left p-6 flex items-center justify-between hover:bg-dark-800 transition-colors" data-target="security-3">
+          <span class="text-white font-medium">Can CanopyIQ operate in air-gapped environments?</span>
+          <svg class="w-5 h-5 text-dark-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="security-3" class="faq-content hidden px-6 pb-6">
+          <p class="text-dark-300">Yes, CanopyIQ supports offline deployment with signed local policies that enable sub-10ms decision making even when disconnected from the control plane. This ensures security enforcement continues even in air-gapped or network-isolated environments.</p>
+        </div>
+      </div>
+
+      <div class="bg-dark-900 border border-dark-700 rounded-lg overflow-hidden">
+        <button class="faq-toggle w-full text-left p-6 flex items-center justify-between hover:bg-dark-800 transition-colors" data-target="security-4">
+          <span class="text-white font-medium">How does audit logging work?</span>
+          <svg class="w-5 h-5 text-dark-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="security-4" class="faq-content hidden px-6 pb-6">
+          <p class="text-dark-300">Every agent action is logged with full context including user identity, timestamp, policy decisions, and outcomes. Audit logs are exported to your existing SIEM systems (Splunk, Sentinel, Datadog) with configurable retention and compliance reporting.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Deployment & Integrations Section -->
+  <section class="mb-12">
+    <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+      <span class="w-8 h-8 rounded-lg bg-gradient-canopy flex items-center justify-center mr-3">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+        </svg>
+      </span>
+      Deployment & Integrations
+    </h2>
+    
+    <div class="space-y-4">
+      <div class="bg-dark-900 border border-dark-700 rounded-lg overflow-hidden">
+        <button class="faq-toggle w-full text-left p-6 flex items-center justify-between hover:bg-dark-800 transition-colors" data-target="deployment-1">
+          <span class="text-white font-medium">What deployment options are available?</span>
+          <svg class="w-5 h-5 text-dark-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="deployment-1" class="faq-content hidden px-6 pb-6">
+          <p class="text-dark-300">CanopyIQ offers flexible deployment options including cloud (AWS, Azure, GCP), on-premises, hybrid, and edge deployments. We provide Docker containers, Kubernetes Helm charts, and Terraform modules for seamless infrastructure integration.</p>
+        </div>
+      </div>
+
+      <div class="bg-dark-900 border border-dark-700 rounded-lg overflow-hidden">
+        <button class="faq-toggle w-full text-left p-6 flex items-center justify-between hover:bg-dark-800 transition-colors" data-target="deployment-2">
+          <span class="text-white font-medium">Which AI platforms does CanopyIQ support?</span>
+          <svg class="w-5 h-5 text-dark-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="deployment-2" class="faq-content hidden px-6 pb-6">
+          <p class="text-dark-300">We support all major AI platforms including OpenAI, Anthropic Claude, AWS Bedrock, Azure OpenAI, Google Vertex AI, and custom agent frameworks. Our universal SDK provides consistent policy enforcement across any AI provider.</p>
+        </div>
+      </div>
+
+      <div class="bg-dark-900 border border-dark-700 rounded-lg overflow-hidden">
+        <button class="faq-toggle w-full text-left p-6 flex items-center justify-between hover:bg-dark-800 transition-colors" data-target="deployment-3">
+          <span class="text-white font-medium">How does CanopyIQ integrate with existing infrastructure?</span>
+          <svg class="w-5 h-5 text-dark-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="deployment-3" class="faq-content hidden px-6 pb-6">
+          <p class="text-dark-300">CanopyIQ integrates through lightweight SDKs or sidecar proxies with minimal code changes. We support standard protocols (HTTP, gRPC) and provide native integrations with popular CI/CD pipelines, monitoring tools, and identity providers.</p>
+        </div>
+      </div>
+
+      <div class="bg-dark-900 border border-dark-700 rounded-lg overflow-hidden">
+        <button class="faq-toggle w-full text-left p-6 flex items-center justify-between hover:bg-dark-800 transition-colors" data-target="deployment-4">
+          <span class="text-white font-medium">What's the performance impact of CanopyIQ?</span>
+          <svg class="w-5 h-5 text-dark-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="deployment-4" class="faq-content hidden px-6 pb-6">
+          <p class="text-dark-300">CanopyIQ adds less than 10ms latency to agent operations with local policy caching. Our distributed architecture scales horizontally and can handle millions of agent actions per day with negligible performance impact.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Compliance Section -->
+  <section class="mb-12">
+    <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+      <span class="w-8 h-8 rounded-lg bg-gradient-canopy flex items-center justify-center mr-3">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </span>
+      Compliance
+    </h2>
+    
+    <div class="space-y-4">
+      <div class="bg-dark-900 border border-dark-700 rounded-lg overflow-hidden">
+        <button class="faq-toggle w-full text-left p-6 flex items-center justify-between hover:bg-dark-800 transition-colors" data-target="compliance-1">
+          <span class="text-white font-medium">Does CanopyIQ help with regulatory compliance?</span>
+          <svg class="w-5 h-5 text-dark-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="compliance-1" class="faq-content hidden px-6 pb-6">
+          <p class="text-dark-300">Yes, CanopyIQ provides pre-built compliance packs for GDPR, HIPAA, SOX, and other regulatory frameworks. Our audit trails, data governance controls, and approval workflows help organizations meet complex compliance requirements for AI systems.</p>
+        </div>
+      </div>
+
+      <div class="bg-dark-900 border border-dark-700 rounded-lg overflow-hidden">
+        <button class="faq-toggle w-full text-left p-6 flex items-center justify-between hover:bg-dark-800 transition-colors" data-target="compliance-2">
+          <span class="text-white font-medium">How does CanopyIQ support data residency requirements?</span>
+          <svg class="w-5 h-5 text-dark-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="compliance-2" class="faq-content hidden px-6 pb-6">
+          <p class="text-dark-300">CanopyIQ can be deployed in any region or jurisdiction to meet data residency requirements. Our on-premises and private cloud options ensure complete control over data location and processing while maintaining full security functionality.</p>
+        </div>
+      </div>
+
+      <div class="bg-dark-900 border border-dark-700 rounded-lg overflow-hidden">
+        <button class="faq-toggle w-full text-left p-6 flex items-center justify-between hover:bg-dark-800 transition-colors" data-target="compliance-3">
+          <span class="text-white font-medium">What compliance reporting does CanopyIQ provide?</span>
+          <svg class="w-5 h-5 text-dark-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="compliance-3" class="faq-content hidden px-6 pb-6">
+          <p class="text-dark-300">CanopyIQ generates automated compliance reports with detailed audit trails, policy adherence metrics, and risk assessments. Reports can be customized for specific regulatory frameworks and exported in various formats for auditor review.</p>
+        </div>
+      </div>
+
+      <div class="bg-dark-900 border border-dark-700 rounded-lg overflow-hidden">
+        <button class="faq-toggle w-full text-left p-6 flex items-center justify-between hover:bg-dark-800 transition-colors" data-target="compliance-4">
+          <span class="text-white font-medium">How does CanopyIQ handle data retention and deletion?</span>
+          <svg class="w-5 h-5 text-dark-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="compliance-4" class="faq-content hidden px-6 pb-6">
+          <p class="text-dark-300">CanopyIQ implements configurable data retention policies with automated deletion capabilities. Organizations can set retention periods based on regulatory requirements and business needs, with secure deletion and compliance verification.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact CTA -->
+  <div class="text-center bg-dark-900 border border-dark-700 rounded-xl p-8">
+    <h3 class="text-2xl font-bold text-white mb-4">Still have questions?</h3>
+    <p class="text-dark-400 mb-6">Our team is here to help you understand how CanopyIQ can secure your AI agents.</p>
+    <a href="/contact" class="inline-flex items-center justify-center rounded-lg bg-gradient-canopy text-white px-6 py-3 hover:opacity-90 transition font-semibold">
+      Contact Sales
+    </a>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const toggles = document.querySelectorAll('.faq-toggle');
+  
+  toggles.forEach(toggle => {
+    toggle.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const content = document.getElementById(targetId);
+      const icon = this.querySelector('.faq-icon');
+      
+      // Close all other accordions
+      toggles.forEach(otherToggle => {
+        if (otherToggle !== toggle) {
+          const otherTargetId = otherToggle.getAttribute('data-target');
+          const otherContent = document.getElementById(otherTargetId);
+          const otherIcon = otherToggle.querySelector('.faq-icon');
+          
+          otherContent.classList.add('hidden');
+          otherIcon.classList.remove('rotate-180');
+        }
+      });
+      
+      // Toggle current accordion
+      content.classList.toggle('hidden');
+      icon.classList.toggle('rotate-180');
+    });
+  });
+});
+</script>
+{% endblock %}

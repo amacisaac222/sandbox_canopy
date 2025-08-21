@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 60" fill="none">
+  <!-- Concentric C design -->
+  <g transform="translate(5, 5)">
+    <!-- Outer ring -->
+    <path d="M25 5 C 37.5 5, 45 12.5, 45 25 C 45 37.5, 37.5 45, 25 45 C 17.5 45, 12.5 42.5, 7.5 37.5" 
+          stroke="#FF6F61" stroke-width="4" fill="none" stroke-linecap="round"/>
+    
+    <!-- Middle ring -->
+    <path d="M25 10 C 35 10, 40 15, 40 25 C 40 35, 35 40, 25 40 C 20 40, 16 38, 12.5 35" 
+          stroke="#FF6F61" stroke-width="3" fill="none" stroke-linecap="round"/>
+    
+    <!-- Inner ring -->
+    <path d="M25 15 C 32.5 15, 35 17.5, 35 25 C 35 32.5, 32.5 35, 25 35 C 22.5 35, 20 34, 17.5 32.5" 
+          stroke="#FF6F61" stroke-width="2" fill="none" stroke-linecap="round"/>
+    
+    <!-- Center dot -->
+    <circle cx="25" cy="25" r="2" fill="#FF6F61"/>
+  </g>
+  
+  <!-- CANOPY IQ Text -->
+  <g transform="translate(70, 0)">
+    <text x="0" y="35" font-family="Nunito, sans-serif" font-size="28" font-weight="900" fill="#FF6F61">
+      CANOPY
+    </text>
+    <text x="140" y="35" font-family="Nunito, sans-serif" font-size="28" font-weight="700" fill="white">
+      IQ
+    </text>
+  </g>
+</svg>
