@@ -66,6 +66,42 @@ async def faq(request: Request):
         path="faq.html"
     )
 
+@app.get("/documentation", response_class=HTMLResponse)
+async def documentation(request: Request):
+    return page(
+        request,
+        title="Documentation | CanopyIQ",
+        desc="Complete documentation for CanopyIQ's AI agent security platform.",
+        path="docs.html"
+    )
+
+@app.get("/pricing", response_class=HTMLResponse)
+async def pricing(request: Request):
+    return page(
+        request,
+        title="Pricing | CanopyIQ",
+        desc="Simple, transparent pricing for CanopyIQ's enterprise AI security platform.",
+        path="pricing.html"
+    )
+
+@app.get("/terms", response_class=HTMLResponse)
+async def terms(request: Request):
+    return page(
+        request,
+        title="Terms of Service | CanopyIQ",
+        desc="Terms of service for CanopyIQ's AI agent security platform.",
+        path="terms.html"
+    )
+
+@app.get("/privacy", response_class=HTMLResponse)
+async def privacy(request: Request):
+    return page(
+        request,
+        title="Privacy Policy | CanopyIQ",
+        desc="Privacy policy for CanopyIQ's AI agent security platform.",
+        path="privacy.html"
+    )
+
 # Health endpoints
 @app.get("/health")
 async def health():
