@@ -43,7 +43,7 @@ async def home(request: Request):
 async def product(request: Request):
     return page(
         request,
-        title="Product | CanopyIQ",
+        title="Product | CanopyIQ - Interactive Demos",
         desc="Complete AI agent security platform with sandboxing, policy enforcement, audit trails, and enterprise compliance features.",
         path="product.html"
     )
