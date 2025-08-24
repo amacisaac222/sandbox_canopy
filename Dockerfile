@@ -21,5 +21,5 @@ WORKDIR /app/canopyiq_site
 # Default port (Railway will override with $PORT)
 ENV PORT=8000
 
-# Run the full CanopyIQ application
-CMD sh -c "python -m uvicorn app:app --host 0.0.0.0 --port $PORT"
+# Start with simple app that definitely works, then we can debug
+CMD sh -c "python -m uvicorn simple_app:simple_app --host 0.0.0.0 --port $PORT"
