@@ -7,14 +7,14 @@ from datetime import datetime
 from typing import Optional, AsyncGenerator
 from sqlalchemy import (
     Column, Integer, String, Text, DateTime, ForeignKey, JSON, Enum, 
-    create_engine, BigInteger
+    create_engine, BigInteger, Boolean, Index
 )
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
 # Get database URL from environment, fallback to SQLite for development
-DATABASE_URL = os.getenv("CP_DB_URL", "sqlite+aiosqlite:///./canopyiq.db")
+DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("CP_DB_URL", "sqlite+aiosqlite:///./canopyiq.db")
 
 # Convert postgres:// to postgresql+asyncpg:// if needed
 if DATABASE_URL.startswith("postgres://"):
@@ -98,6 +98,46 @@ class Setting(Base):
     value = Column(JSON, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+class Company(Base):
+    """Companies/Tenants table for multi-tenant support"""
+    __tablename__ = "companies"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(255), nullable=False)  # Company display name
+    domain = Column(String(255), unique=True, nullable=False)  # Primary domain (e.g., "acme.com")
+    slug = Column(String(100), unique=True, nullable=False)  # URL-safe identifier
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    
+    # Configuration
+    settings = Column(JSON, nullable=True)  # Company-specific settings
+    
+    # Relationships
+    users = relationship("CompanyUser", back_populates="company", cascade="all, delete-orphan")
+
+class CompanyUser(Base):
+    """Company users with role-based access"""
+    __tablename__ = "company_users"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    company_id = Column(Integer, ForeignKey("companies.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(String(255), nullable=False)  # OIDC subject or local user ID
+    email = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=False)
+    roles = Column(JSON, nullable=False, default=list)  # ["admin", "user", "auditor"]
+    groups = Column(JSON, nullable=False, default=list)  # ["engineering", "security"]
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    last_login = Column(DateTime, nullable=True)
+    
+    # Relationships
+    company = relationship("Company", back_populates="users")
+    
+    # Unique constraint for user per company
+    __table_args__ = (Index("idx_company_user", "company_id", "user_id", unique=True),)
 
 class Approval(Base):
     """Approval workflows table"""
