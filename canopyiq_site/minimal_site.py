@@ -116,7 +116,7 @@ async def privacy(request: Request):
 # Health endpoints
 @app.get("/health")
 async def health():
-    return {"status": "ok", "service": "canopyiq", "version": "minimal"}
+    return {"status": "ok", "service": "canopyiq", "version": "minimal", "commit": "922255d", "timestamp": "2025-08-24-debug"}
 
 @app.get("/healthz")
 async def healthz():
