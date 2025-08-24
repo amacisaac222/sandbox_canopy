@@ -16,8 +16,8 @@ from sqlalchemy.orm import relationship, sessionmaker
 # Get database URL from environment, fallback to SQLite for development
 DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("CP_DB_URL", "sqlite+aiosqlite:///./canopyiq.db")
 
-# Convert postgres:// to postgresql+asyncpg:// if needed
-if DATABASE_URL.startswith("postgres://"):
+# Convert postgres:// to postgresql+asyncpg:// if needed (Railway compatibility)
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
 elif DATABASE_URL.startswith("postgresql://"):
     DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
