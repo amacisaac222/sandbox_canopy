@@ -22,4 +22,4 @@ WORKDIR /app/canopyiq_site
 ENV PORT=8000
 
 # Run the complete CanopyIQ application with all features
-CMD sh -c "python -m uvicorn app:app --host 0.0.0.0 --port $PORT"
+CMD sh -c "python -m uvicorn app_production:app --host 0.0.0.0 --port $PORT"

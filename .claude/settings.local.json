@@ -35,7 +35,10 @@
       "Bash(git checkout:*)",
       "Bash(alembic revision:*)",
       "Bash(find:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "WebFetch(domain:docs.railway.app)",
+      "WebFetch(domain:docs.railway.com)",
+      "Bash(git fetch:*)"
     ],
     "deny": [],
     "ask": [],
