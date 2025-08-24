@@ -21,5 +21,5 @@ WORKDIR /app/canopyiq_site
 # Default port (Railway will override with $PORT)
 ENV PORT=8000
 
-# Run the full CanopyIQ application (startup is now safe)
-CMD sh -c "python -m uvicorn app:app --host 0.0.0.0 --port $PORT"
+# Run minimal CanopyIQ site with templates but no complex dependencies
+CMD sh -c "python -m uvicorn minimal_site:app --host 0.0.0.0 --port $PORT"
