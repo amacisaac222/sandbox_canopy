@@ -1,33 +1,25 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
+# Install curl for health checks
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
-# system deps
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential curl ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
-
+# Set working directory
 WORKDIR /app
 
-# copy deps first for better caching
-COPY requirements.txt /app/requirements.txt
-RUN pip install --upgrade pip && pip install -r /app/requirements.txt
+# Copy requirements first for better caching
+COPY canopyiq_site/requirements.txt .
 
-# copy app
-COPY control_plane /app/control_plane
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# default env (override in runtime)
-ENV CP_DB_URL=sqlite+aiosqlite:///./sandbox.db \
-    CP_TENANT_SECRET=change_me \
-    CP_BIND=0.0.0.0 \
-    CP_PORT=8080
+# Copy the entire project
+COPY . .
 
-EXPOSE 8080
+# Set working directory to canopyiq_site for the app
+WORKDIR /app/canopyiq_site
 
-# simple healthcheck
-HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
-  CMD curl -fsS http://127.0.0.1:8080/health || exit 1
+# Default port (Railway will override with $PORT)
+ENV PORT=8000
 
-CMD ["uvicorn", "control_plane.app:app", "--host", "0.0.0.0", "--port", "8080"]
+# Start the application using a shell to handle environment variables
+CMD sh -c "python -m uvicorn app:app --host 0.0.0.0 --port $PORT"
