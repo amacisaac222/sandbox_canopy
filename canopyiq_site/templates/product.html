@@ -1,28 +1,819 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="max-w-7xl mx-auto px-4 py-14">
-  <h1 class="text-3xl font-semibold mb-6">Product</h1>
-  <div class="space-y-8 text-muted">
-    <div>
-      <h2 class="text-xl text-ink font-medium">Runtime Guardrails</h2>
-      <p>Allow/deny lists, JSON Schema validation, budgets, loop/chain guards.</p>
+
+<!-- DEBUG: Interactive Product Template Loaded Successfully -->
+
+<!-- Product Hero Section -->
+<section class="max-w-7xl mx-auto px-4 py-20">
+  <div class="text-center mb-16">
+    <h1 class="text-4xl lg:text-5xl font-black text-white mb-6">Enterprise AI <span class="text-coral-500">Security Platform</span></h1>
+    <p class="text-xl text-navy-300 max-w-4xl mx-auto mb-12 font-bold">
+      CanopyIQ makes agent adoption safe, fast, and compliant. Every agent action is checked in real-time against your policies. Risky behaviors are blocked or routed for human approval—without slowing down innovation.
+    </p>
+  </div>
+  
+  <div class="grid lg:grid-cols-2 xl:grid-cols-4 gap-6">
+    <div class="group p-6 rounded-xl bg-navy-800 border border-navy-700 hover:border-coral-500/50 transition-all duration-300 cursor-pointer product-demo-card" data-demo="sandbox">
+      <div class="w-12 h-12 rounded-lg bg-gradient-coral flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-black text-white mb-2">Sandbox Every Action</h3>
+      <p class="text-navy-300 font-bold mb-3">Contain agents so they only act where permitted.</p>
+      <div class="text-coral-500 text-sm font-bold group-hover:text-coral-400 transition-colors">
+        → Try Interactive Demo
+      </div>
     </div>
-    <div>
-      <h2 class="text-xl text-ink font-medium">Human-in-the-Loop</h2>
-      <p>Approval queues for sensitive actions; Slack/Teams integrations (roadmap).</p>
+    
+    <div class="group p-6 rounded-xl bg-navy-800 border border-navy-700 hover:border-coral-500/50 transition-all duration-300 cursor-pointer product-demo-card" data-demo="policy">
+      <div class="w-12 h-12 rounded-lg bg-gradient-coral flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-black text-white mb-2">Policy Enforcement</h3>
+      <p class="text-navy-300 font-bold mb-3">Apply guardrails across thousands of agents instantly.</p>
+      <div class="text-coral-500 text-sm font-bold group-hover:text-coral-400 transition-colors">
+        → Try Interactive Demo
+      </div>
     </div>
-    <div>
-      <h2 class="text-xl text-ink font-medium">Cross-Vendor Policies</h2>
-      <p>One policy language across AWS AgentCore/Strands, OpenAI, Anthropic, Azure.</p>
+    
+    <div class="group p-6 rounded-xl bg-navy-800 border border-navy-700 hover:border-coral-500/50 transition-all duration-300 cursor-pointer product-demo-card" data-demo="audit">
+      <div class="w-12 h-12 rounded-lg bg-gradient-coral flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-black text-white mb-2">Audit & Approvals</h3>
+      <p class="text-navy-300 font-bold mb-3">Every decision logged, every high-risk step approved.</p>
+      <div class="text-coral-500 text-sm font-bold group-hover:text-coral-400 transition-colors">
+        → Try Interactive Demo
+      </div>
     </div>
-    <div>
-      <h2 class="text-xl text-ink font-medium">Observability & Audit</h2>
-      <p>Lineage, redacted logs, SIEM exports, compliance-friendly reports.</p>
-    </div>
-    <div>
-      <h2 class="text-xl text-ink font-medium">Scale</h2>
-      <p>Local signed policy bundles for sub-10ms decisions at fleet scale.</p>
+    
+    <div class="group p-6 rounded-xl bg-navy-800 border border-navy-700 hover:border-coral-500/50 transition-all duration-300 cursor-pointer product-demo-card" data-demo="compliance">
+      <div class="w-12 h-12 rounded-lg bg-gradient-coral flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-black text-white mb-2">Compliance Ready</h3>
+      <p class="text-navy-300 font-bold mb-3">HIPAA, GDPR, SOX templates included.</p>
+      <div class="text-coral-500 text-sm font-bold group-hover:text-coral-400 transition-colors">
+        → Try Interactive Demo
+      </div>
     </div>
   </div>
 </section>
+
+<!-- Interactive Product Demos -->
+<section class="max-w-7xl mx-auto px-4 py-20" id="product-demos">
+  <div class="text-center mb-16">
+    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Interactive Product <span class="text-coral-500">Demonstrations</span></h2>
+    <p class="text-xl text-navy-300 max-w-3xl mx-auto font-bold">
+      Explore each CanopyIQ feature with hands-on demos. Click through real scenarios and see how enterprise AI security works in practice.
+    </p>
+  </div>
+
+  <!-- Sandbox Demo -->
+  <div class="demo-section hidden mb-20" id="sandbox-demo">
+    <div class="bg-navy-800 rounded-2xl p-8 border border-navy-700">
+      <div class="text-center mb-8">
+        <h3 class="text-3xl font-black text-white mb-4">Sandbox Every Action Demo</h3>
+        <p class="text-lg text-navy-300 font-bold">See how CanopyIQ creates secure boundaries for AI agent operations</p>
+      </div>
+      
+      <div class="grid lg:grid-cols-2 gap-8 mb-8">
+        <div class="space-y-6">
+          <div class="bg-navy-900 rounded-lg p-6">
+            <h4 class="text-xl font-black text-white mb-4">Scenario: File System Access</h4>
+            <p class="text-navy-300 font-bold mb-4">An AI agent needs to process customer documents stored in various directories.</p>
+            
+            <div class="space-y-3">
+              <button class="sandbox-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="1">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-bold">1. Agent requests file access</span>
+                  <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </button>
+              
+              <button class="sandbox-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="2">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-bold">2. CanopyIQ creates secure sandbox</span>
+                  <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </button>
+              
+              <button class="sandbox-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="3">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-bold">3. Restricted access enforced</span>
+                  <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </button>
+              
+              <button class="sandbox-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="4">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-bold">4. Safe execution & monitoring</span>
+                  <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-navy-900 rounded-lg p-6">
+          <div class="sandbox-result" id="sandbox-result-1" style="display: none;">
+            <h5 class="text-lg font-black text-white mb-3">Agent File Access Request</h5>
+            <div class="bg-navy-800 rounded p-3 font-mono text-sm mb-4">
+              <div class="text-coral-400">Agent: DocumentProcessor</div>
+              <div class="text-navy-300">Request: access("/customer-docs/", "read")</div>
+              <div class="text-navy-300">Files: ["invoice.pdf", "contract.doc"]</div>
+            </div>
+            <div class="flex items-center gap-2 text-yellow-400">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"/>
+              </svg>
+              <span class="font-bold">Intercepted by CanopyIQ</span>
+            </div>
+          </div>
+          
+          <div class="sandbox-result" id="sandbox-result-2" style="display: none;">
+            <h5 class="text-lg font-black text-white mb-3">Secure Sandbox Created</h5>
+            <div class="space-y-3">
+              <div class="bg-green-500/10 border border-green-500/30 rounded p-3">
+                <div class="text-green-400 font-bold">✓ Sandbox Environment Active</div>
+              </div>
+              <div class="bg-navy-800 rounded p-3 text-sm">
+                <div class="text-white font-bold mb-2">Sandbox Boundaries:</div>
+                <div class="text-navy-300">• Read-only access to /customer-docs/</div>
+                <div class="text-navy-300">• Network access: BLOCKED</div>
+                <div class="text-navy-300">• System calls: RESTRICTED</div>
+                <div class="text-navy-300">• Time limit: 5 minutes</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="sandbox-result" id="sandbox-result-3" style="display: none;">
+            <h5 class="text-lg font-black text-white mb-3">Access Restrictions Applied</h5>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3 bg-navy-800 rounded p-3">
+                <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                  </svg>
+                </div>
+                <span class="text-white">Access to customer-docs/ ✓ ALLOWED</span>
+              </div>
+              <div class="flex items-center gap-3 bg-navy-800 rounded p-3">
+                <div class="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/>
+                  </svg>
+                </div>
+                <span class="text-white">Access to /admin/ ✗ BLOCKED</span>
+              </div>
+              <div class="flex items-center gap-3 bg-navy-800 rounded p-3">
+                <div class="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/>
+                  </svg>
+                </div>
+                <span class="text-white">Network requests ✗ BLOCKED</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="sandbox-result" id="sandbox-result-4" style="display: none;">
+            <h5 class="text-lg font-black text-white mb-3">Safe Execution Complete</h5>
+            <div class="space-y-3">
+              <div class="bg-green-500/10 border border-green-500/30 rounded p-3">
+                <div class="text-green-400 font-bold mb-1">✓ Task Completed Successfully</div>
+                <div class="text-green-300 text-sm">2 documents processed safely</div>
+              </div>
+              <div class="bg-navy-800 rounded p-3 text-sm">
+                <div class="text-white font-bold mb-2">Execution Summary:</div>
+                <div class="text-navy-300">• Files read: invoice.pdf, contract.doc</div>
+                <div class="text-navy-300">• Execution time: 1.2 seconds</div>
+                <div class="text-navy-300">• Memory used: 45MB (within limits)</div>
+                <div class="text-navy-300">• Security violations: 0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-center">
+        <button class="bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600 transition font-bold mr-4" onclick="resetSandboxDemo()">
+          Reset Demo
+        </button>
+        <button class="border border-coral-500 text-coral-500 px-6 py-3 rounded-lg hover:bg-coral-500 hover:text-white transition font-bold" onclick="closeDemos()">
+          View Other Demos
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Policy Demo -->
+  <div class="demo-section hidden mb-20" id="policy-demo">
+    <div class="bg-navy-800 rounded-2xl p-8 border border-navy-700">
+      <div class="text-center mb-8">
+        <h3 class="text-3xl font-black text-white mb-4">Policy Enforcement Demo</h3>
+        <p class="text-lg text-navy-300 font-bold">Experience real-time policy evaluation and enforcement across your AI fleet</p>
+      </div>
+      
+      <div class="grid lg:grid-cols-2 gap-8 mb-8">
+        <div class="space-y-6">
+          <div class="bg-navy-900 rounded-lg p-6">
+            <h4 class="text-xl font-black text-white mb-4">Scenario: Database Query with PII</h4>
+            <p class="text-navy-300 font-bold mb-4">Multiple agents attempt different database operations with varying risk levels.</p>
+            
+            <div class="space-y-3">
+              <button class="policy-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="1">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-bold">1. Agent sends database query</span>
+                  <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </button>
+              
+              <button class="policy-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="2">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-bold">2. Policy engine evaluates request</span>
+                  <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </button>
+              
+              <button class="policy-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="3">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-bold">3. Risk assessment & classification</span>
+                  <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </button>
+              
+              <button class="policy-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="4">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-bold">4. Enforcement action applied</span>
+                  <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-navy-900 rounded-lg p-6">
+          <div class="policy-result" id="policy-result-1" style="display: none;">
+            <h5 class="text-lg font-black text-white mb-3">Database Query Request</h5>
+            <div class="bg-navy-800 rounded p-3 font-mono text-sm mb-4">
+              <div class="text-coral-400">Agent: AnalyticsBot</div>
+              <div class="text-navy-300">Query: SELECT * FROM customers WHERE</div>
+              <div class="text-navy-300">       country = 'US' AND age > 25</div>
+              <div class="text-navy-300">Fields: [email, phone, ssn, address]</div>
+            </div>
+            <div class="flex items-center gap-2 text-yellow-400">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"/>
+              </svg>
+              <span class="font-bold">Policy evaluation initiated</span>
+            </div>
+          </div>
+          
+          <div class="policy-result" id="policy-result-2" style="display: none;">
+            <h5 class="text-lg font-black text-white mb-3">Policy Engine Analysis</h5>
+            <div class="space-y-3">
+              <div class="bg-navy-800 rounded p-3 text-sm">
+                <div class="text-white font-bold mb-2">Active Policies (4 evaluated):</div>
+                <div class="space-y-1">
+                  <div class="flex justify-between text-navy-300">
+                    <span>• Data Access Control Policy</span>
+                    <span class="text-green-400">✓ PASS</span>
+                  </div>
+                  <div class="flex justify-between text-navy-300">
+                    <span>• PII Protection Policy</span>
+                    <span class="text-red-400">✗ FAIL</span>
+                  </div>
+                  <div class="flex justify-between text-navy-300">
+                    <span>• GDPR Compliance Policy</span>
+                    <span class="text-yellow-400">⚠ REVIEW</span>
+                  </div>
+                  <div class="flex justify-between text-navy-300">
+                    <span>• Time-based Access Policy</span>
+                    <span class="text-green-400">✓ PASS</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="policy-result" id="policy-result-3" style="display: none;">
+            <h5 class="text-lg font-black text-white mb-3">Risk Assessment Results</h5>
+            <div class="space-y-3">
+              <div class="bg-red-500/10 border border-red-500/30 rounded p-3">
+                <div class="text-red-400 font-bold mb-2">🚨 HIGH RISK DETECTED</div>
+                <div class="text-red-300 text-sm">Query attempts to access SSN field (PII)</div>
+              </div>
+              <div class="bg-navy-800 rounded p-3 text-sm">
+                <div class="text-white font-bold mb-2">Risk Factors:</div>
+                <div class="text-navy-300">• PII fields requested: SSN, phone, email</div>
+                <div class="text-navy-300">• Data volume: ~15,000 records</div>
+                <div class="text-navy-300">• Agent permissions: Standard (not elevated)</div>
+                <div class="text-navy-300">• Time: Outside business hours</div>
+              </div>
+              <div class="bg-yellow-500/10 border border-yellow-500/30 rounded p-3">
+                <div class="text-yellow-400 font-bold">⚠ Recommended Action: BLOCK & NOTIFY</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="policy-result" id="policy-result-4" style="display: none;">
+            <h5 class="text-lg font-black text-white mb-3">Enforcement Action Applied</h5>
+            <div class="space-y-3">
+              <div class="bg-red-500/10 border border-red-500/30 rounded p-3">
+                <div class="text-red-400 font-bold mb-1">✗ Query BLOCKED</div>
+                <div class="text-red-300 text-sm">PII access denied - insufficient permissions</div>
+              </div>
+              <div class="bg-blue-500/10 border border-blue-500/30 rounded p-3">
+                <div class="text-blue-400 font-bold mb-1">Alternative Query Suggested:</div>
+                <div class="text-blue-300 text-sm font-mono">SELECT id, country, age FROM customers WHERE...</div>
+              </div>
+              <div class="bg-navy-800 rounded p-3 text-sm">
+                <div class="text-white font-bold mb-2">Actions Taken:</div>
+                <div class="text-navy-300">• Security team notified via Slack</div>
+                <div class="text-navy-300">• Audit log entry created</div>
+                <div class="text-navy-300">• Agent redirected to approved query</div>
+                <div class="text-navy-300">• Compliance report updated</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-center">
+        <button class="bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600 transition font-bold mr-4" onclick="resetPolicyDemo()">
+          Reset Demo
+        </button>
+        <button class="border border-coral-500 text-coral-500 px-6 py-3 rounded-lg hover:bg-coral-500 hover:text-white transition font-bold" onclick="closeDemos()">
+          View Other Demos
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audit Demo -->
+  <div class="demo-section hidden mb-20" id="audit-demo">
+    <div class="bg-navy-800 rounded-2xl p-8 border border-navy-700">
+      <div class="text-center mb-8">
+        <h3 class="text-3xl font-black text-white mb-4">Audit & Approvals Demo</h3>
+        <p class="text-lg text-navy-300 font-bold">See how high-risk actions get human oversight while maintaining operational speed</p>
+      </div>
+      
+      <div class="grid lg:grid-cols-2 gap-8 mb-8">
+        <div class="space-y-6">
+          <div class="bg-navy-900 rounded-lg p-6">
+            <h4 class="text-xl font-black text-white mb-4">Scenario: Financial Transaction</h4>
+            <p class="text-navy-300 font-bold mb-4">An agent attempts to process a large refund requiring approval workflow.</p>
+            
+            <div class="space-y-3">
+              <button class="audit-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="1">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-bold">1. Agent initiates transaction</span>
+                  <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </button>
+              
+              <button class="audit-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="2">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-bold">2. Approval workflow triggered</span>
+                  <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </button>
+              
+              <button class="audit-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="3">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-bold">3. Manager reviews & approves</span>
+                  <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </button>
+              
+              <button class="audit-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="4">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-bold">4. Audit trail generated</span>
+                  <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-navy-900 rounded-lg p-6">
+          <div class="audit-result" id="audit-result-1" style="display: none;">
+            <h5 class="text-lg font-black text-white mb-3">Transaction Request</h5>
+            <div class="bg-navy-800 rounded p-3 font-mono text-sm mb-4">
+              <div class="text-coral-400">Agent: RefundProcessor</div>
+              <div class="text-navy-300">Action: process_refund()</div>
+              <div class="text-navy-300">Amount: $2,500.00</div>
+              <div class="text-navy-300">Customer: jane.doe@email.com</div>
+              <div class="text-navy-300">Reason: "Product defect"</div>
+            </div>
+            <div class="flex items-center gap-2 text-yellow-400">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"/>
+              </svg>
+              <span class="font-bold">High-value transaction detected</span>
+            </div>
+          </div>
+          
+          <div class="audit-result" id="audit-result-2" style="display: none;">
+            <h5 class="text-lg font-black text-white mb-3">Approval Workflow Activated</h5>
+            <div class="space-y-3">
+              <div class="bg-yellow-500/10 border border-yellow-500/30 rounded p-3">
+                <div class="text-yellow-400 font-bold mb-2">⏳ PENDING APPROVAL</div>
+                <div class="text-yellow-300 text-sm">Amount exceeds $1,000 threshold</div>
+              </div>
+              <div class="bg-navy-800 rounded p-3">
+                <div class="flex items-start gap-3 mb-3">
+                  <div class="w-8 h-8 bg-purple-500 rounded flex items-center justify-center flex-shrink-0">
+                    <span class="text-white text-sm font-bold">M</span>
+                  </div>
+                  <div>
+                    <div class="text-white font-bold">Teams Notification</div>
+                    <div class="text-gray-300 text-sm">To: finance-managers</div>
+                  </div>
+                </div>
+                <div class="bg-navy-700 rounded p-3 text-sm">
+                  <div class="text-coral-400 font-bold mb-2">💰 Refund Approval Required</div>
+                  <div class="text-gray-300 mb-2">$2,500 refund requested by RefundProcessor</div>
+                  <div class="text-gray-300 mb-3">Customer: Jane Doe | Reason: Product defect</div>
+                  <div class="flex gap-2">
+                    <button class="bg-green-500 text-white px-3 py-1 rounded text-xs font-bold">✓ Approve</button>
+                    <button class="bg-red-500 text-white px-3 py-1 rounded text-xs font-bold">✗ Reject</button>
+                    <button class="bg-gray-600 text-white px-3 py-1 rounded text-xs font-bold">📋 Details</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="audit-result" id="audit-result-3" style="display: none;">
+            <h5 class="text-lg font-black text-white mb-3">Manager Review Complete</h5>
+            <div class="space-y-3">
+              <div class="bg-green-500/10 border border-green-500/30 rounded p-3">
+                <div class="text-green-400 font-bold mb-1">✓ APPROVED by Sarah Johnson</div>
+                <div class="text-green-300 text-sm">Approval time: 3 minutes 42 seconds</div>
+              </div>
+              <div class="bg-navy-800 rounded p-3 text-sm">
+                <div class="text-white font-bold mb-2">Approval Details:</div>
+                <div class="text-navy-300">• Approver: sarah.johnson@company.com</div>
+                <div class="text-navy-300">• Timestamp: 2025-08-21 15:42:18 UTC</div>
+                <div class="text-navy-300">• IP Address: 192.168.1.42</div>
+                <div class="text-navy-300">• Note: "Valid defect claim - processed"</div>
+              </div>
+              <div class="bg-blue-500/10 border border-blue-500/30 rounded p-3">
+                <div class="text-blue-400 font-bold">🔄 Transaction proceeding...</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="audit-result" id="audit-result-4" style="display: none;">
+            <h5 class="text-lg font-black text-white mb-3">Complete Audit Trail</h5>
+            <div class="space-y-3">
+              <div class="bg-green-500/10 border border-green-500/30 rounded p-3">
+                <div class="text-green-400 font-bold mb-1">✓ Transaction Completed</div>
+                <div class="text-green-300 text-sm">$2,500 refund processed successfully</div>
+              </div>
+              <div class="bg-navy-800 rounded p-3 text-sm max-h-48 overflow-y-auto">
+                <div class="text-white font-bold mb-2">Full Audit Log:</div>
+                <div class="space-y-1 text-xs text-navy-300">
+                  <div>15:38:35 - Agent initiated refund request</div>
+                  <div>15:38:36 - Risk analysis: HIGH (amount > $1000)</div>
+                  <div>15:38:37 - Approval workflow triggered</div>
+                  <div>15:38:38 - Notification sent to finance-managers</div>
+                  <div>15:42:18 - Approved by sarah.johnson@company.com</div>
+                  <div>15:42:19 - Transaction authorized</div>
+                  <div>15:42:20 - Refund processed via Stripe API</div>
+                  <div>15:42:21 - Customer notification sent</div>
+                  <div>15:42:22 - Compliance report updated</div>
+                  <div>15:42:23 - Audit trail finalized</div>
+                </div>
+              </div>
+              <div class="bg-navy-700 rounded p-3 text-xs">
+                <div class="text-coral-400 font-bold mb-1">Compliance Status:</div>
+                <div class="text-navy-300">SOX: ✓ Documented | GDPR: ✓ Logged | PCI: ✓ Secured</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-center">
+        <button class="bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600 transition font-bold mr-4" onclick="resetAuditDemo()">
+          Reset Demo
+        </button>
+        <button class="border border-coral-500 text-coral-500 px-6 py-3 rounded-lg hover:bg-coral-500 hover:text-white transition font-bold" onclick="closeDemos()">
+          View Other Demos
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compliance Demo -->
+  <div class="demo-section hidden mb-20" id="compliance-demo">
+    <div class="bg-navy-800 rounded-2xl p-8 border border-navy-700">
+      <div class="text-center mb-8">
+        <h3 class="text-3xl font-black text-white mb-4">Compliance Ready Demo</h3>
+        <p class="text-lg text-navy-300 font-bold">Discover how CanopyIQ automatically handles GDPR, HIPAA, and SOX requirements</p>
+      </div>
+      
+      <div class="grid lg:grid-cols-2 gap-8 mb-8">
+        <div class="space-y-6">
+          <div class="bg-navy-900 rounded-lg p-6">
+            <h4 class="text-xl font-black text-white mb-4">Scenario: Healthcare Data Processing</h4>
+            <p class="text-navy-300 font-bold mb-4">A medical AI agent processes patient data under HIPAA compliance requirements.</p>
+            
+            <div class="space-y-3">
+              <button class="compliance-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="1">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-bold">1. Agent accesses patient data</span>
+                  <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </button>
+              
+              <button class="compliance-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="2">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-bold">2. HIPAA compliance check</span>
+                  <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </button>
+              
+              <button class="compliance-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="3">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-bold">3. Automatic documentation</span>
+                  <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </button>
+              
+              <button class="compliance-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="4">
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-bold">4. Compliance report ready</span>
+                  <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-navy-900 rounded-lg p-6">
+          <div class="compliance-result" id="compliance-result-1" style="display: none;">
+            <h5 class="text-lg font-black text-white mb-3">Patient Data Access Request</h5>
+            <div class="bg-navy-800 rounded p-3 font-mono text-sm mb-4">
+              <div class="text-coral-400">Agent: DiagnosticAssistant</div>
+              <div class="text-navy-300">Patient ID: P-12345-2025</div>
+              <div class="text-navy-300">Data: [medical_history, test_results]</div>
+              <div class="text-navy-300">Purpose: "Treatment recommendation"</div>
+            </div>
+            <div class="bg-red-500/10 border border-red-500/30 rounded p-3">
+              <div class="text-red-400 font-bold">🏥 HIPAA Protected Health Information (PHI) Detected</div>
+            </div>
+          </div>
+          
+          <div class="compliance-result" id="compliance-result-2" style="display: none;">
+            <h5 class="text-lg font-black text-white mb-3">HIPAA Compliance Verification</h5>
+            <div class="space-y-3">
+              <div class="bg-navy-800 rounded p-3 text-sm">
+                <div class="text-white font-bold mb-2">HIPAA Requirements Check:</div>
+                <div class="space-y-1">
+                  <div class="flex justify-between text-navy-300">
+                    <span>• Minimum Necessary Standard</span>
+                    <span class="text-green-400">✓ PASS</span>
+                  </div>
+                  <div class="flex justify-between text-navy-300">
+                    <span>• Agent Authorization</span>
+                    <span class="text-green-400">✓ VERIFIED</span>
+                  </div>
+                  <div class="flex justify-between text-navy-300">
+                    <span>• Purpose of Use</span>
+                    <span class="text-green-400">✓ VALID</span>
+                  </div>
+                  <div class="flex justify-between text-navy-300">
+                    <span>• Audit Log Requirements</span>
+                    <span class="text-green-400">✓ ENABLED</span>
+                  </div>
+                  <div class="flex justify-between text-navy-300">
+                    <span>• Data Encryption</span>
+                    <span class="text-green-400">✓ AES-256</span>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-green-500/10 border border-green-500/30 rounded p-3">
+                <div class="text-green-400 font-bold">✓ All HIPAA Requirements Met</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="compliance-result" id="compliance-result-3" style="display: none;">
+            <h5 class="text-lg font-black text-white mb-3">Automatic Documentation</h5>
+            <div class="space-y-3">
+              <div class="bg-blue-500/10 border border-blue-500/30 rounded p-3">
+                <div class="text-blue-400 font-bold mb-2">📋 Compliance Records Generated</div>
+                <div class="text-blue-300 text-sm">All required documentation automatically created</div>
+              </div>
+              <div class="bg-navy-800 rounded p-3 text-sm">
+                <div class="text-white font-bold mb-2">Generated Documents:</div>
+                <div class="space-y-1 text-navy-300">
+                  <div>• Access Control Matrix updated</div>
+                  <div>• Business Associate Agreement verified</div>
+                  <div>• Risk Assessment documented</div>
+                  <div>• Security Incident procedures activated</div>
+                  <div>• Patient consent verification recorded</div>
+                </div>
+              </div>
+              <div class="bg-navy-700 rounded p-3 text-xs">
+                <div class="text-coral-400 font-bold mb-1">Cross-Compliance Check:</div>
+                <div class="flex justify-between text-navy-300 mb-1">
+                  <span>GDPR (EU patients):</span>
+                  <span class="text-green-400">✓ Compliant</span>
+                </div>
+                <div class="flex justify-between text-navy-300">
+                  <span>SOX (Financial data):</span>
+                  <span class="text-yellow-400">⚠ N/A</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="compliance-result" id="compliance-result-4" style="display: none;">
+            <h5 class="text-lg font-black text-white mb-3">Compliance Dashboard Ready</h5>
+            <div class="space-y-3">
+              <div class="bg-green-500/10 border border-green-500/30 rounded p-3">
+                <div class="text-green-400 font-bold mb-1">✓ Compliance Report Generated</div>
+                <div class="text-green-300 text-sm">Ready for auditor review</div>
+              </div>
+              <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="bg-navy-800 rounded p-3 text-center">
+                  <div class="text-2xl font-bold text-coral-500">100%</div>
+                  <div class="text-xs text-navy-300">HIPAA Compliance</div>
+                </div>
+                <div class="bg-navy-800 rounded p-3 text-center">
+                  <div class="text-2xl font-bold text-coral-500">2.3s</div>
+                  <div class="text-xs text-navy-300">Processing Time</div>
+                </div>
+              </div>
+              <div class="bg-navy-800 rounded p-3 text-sm">
+                <div class="text-white font-bold mb-2">Report Summary:</div>
+                <div class="text-navy-300 text-xs space-y-1">
+                  <div>• 1 PHI access request processed</div>
+                  <div>• 0 compliance violations detected</div>
+                  <div>• 5 documentation items generated</div>
+                  <div>• Audit trail: Complete & encrypted</div>
+                  <div>• Next review: 30 days</div>
+                </div>
+              </div>
+              <div class="flex gap-2 text-xs">
+                <button class="bg-coral-500 text-white px-3 py-2 rounded font-bold flex-1">Download Report</button>
+                <button class="border border-coral-500 text-coral-500 px-3 py-2 rounded font-bold flex-1">Schedule Audit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-center">
+        <button class="bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600 transition font-bold mr-4" onclick="resetComplianceDemo()">
+          Reset Demo
+        </button>
+        <button class="border border-coral-500 text-coral-500 px-6 py-3 rounded-lg hover:bg-coral-500 hover:text-white transition font-bold" onclick="closeDemos()">
+          View Other Demos
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JavaScript and CSS for Interactive Demos -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Product demo card functionality
+  const productCards = document.querySelectorAll('.product-demo-card');
+  const demoSections = document.querySelectorAll('.demo-section');
+  
+  productCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const demoType = card.dataset.demo;
+      showProductDemo(demoType);
+    });
+  });
+  
+  function showProductDemo(demoType) {
+    // Hide all demo sections
+    demoSections.forEach(section => {
+      section.classList.add('hidden');
+    });
+    
+    // Show the selected demo section
+    const targetDemo = document.getElementById(`${demoType}-demo`);
+    if (targetDemo) {
+      targetDemo.classList.remove('hidden');
+      targetDemo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      
+      // Reset the demo to first step
+      resetSpecificDemo(demoType);
+    }
+  }
+  
+  // Individual demo step handlers
+  function setupDemoSteps(demoType) {
+    const stepBtns = document.querySelectorAll(`.${demoType}-step`);
+    stepBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const step = parseInt(btn.dataset.step);
+        showDemoStep(demoType, step);
+      });
+    });
+  }
+  
+  function showDemoStep(demoType, step) {
+    // Hide all results for this demo type
+    const results = document.querySelectorAll(`.${demoType}-result`);
+    results.forEach(result => result.style.display = 'none');
+    
+    // Show the specific result
+    const targetResult = document.getElementById(`${demoType}-result-${step}`);
+    if (targetResult) {
+      targetResult.style.display = 'block';
+    }
+    
+    // Update button styles
+    const stepBtns = document.querySelectorAll(`.${demoType}-step`);
+    stepBtns.forEach((btn, index) => {
+      const isActive = parseInt(btn.dataset.step) === step;
+      btn.classList.toggle('border-coral-500', isActive);
+      btn.classList.toggle('bg-coral-500/10', isActive);
+    });
+  }
+  
+  function resetSpecificDemo(demoType) {
+    // Hide all results
+    const results = document.querySelectorAll(`.${demoType}-result`);
+    results.forEach(result => result.style.display = 'none');
+    
+    // Reset button styles
+    const stepBtns = document.querySelectorAll(`.${demoType}-step`);
+    stepBtns.forEach(btn => {
+      btn.classList.remove('border-coral-500', 'bg-coral-500/10');
+    });
+  }
+  
+  // Global demo functions for buttons
+  window.resetSandboxDemo = () => resetSpecificDemo('sandbox');
+  window.resetPolicyDemo = () => resetSpecificDemo('policy');
+  window.resetAuditDemo = () => resetSpecificDemo('audit');
+  window.resetComplianceDemo = () => resetSpecificDemo('compliance');
+  
+  window.closeDemos = () => {
+    demoSections.forEach(section => {
+      section.classList.add('hidden');
+    });
+    // Scroll back to product sections
+    document.getElementById('product-demos').scrollIntoView({ behavior: 'smooth' });
+  };
+  
+  // Initialize demo step handlers
+  setupDemoSteps('sandbox');
+  setupDemoSteps('policy');
+  setupDemoSteps('audit');
+  setupDemoSteps('compliance');
+});
+</script>
+
 {% endblock %}

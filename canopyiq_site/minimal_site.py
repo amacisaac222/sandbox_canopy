@@ -41,12 +41,23 @@ async def home(request: Request):
 
 @app.get("/product", response_class=HTMLResponse)
 async def product(request: Request):
-    return page(
-        request,
-        title="Product | CanopyIQ - Interactive Demos",
-        desc="Complete AI agent security platform with sandboxing, policy enforcement, audit trails, and enterprise compliance features.",
-        path="product.html"
-    )
+    try:
+        return page(
+            request,
+            title="Product | CanopyIQ - Interactive Demos",
+            desc="Complete AI agent security platform with sandboxing, policy enforcement, audit trails, and enterprise compliance features.",
+            path="product.html"
+        )
+    except Exception as e:
+        # Fallback if template fails
+        return templates.TemplateResponse("404.html", {
+            "request": request,
+            "meta": {
+                "title": f"Template Error: {str(e)}",
+                "desc": "Template loading failed",
+                "url_path": "/product"
+            }
+        })
 
 @app.get("/contact", response_class=HTMLResponse) 
 async def contact(request: Request):
