@@ -18,7 +18,7 @@ COPY . .
 # Set working directory to canopyiq_site for the app
 WORKDIR /app/canopyiq_site
 
-# Default port (Railway will override with $PORT)
+# Default port (Render will override with $PORT)
 ENV PORT=8000
 
 # Run the complete CanopyIQ application with all features

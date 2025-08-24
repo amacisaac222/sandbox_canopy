@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: canopyiq
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        fromService:
+          type: web
+          name: canopyiq
+          property: port
+      - key: BASE_URL
+        value: https://canopyiq.onrender.com
+    domains:
+      - canopyiq.ai
