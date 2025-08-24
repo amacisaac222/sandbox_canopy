@@ -79,12 +79,9 @@ async def faq(request: Request):
 
 @app.get("/documentation", response_class=HTMLResponse)
 async def documentation(request: Request):
-    return page(
-        request,
-        title="Documentation | CanopyIQ",
-        desc="Complete documentation for CanopyIQ's AI agent security platform.",
-        path="docs.html"
-    )
+    # Redirect to the static documentation site
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/static/docs/", status_code=301)
 
 @app.get("/pricing", response_class=HTMLResponse)
 async def pricing(request: Request):
