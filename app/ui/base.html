@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>CanopyIQ — Read-only Console</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:Inter,ui-sans-serif,system-ui;margin:0;background:#fafaf8;color:#111}
+    header{position:sticky;top:0;background:#fff8;border-bottom:1px solid #e5e7eb;backdrop-filter:saturate(180%) blur(8px)}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    a{color:#1A2E1A;text-decoration:none}
+    a:hover{text-decoration:underline}
+    .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid #eee}
+    .grid{display:grid;gap:12px}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px}
+    table{width:100%;border-collapse:collapse}
+    th,td{border-bottom:1px solid #eee;padding:8px;text-align:left;font-size:14px}
+    th{background:#fafafa;font-weight:600}
+    .muted{color:#6b7280}
+    input,select,button{padding:6px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px}
+    button{background:#1f2937;color:white;cursor:pointer}
+    button:hover{background:#374151}
+    .pill.allow{background:#dcfce7;border-color:#bbf7d0;color:#166534}
+    .pill.deny{background:#fecaca;border-color:#fca5a5;color:#dc2626}
+    .pill.approval{background:#fef3c7;border-color:#fde68a;color:#d97706}
+    .pill.pending{background:#dbeafe;border-color:#93c5fd;color:#2563eb}
+  </style>
+</head>
+<body>
+<header><div class="wrap" style="display:flex;align-items:center;gap:12px;">
+  <strong>CanopyIQ</strong><span class="muted">Read-only Console</span>
+  <nav style="margin-left:auto;display:flex;gap:12px;">
+    <a href="/ui/audit">Audit</a>
+    <a href="/ui/approvals">Approvals</a>
+  </nav>
+</div></header>
+<div class="wrap">
+  {% block content %}{% endblock %}
+</div>
+</body>
+</html>

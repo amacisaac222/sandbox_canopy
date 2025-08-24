@@ -1,0 +1,52 @@
+image:
+  repository: yourrepo/canopyiq-mcp
+  tag: v0.1.0
+  pullPolicy: IfNotPresent
+
+replicaCount: 2
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: ""
+  hosts:
+    - host: mcp.canopyiq.internal
+      paths:
+        - path: /mcp
+          pathType: Prefix
+        - path: /metrics
+          pathType: Prefix
+  tls:
+    - secretName: mcp-tls
+      hosts:
+        - mcp.canopyiq.internal
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 1
+    memory: 1Gi
+
+env:
+  OIDC_ISSUER: "https://login.example.com/oidc"
+  OIDC_AUDIENCE: "canopyiq-mcp"
+  OIDC_JWKS_URL: "https://login.example.com/oidc/jwks"
+  REDIS_URL: "redis://redis:6379/0"
+  DATABASE_URL: "postgresql://user:pass@pg:5432/audit"
+  EGRESS_ALLOWLIST: "intranet.api,auth.internal.corp"
+  SLACK_WEBHOOK_URL: ""
+  SLACK_SIGNING_SECRET: ""
+  APPROVAL_SYNC_WAIT_MS: "0"     # set "20000" to wait up to 20s for sync approval
+  POLICY_PUBLIC_KEY_B64: ""      # base64 public verify key
+  POLICY_SIG_PATH: ""            # mount signature file into container
+  POLICY_REQUIRE_SIGNATURE: "false"
+
+podAnnotations: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}

@@ -1,0 +1,52 @@
+:root {
+  --md-primary-fg-color: #1c2a4a;   /* Deep navy from the logo */
+  --md-accent-fg-color:  #ff6f61;   /* Coral-pink from the logo */
+  --md-primary-bg-color: #ffffff;
+  --md-accent-bg-color:  #ff6f61;
+}
+
+/* Additional brand styling */
+.md-header {
+  background: linear-gradient(135deg, #1c2a4a 0%, #253658 100%);
+}
+
+.md-tabs {
+  background: linear-gradient(135deg, #1c2a4a 0%, #253658 100%);
+}
+
+.md-nav__link--active {
+  color: #ff6f61 !important;
+}
+
+.md-typeset a {
+  color: #ff6f61;
+}
+
+.md-typeset a:hover {
+  color: #f5553d;
+}
+
+.md-typeset .admonition.success {
+  border-color: #ff6f61;
+}
+
+.md-typeset .admonition.success .admonition-title {
+  background-color: #ff6f6120;
+  border-color: #ff6f61;
+}
+
+/* Code block styling */
+.md-typeset pre {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+.md-typeset code {
+  background: #1e293b20;
+  color: #1c2a4a;
+}
+
+/* Mermaid diagram styling */
+.mermaid {
+  background: transparent !important;
+}

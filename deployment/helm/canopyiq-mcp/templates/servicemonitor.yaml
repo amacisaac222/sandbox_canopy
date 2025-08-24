@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "canopyiq-mcp.fullname" . }}
+  labels:
+    release: prometheus-operator
+spec:
+  selector:
+    matchLabels:
+      app: canopyiq-mcp
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

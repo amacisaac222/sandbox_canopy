@@ -28,7 +28,14 @@
       "Bash(tree:*)",
       "Bash(git init:*)",
       "Bash(git remote add:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(sqlite3:*)",
+      "WebFetch(domain:resolve.ai)",
+      "Bash(git checkout:*)",
+      "Bash(alembic revision:*)",
+      "Bash(find:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": [],

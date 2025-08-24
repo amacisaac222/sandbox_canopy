@@ -1,0 +1,47 @@
+{% extends "ui/base.html" %}
+{% block content %}
+<h2>Audit Log</h2>
+<form method="get" class="card" style="display:flex;gap:12px;align-items:end;flex-wrap:wrap;">
+  <div><label>Tenant<br><input name="tenant" value="{{tenant or ''}}"></label></div>
+  <div><label>Tool<br><input name="tool" value="{{tool or ''}}"></label></div>
+  <div><label>Decision<br>
+    <select name="decision">
+      <option value="" {{ 'selected' if not decision }}>Any</option>
+      {% for d in ['allow','deny','approval'] %}
+      <option value="{{d}}" {{ 'selected' if decision==d }}>{{d}}</option>
+      {% endfor %}
+    </select>
+  </label></div>
+  <div><label>Limit<br><input type="number" name="limit" value="{{limit or 50}}" min="1" max="1000"></label></div>
+  <div><button type="submit">Filter</button></div>
+</form>
+<div class="card">
+  <table>
+    <tr>
+      <th>Time (UTC)</th>
+      <th>Tenant</th>
+      <th>Subject</th>
+      <th>Tool</th>
+      <th>Decision</th>
+      <th>Rule</th>
+      <th>Approver</th>
+    </tr>
+    {% for row in rows %}
+    <tr>
+      <td class="muted">{{row.ts}}</td>
+      <td>{{row.tenant}}</td>
+      <td class="muted">{{row.subject}}</td>
+      <td>{{row.tool}}</td>
+      <td><span class="pill {{row.decision}}">{{row.decision}}</span></td>
+      <td class="muted">{{row.rule or ''}}</td>
+      <td class="muted">{{row.approver or ''}}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7" class="muted" style="text-align:center;padding:24px;">No audit records found</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% if rows %}
+<p class="muted">Showing {{rows|length}} records</p>
+{% endif %}
+{% endblock %}

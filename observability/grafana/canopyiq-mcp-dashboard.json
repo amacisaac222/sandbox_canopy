@@ -1,0 +1,74 @@
+{
+  "title": "CanopyIQ MCP - Overview",
+  "tags": ["canopyiq", "mcp"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Requests / s",
+      "gridPos": {"x":0,"y":0,"w":6,"h":4},
+      "targets": [
+        {
+          "expr": "sum(rate(mcp_requests_total[1m]))",
+          "legendFormat": "all"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "p95 Latency (s)",
+      "gridPos": {"x":6,"y":0,"w":6,"h":4},
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(mcp_request_latency_seconds_bucket[1m])) by (le))",
+          "legendFormat": "p95"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Requests by Method",
+      "gridPos": {"x":0,"y":4,"w":12,"h":6},
+      "lines": true,
+      "targets": [
+        { "expr": "sum(rate(mcp_requests_total[1m])) by (method)", "legendFormat": "{{method}}" }
+      ],
+      "yaxes": [{"format":"ops"}, {"format":"short"}]
+    },
+    {
+      "type": "graph",
+      "title": "Policy Decisions (rate)",
+      "gridPos": {"x":0,"y":10,"w":12,"h":6},
+      "lines": true,
+      "targets": [
+        { "expr": "sum(rate(mcp_policy_denies_total[1m])) by (tool)", "legendFormat": "deny: {{tool}}" },
+        { "expr": "sum(rate(mcp_policy_approvals_total[1m])) by (tool)", "legendFormat": "approval: {{tool}}" }
+      ],
+      "yaxes": [{"format":"ops"},{"format":"short"}]
+    },
+    {
+      "type": "graph",
+      "title": "Tool Errors",
+      "gridPos": {"x":0,"y":16,"w":12,"h":6},
+      "lines": true,
+      "targets": [
+        { "expr": "sum(rate(http_requests_total{status=~\"5..\"}[1m]))", "legendFormat": "5xx" }
+      ]
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "job",
+        "type": "query",
+        "datasource": null,
+        "query": "label_values(mcp_requests_total, job)",
+        "current": {"selected": true, "text": "canopyiq-mcp", "value": "canopyiq-mcp"},
+        "includeAll": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+version: 1
+defaults: 
+  decision: deny
+
+rules:
+  - name: "Allow intranet HTTP"
+    match: "net.http"
+    where: 
+      host_in: ["intranet.api"]
+    action: allow
+
+  - name: "Large uploads need approval"
+    match: "net.http"
+    where: 
+      method: "POST"
+      body_bytes_over: 1048576
+    action: approval
+    required_approvals: 1
+    reason: "Large POST requests require approval"
+
+  - name: "FS-write outside jail requires dual approval"
+    match: "fs.write"
+    where:
+      path_not_under: ["/sandbox/tmp", "/sandbox/out"]
+    action: approval
+    approver_group: "secops"
+    required_approvals: 2
+    reason: "Write outside jail requires two approvers"
+
+  - name: "Cloud ops over $10 require approval"
+    match: "cloud.ops"
+    where:
+      estimated_cost_usd_over: 10
+    action: approval
+    reason: "High-cost cloud op"
+
+  - name: "Cloud ops under budget"
+    match: "cloud.ops"
+    action: allow

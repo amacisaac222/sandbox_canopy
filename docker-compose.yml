@@ -1,21 +1,55 @@
-version: "3.8"
+version: '3.8'
+
 services:
-  control_plane:
-    build: .
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:15
     environment:
-      CP_DB_URL: sqlite+aiosqlite:///./sandbox.db
-      CP_TENANT_SECRET: devsecret_please_change
-      CP_BIND: 0.0.0.0
-      CP_PORT: "8080"
+      POSTGRES_PASSWORD: canopy
+      POSTGRES_USER: canopy
+      POSTGRES_DB: audit
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./app/audit/migrate.sql:/docker-entrypoint-initdb.d/migrate.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U canopy"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build: .
     ports:
       - "8080:8080"
-    volumes:
-      - cpdata:/app
-  proxy:
-    build: ./nginx
     depends_on:
-      - control_plane
-    ports:
-      - "8081:80"
-volumes:
-  cpdata: {}
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      DATABASE_URL: postgresql://canopy:canopy@postgres:5432/audit
+      DEFAULT_QPS: "100"
+      EGRESS_ALLOWLIST: "intranet.api,auth.internal.corp"
+      # Teams-style approvals for CI (no external dependency)
+      TEAMS_WEBHOOK_URL: ""
+      TEAMS_SIGNING_SECRET: "ci-secret"
+      BASE_URL: "http://localhost:8080"
+      # Dev-mode auth
+      DEV_JWT_SECRET: "dev-secret"
+      DEV_ISSUER: "canopyiq-dev"
+      OIDC_AUDIENCE: "canopyiq-mcp"
+      # Policy settings
+      CANOPYIQ_POLICY_FILE: "./app/policies/samples.yaml"
+      # Disable sync wait for demo (return pending_id immediately)
+      APPROVAL_SYNC_WAIT_MS: "0"

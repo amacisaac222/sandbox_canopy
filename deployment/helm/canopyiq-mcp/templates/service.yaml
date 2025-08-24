@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "canopyiq-mcp.fullname" . }}
+  labels: { app: canopyiq-mcp }
+spec:
+  selector: { app: canopyiq-mcp }
+  ports:
+    - name: http
+      port: {{ .Values.service.port }}
+      targetPort: http

@@ -12,3 +12,9 @@ alembic
 sqlalchemy[asyncio]
 asyncpg
 httpx
+opentelemetry-sdk
+opentelemetry-api
+opentelemetry-instrumentation-fastapi
+opentelemetry-instrumentation-httpx
+opentelemetry-instrumentation-sqlalchemy
+opentelemetry-exporter-otlp-proto-http

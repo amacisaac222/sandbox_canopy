@@ -1,0 +1,42 @@
+site_name: CanopyIQ
+site_description: Enterprise MCP tool-gateway with policy, approvals, budgets, and audit.
+repo_url: https://github.com/<your-org>/<your-repo>
+site_url: https://<your-org>.github.io/<your-repo>/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: green
+      accent: green
+  features:
+    - content.tabs.link
+    - navigation.instant
+    - navigation.sections
+    - toc.follow
+    - navigation.top
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Overview: index.md
+  - Quick Start: quickstart.md
+  - Integrations:
+    - MCP: integrations/mcp.md
+  - Concepts:
+    - Approvals: concepts/approvals.md
+    - Cost Controls: concepts/cost-controls.md
+  - Reference:
+    - API: reference/api.md
+    - CLI: reference/cli.md
+    - Policy Spec: reference/policy-spec.md
+  - Security:
+    - Security & Compliance: security/compliance.md
+  - FAQ: faq.md

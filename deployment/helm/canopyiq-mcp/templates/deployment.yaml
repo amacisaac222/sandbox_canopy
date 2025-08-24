@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "canopyiq-mcp.fullname" . }}
+  labels:
+    app: canopyiq-mcp
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels: { app: canopyiq-mcp }
+  template:
+    metadata:
+      labels: { app: canopyiq-mcp }
+    spec:
+      containers:
+        - name: server
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["uvicorn","app.main:app","--host","0.0.0.0","--port","8080"]
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: OIDC_ISSUER
+              value: "{{ .Values.env.OIDC_ISSUER }}"
+            - name: OIDC_AUDIENCE
+              value: "{{ .Values.env.OIDC_AUDIENCE }}"
+            - name: OIDC_JWKS_URL
+              value: "{{ .Values.env.OIDC_JWKS_URL }}"
+            - name: REDIS_URL
+              value: "{{ .Values.env.REDIS_URL }}"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "canopyiq-mcp.fullname" . }}-secrets
+                  key: DATABASE_URL
+            - name: EGRESS_ALLOWLIST
+              value: "{{ .Values.env.EGRESS_ALLOWLIST }}"
+            - name: SLACK_WEBHOOK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "canopyiq-mcp.fullname" . }}-secrets
+                  key: SLACK_WEBHOOK_URL
+            - name: SLACK_SIGNING_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "canopyiq-mcp.fullname" . }}-secrets
+                  key: SLACK_SIGNING_SECRET
+            - name: APPROVAL_SYNC_WAIT_MS
+              value: "{{ .Values.env.APPROVAL_SYNC_WAIT_MS }}"
+            - name: POLICY_PUBLIC_KEY_B64
+              value: "{{ .Values.env.POLICY_PUBLIC_KEY_B64 }}"
+            - name: POLICY_SIG_PATH
+              value: "{{ .Values.env.POLICY_SIG_PATH }}"
+            - name: POLICY_REQUIRE_SIGNATURE
+              value: "{{ .Values.env.POLICY_REQUIRE_SIGNATURE }}"
+          readinessProbe:
+            httpGet: { path: /readyz, port: http }
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /healthz, port: http }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+{{- toYaml .Values.resources | nindent 12 }}
+      # Mount a secret with URLs and secrets:
+      # kubectl create secret generic canopyiq-mcp-secrets --from-literal=DATABASE_URL=... --from-literal=SLACK_WEBHOOK_URL=... --from-literal=SLACK_SIGNING_SECRET=...

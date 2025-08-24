@@ -1,0 +1,46 @@
+{% extends "ui/base.html" %}
+{% block content %}
+<h2>Pending Approvals</h2>
+<form method="get" class="card" style="display:flex;gap:12px;align-items:end;flex-wrap:wrap;">
+  <div><label>Tenant<br><input name="tenant" value="{{tenant or ''}}"></label></div>
+  <div><label>Status<br>
+    <select name="status">
+      {% for s in ['pending','allow','deny'] %}
+      <option value="{{s}}" {{ 'selected' if status==s }}>{{s}}</option>
+      {% endfor %}
+    </select></label></div>
+  <div><label>Limit<br><input type="number" name="limit" value="{{limit or 50}}" min="1" max="1000"></label></div>
+  <div><button type="submit">Filter</button></div>
+</form>
+<div class="card">
+  <table>
+    <tr>
+      <th>Created</th>
+      <th>Tenant</th>
+      <th>Requester</th>
+      <th>Tool</th>
+      <th>Status</th>
+      <th>Required</th>
+      <th>Approved</th>
+      <th>Rejected</th>
+    </tr>
+    {% for row in rows %}
+    <tr>
+      <td class="muted">{{row.ts_created}}</td>
+      <td>{{row.tenant}}</td>
+      <td class="muted">{{row.requester}}</td>
+      <td>{{row.tool}}</td>
+      <td><span class="pill {{row.status}}">{{row.status}}</span></td>
+      <td>{{row.required_approvals or 1}}</td>
+      <td>{{row.approvals_count or 0}}</td>
+      <td>{{row.rejections_count or 0}}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="8" class="muted" style="text-align:center;padding:24px;">No approval records found</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% if rows %}
+<p class="muted">Showing {{rows|length}} records</p>
+{% endif %}
+{% endblock %}

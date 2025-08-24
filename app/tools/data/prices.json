@@ -1,0 +1,13 @@
+{
+  "aws": {
+    "ec2.run_instances": { "unit": "instance-hour", "usd_per_unit": 0.092 },
+    "s3.put_object":     { "unit": "1k-requests",  "usd_per_unit": 0.005 },
+    "bedrock.invocation":{ "unit": "1k-tokens",    "usd_per_unit": 0.002 }
+  },
+  "gcp": {
+    "compute.instances.insert": { "unit": "instance-hour", "usd_per_unit": 0.085 }
+  },
+  "azure": {
+    "vm.create": { "unit": "instance-hour", "usd_per_unit": 0.09 }
+  }
+}

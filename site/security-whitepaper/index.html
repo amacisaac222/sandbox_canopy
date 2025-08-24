@@ -1,0 +1,2524 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Safety, policy, and compliance guardrails for AI agents at enterprise scale.">
+      
+      
+      
+        <link rel="canonical" href="https://docs.canopyiq.ai/security-whitepaper/">
+      
+      
+      
+      
+      <link rel="icon" href="../images/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.17">
+    
+    
+      
+        <title>CanopyIQ Security Whitepaper - CanopyIQ Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../styles/brand.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#canopyiq-security-whitepaper" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="CanopyIQ Documentation" class="md-header__button md-logo" aria-label="CanopyIQ Documentation" data-md-component="logo">
+      
+  <img src="../images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CanopyIQ Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CanopyIQ Security Whitepaper
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/your-org/canopyiq" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="CanopyIQ Documentation" class="md-nav__button md-logo" aria-label="CanopyIQ Documentation" data-md-component="logo">
+      
+  <img src="../images/logo.svg" alt="logo">
+
+    </a>
+    CanopyIQ Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/your-org/canopyiq" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quick Start
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Core Concepts
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Core Concepts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/sandbox/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Sandbox
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/policy-engine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Policy Engine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/audit-logging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Audit Logging
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/approvals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Human Approvals
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/compliance-templates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Compliance Templates
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tutorials
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/run-100-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Run 100 Test Agents
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/slack-approvals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Slack Approvals
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/siem-splunk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Forward Logs to Splunk
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/hipaa-policy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    HIPAA Baseline Policy
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/sdk-python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SDK (Python)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/sdk-node/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SDK (Node)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/policy-spec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Policy Spec
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/scaling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scaling to 10k+ Agents
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Deployment
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Deployment
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment/local-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Local (Docker)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment/kubernetes-helm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Kubernetes (Helm)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment/terraform-aws/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Terraform (AWS)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Security
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Security
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/security-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Security & Compliance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/threat-model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Threat Model
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Observability
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            Observability
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../observability/metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Metrics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../observability/logging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Logging & SIEM
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Roadmap
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Legal
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            Legal
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../legal/terms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Terms of Use
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../legal/privacy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Privacy Policy
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="canopyiq-security-whitepaper">CanopyIQ Security Whitepaper<a class="headerlink" href="#canopyiq-security-whitepaper" title="Permanent link">&para;</a></h1>
+<p><strong>Version:</strong> 1.0<br />
+<strong>Date:</strong> January 2025<br />
+<strong>Classification:</strong> Public</p>
+<hr />
+<h2 id="executive-summary">Executive Summary<a class="headerlink" href="#executive-summary" title="Permanent link">&para;</a></h2>
+<p>CanopyIQ is a runtime sandbox and policy control plane designed to enable secure execution of AI agents at enterprise scale. This whitepaper outlines the comprehensive security architecture, threat model, and defensive mechanisms implemented to protect against AI-specific and traditional application security risks.</p>
+<p>As AI agents become increasingly autonomous and handle sensitive data, the need for robust security controls becomes paramount. CanopyIQ addresses these challenges through defense-in-depth strategies, comprehensive audit trails, and enterprise-grade access controls.</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h2>
+<ol>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#threat-model">Threat Model</a></li>
+<li><a href="#architecture-overview">Architecture Overview</a></li>
+<li><a href="#data-flows-and-security-boundaries">Data Flows and Security Boundaries</a></li>
+<li><a href="#encryption-and-cryptography">Encryption and Cryptography</a></li>
+<li><a href="#authentication-and-authorization">Authentication and Authorization</a></li>
+<li><a href="#audit-logging-and-monitoring">Audit Logging and Monitoring</a></li>
+<li><a href="#observability-and-security-monitoring">Observability and Security Monitoring</a></li>
+<li><a href="#air-gapped-deployment-mode">Air-Gapped Deployment Mode</a></li>
+<li><a href="#security-controls-matrix">Security Controls Matrix</a></li>
+<li><a href="#compliance-and-standards">Compliance and Standards</a></li>
+<li><a href="#incident-response">Incident Response</a></li>
+<li><a href="#security-development-lifecycle">Security Development Lifecycle</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ol>
+<hr />
+<h2 id="1-introduction">1. Introduction<a class="headerlink" href="#1-introduction" title="Permanent link">&para;</a></h2>
+<h3 id="11-purpose-and-scope">1.1 Purpose and Scope<a class="headerlink" href="#11-purpose-and-scope" title="Permanent link">&para;</a></h3>
+<p>This document provides a comprehensive security analysis of CanopyIQ, covering:</p>
+<ul>
+<li><strong>Threat modeling</strong> and risk assessment</li>
+<li><strong>Security architecture</strong> and controls</li>
+<li><strong>Data protection</strong> mechanisms</li>
+<li><strong>Access control</strong> implementation</li>
+<li><strong>Monitoring and audit</strong> capabilities</li>
+<li><strong>Deployment security</strong> considerations</li>
+</ul>
+<h3 id="12-security-principles">1.2 Security Principles<a class="headerlink" href="#12-security-principles" title="Permanent link">&para;</a></h3>
+<p>CanopyIQ is built on the following security principles:</p>
+<ol>
+<li><strong>Zero Trust Architecture</strong> - Never trust, always verify</li>
+<li><strong>Defense in Depth</strong> - Multiple layers of security controls</li>
+<li><strong>Principle of Least Privilege</strong> - Minimal necessary access</li>
+<li><strong>Security by Design</strong> - Security integrated from the ground up</li>
+<li><strong>Transparency and Auditability</strong> - Comprehensive logging and monitoring</li>
+<li><strong>Fail Secure</strong> - Safe defaults and graceful degradation</li>
+</ol>
+<hr />
+<h2 id="2-threat-model">2. Threat Model<a class="headerlink" href="#2-threat-model" title="Permanent link">&para;</a></h2>
+<h3 id="21-asset-classification">2.1 Asset Classification<a class="headerlink" href="#21-asset-classification" title="Permanent link">&para;</a></h3>
+<h4 id="211-critical-assets">2.1.1 Critical Assets<a class="headerlink" href="#211-critical-assets" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Agent Execution Environment</strong> - Sandboxed runtime for AI agents</li>
+<li><strong>Policy Engine</strong> - Rules and controls governing agent behavior</li>
+<li><strong>Audit Data</strong> - Security logs and compliance records</li>
+<li><strong>Authentication Credentials</strong> - User sessions and API keys</li>
+<li><strong>Agent Code and Data</strong> - Proprietary algorithms and training data</li>
+</ul>
+<h4 id="212-data-classification">2.1.2 Data Classification<a class="headerlink" href="#212-data-classification" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Public</strong> - Documentation, marketing materials</li>
+<li><strong>Internal</strong> - Configuration templates, non-sensitive logs</li>
+<li><strong>Confidential</strong> - Agent policies, execution metadata</li>
+<li><strong>Restricted</strong> - Authentication tokens, encryption keys, PII</li>
+</ul>
+<h3 id="22-threat-actors">2.2 Threat Actors<a class="headerlink" href="#22-threat-actors" title="Permanent link">&para;</a></h3>
+<h4 id="221-external-threats">2.2.1 External Threats<a class="headerlink" href="#221-external-threats" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Malicious Attackers</strong> - Unauthorized access attempts</li>
+<li><strong>Advanced Persistent Threats (APTs)</strong> - Nation-state actors</li>
+<li><strong>Insider Threats</strong> - Compromised employee accounts</li>
+<li><strong>Supply Chain Attacks</strong> - Compromised dependencies</li>
+</ul>
+<h4 id="222-ai-specific-threats">2.2.2 AI-Specific Threats<a class="headerlink" href="#222-ai-specific-threats" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Prompt Injection</strong> - Malicious input to AI agents</li>
+<li><strong>Model Poisoning</strong> - Corrupted training data or models</li>
+<li><strong>Data Exfiltration</strong> - Unauthorized access to training data</li>
+<li><strong>Agent Escape</strong> - Breaking out of sandbox environments</li>
+</ul>
+<h3 id="23-attack-vectors">2.3 Attack Vectors<a class="headerlink" href="#23-attack-vectors" title="Permanent link">&para;</a></h3>
+<h4 id="231-network-based-attacks">2.3.1 Network-Based Attacks<a class="headerlink" href="#231-network-based-attacks" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Man-in-the-Middle</strong> - Intercepting communications</li>
+<li><strong>DDoS/DoS</strong> - Service availability attacks</li>
+<li><strong>Protocol Exploitation</strong> - Network protocol vulnerabilities</li>
+</ul>
+<h4 id="232-application-level-attacks">2.3.2 Application-Level Attacks<a class="headerlink" href="#232-application-level-attacks" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Injection Attacks</strong> - SQL, NoSQL, command injection</li>
+<li><strong>Cross-Site Scripting (XSS)</strong> - Client-side code injection</li>
+<li><strong>Cross-Site Request Forgery (CSRF)</strong> - Unauthorized actions</li>
+<li><strong>Authentication Bypass</strong> - Circumventing access controls</li>
+</ul>
+<h4 id="233-infrastructure-attacks">2.3.3 Infrastructure Attacks<a class="headerlink" href="#233-infrastructure-attacks" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Container Escape</strong> - Breaking out of containerized environments</li>
+<li><strong>Privilege Escalation</strong> - Gaining unauthorized elevated access</li>
+<li><strong>Kubernetes Attacks</strong> - Exploiting orchestration vulnerabilities</li>
+<li><strong>Cloud Misconfigurations</strong> - Insecure cloud resource settings</li>
+</ul>
+<h3 id="24-risk-assessment-matrix">2.4 Risk Assessment Matrix<a class="headerlink" href="#24-risk-assessment-matrix" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Threat</th>
+<th>Likelihood</th>
+<th>Impact</th>
+<th>Risk Level</th>
+<th>Mitigation Priority</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prompt Injection</td>
+<td>High</td>
+<td>High</td>
+<td>Critical</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>Authentication Bypass</td>
+<td>Medium</td>
+<td>High</td>
+<td>High</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>Data Exfiltration</td>
+<td>Medium</td>
+<td>High</td>
+<td>High</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>Container Escape</td>
+<td>Low</td>
+<td>High</td>
+<td>Medium</td>
+<td>P2</td>
+</tr>
+<tr>
+<td>DDoS Attack</td>
+<td>High</td>
+<td>Medium</td>
+<td>Medium</td>
+<td>P2</td>
+</tr>
+<tr>
+<td>Supply Chain Attack</td>
+<td>Low</td>
+<td>High</td>
+<td>Medium</td>
+<td>P2</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-architecture-overview">3. Architecture Overview<a class="headerlink" href="#3-architecture-overview" title="Permanent link">&para;</a></h2>
+<h3 id="31-security-architecture-diagram">3.1 Security Architecture Diagram<a class="headerlink" href="#31-security-architecture-diagram" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────┐
+│                     Security Perimeter                      │
+├─────────────────────────────────────────────────────────────┤
+│                    Load Balancer (TLS)                      │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐          │
+│  │   Web UI    │  │  Admin UI   │  │  API Layer  │          │
+│  │   (React)   │  │  (FastAPI)  │  │  (FastAPI)  │          │
+│  └─────────────┘  └─────────────┘  └─────────────┘          │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐          │
+│  │    RBAC     │  │   Session   │  │   Policy    │          │
+│  │   Engine    │  │  Manager    │  │   Engine    │          │
+│  └─────────────┘  └─────────────┘  └─────────────┘          │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐          │
+│  │   Agent     │  │   Sandbox   │  │   Audit     │          │
+│  │  Runtime    │  │  Manager    │  │   Logger    │          │
+│  └─────────────┘  └─────────────┘  └─────────────┘          │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐          │
+│  │  Database   │  │   Secrets   │  │   Metrics   │          │
+│  │ (Encrypted) │  │  Manager    │  │  Collector  │          │
+│  └─────────────┘  └─────────────┘  └─────────────┘          │
+└─────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="32-security-zones">3.2 Security Zones<a class="headerlink" href="#32-security-zones" title="Permanent link">&para;</a></h3>
+<h4 id="321-dmz-demilitarized-zone">3.2.1 DMZ (Demilitarized Zone)<a class="headerlink" href="#321-dmz-demilitarized-zone" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Load Balancer</strong> - SSL termination and traffic distribution</li>
+<li><strong>Web Application Firewall</strong> - Application-layer filtering</li>
+<li><strong>Rate Limiting</strong> - DoS protection and abuse prevention</li>
+</ul>
+<h4 id="322-application-zone">3.2.2 Application Zone<a class="headerlink" href="#322-application-zone" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Web Interface</strong> - User-facing application components</li>
+<li><strong>API Services</strong> - RESTful interfaces for agent management</li>
+<li><strong>Authentication Services</strong> - OIDC/SAML integration</li>
+</ul>
+<h4 id="323-processing-zone">3.2.3 Processing Zone<a class="headerlink" href="#323-processing-zone" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Agent Runtime</strong> - Sandboxed execution environment</li>
+<li><strong>Policy Engine</strong> - Rule evaluation and enforcement</li>
+<li><strong>Session Management</strong> - User session handling</li>
+</ul>
+<h4 id="324-data-zone">3.2.4 Data Zone<a class="headerlink" href="#324-data-zone" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Database</strong> - Encrypted data storage</li>
+<li><strong>Secrets Management</strong> - Credential and key storage</li>
+<li><strong>Audit Storage</strong> - Security event logs</li>
+</ul>
+<hr />
+<h2 id="4-data-flows-and-security-boundaries">4. Data Flows and Security Boundaries<a class="headerlink" href="#4-data-flows-and-security-boundaries" title="Permanent link">&para;</a></h2>
+<h3 id="41-data-flow-diagram">4.1 Data Flow Diagram<a class="headerlink" href="#41-data-flow-diagram" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>User Browser ─TLS─┐
+                  ├─→ Load Balancer ─TLS─→ Application Services
+Admin Panel ─TLS─┘                            │
+                                               ├─mTLS─→ Agent Runtime
+API Clients ─mTLS─────────────────────────────┘         │
+                                                         ├─Encrypted─→ Database
+External Services ←─TLS─────────────────────────────────┘
+</code></pre></div>
+<h3 id="42-security-boundaries">4.2 Security Boundaries<a class="headerlink" href="#42-security-boundaries" title="Permanent link">&para;</a></h3>
+<h4 id="421-network-boundaries">4.2.1 Network Boundaries<a class="headerlink" href="#421-network-boundaries" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Internet ↔ DMZ</strong> - Firewall rules, DDoS protection</li>
+<li><strong>DMZ ↔ Application Zone</strong> - Internal firewalls, VPC security groups</li>
+<li><strong>Application ↔ Data Zone</strong> - Database firewalls, network segmentation</li>
+</ul>
+<h4 id="422-process-boundaries">4.2.2 Process Boundaries<a class="headerlink" href="#422-process-boundaries" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>User Space ↔ Kernel</strong> - System call filtering, seccomp</li>
+<li><strong>Container ↔ Host</strong> - Namespace isolation, cgroups</li>
+<li><strong>Application ↔ Runtime</strong> - Sandbox isolation, resource limits</li>
+</ul>
+<h4 id="423-trust-boundaries">4.2.3 Trust Boundaries<a class="headerlink" href="#423-trust-boundaries" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Unauthenticated ↔ Authenticated</strong> - Authentication gates</li>
+<li><strong>User ↔ Admin</strong> - Role-based access controls</li>
+<li><strong>Internal ↔ External</strong> - API authentication, mTLS</li>
+</ul>
+<h3 id="43-data-classification-and-handling">4.3 Data Classification and Handling<a class="headerlink" href="#43-data-classification-and-handling" title="Permanent link">&para;</a></h3>
+<h4 id="431-data-in-transit">4.3.1 Data in Transit<a class="headerlink" href="#431-data-in-transit" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>TLS 1.3</strong> for all external communications</li>
+<li><strong>mTLS</strong> for service-to-service communication</li>
+<li><strong>Perfect Forward Secrecy</strong> for session encryption</li>
+<li><strong>Certificate pinning</strong> for critical connections</li>
+</ul>
+<h4 id="432-data-at-rest">4.3.2 Data at Rest<a class="headerlink" href="#432-data-at-rest" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>AES-256-GCM</strong> for database encryption</li>
+<li><strong>Key Management Service (KMS)</strong> integration</li>
+<li><strong>Encrypted backups</strong> with separate key storage</li>
+<li><strong>Secure key rotation</strong> procedures</li>
+</ul>
+<h4 id="433-data-in-processing">4.3.3 Data in Processing<a class="headerlink" href="#433-data-in-processing" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Memory encryption</strong> where supported</li>
+<li><strong>Secure enclaves</strong> for sensitive operations</li>
+<li><strong>Data residency</strong> controls for compliance</li>
+<li><strong>Secure deletion</strong> of temporary data</li>
+</ul>
+<hr />
+<h2 id="5-encryption-and-cryptography">5. Encryption and Cryptography<a class="headerlink" href="#5-encryption-and-cryptography" title="Permanent link">&para;</a></h2>
+<h3 id="51-encryption-standards">5.1 Encryption Standards<a class="headerlink" href="#51-encryption-standards" title="Permanent link">&para;</a></h3>
+<h4 id="511-symmetric-encryption">5.1.1 Symmetric Encryption<a class="headerlink" href="#511-symmetric-encryption" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Algorithm:</strong> AES-256-GCM</li>
+<li><strong>Key Size:</strong> 256 bits</li>
+<li><strong>Mode:</strong> Galois/Counter Mode (authenticated encryption)</li>
+<li><strong>IV Generation:</strong> Cryptographically secure random</li>
+</ul>
+<h4 id="512-asymmetric-encryption">5.1.2 Asymmetric Encryption<a class="headerlink" href="#512-asymmetric-encryption" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Algorithm:</strong> RSA-4096 or ECDSA P-384</li>
+<li><strong>Key Exchange:</strong> ECDH with P-384 curve</li>
+<li><strong>Digital Signatures:</strong> RSA-PSS or ECDSA</li>
+<li><strong>Hash Functions:</strong> SHA-384 or SHA-512</li>
+</ul>
+<h3 id="52-key-management">5.2 Key Management<a class="headerlink" href="#52-key-management" title="Permanent link">&para;</a></h3>
+<h4 id="521-key-hierarchy">5.2.1 Key Hierarchy<a class="headerlink" href="#521-key-hierarchy" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Root Key (Hardware Security Module)
+    ├── Master Encryption Key (MEK)
+    │   ├── Data Encryption Key (DEK) - Database
+    │   ├── Key Encryption Key (KEK) - Secrets
+    │   └── Session Encryption Key (SEK) - API
+    └── Signing Keys
+        ├── JWT Signing Key
+        ├── Audit Log Signing Key
+        └── API Certificate Key
+</code></pre></div>
+<h4 id="522-key-lifecycle-management">5.2.2 Key Lifecycle Management<a class="headerlink" href="#522-key-lifecycle-management" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Generation:</strong> Hardware random number generators</li>
+<li><strong>Distribution:</strong> Secure key exchange protocols</li>
+<li><strong>Storage:</strong> Hardware Security Modules (HSM) or KMS</li>
+<li><strong>Rotation:</strong> Automated rotation every 90 days</li>
+<li><strong>Revocation:</strong> Immediate revocation capability</li>
+<li><strong>Destruction:</strong> Secure key deletion procedures</li>
+</ul>
+<h3 id="53-transport-layer-security">5.3 Transport Layer Security<a class="headerlink" href="#53-transport-layer-security" title="Permanent link">&para;</a></h3>
+<h4 id="531-tls-configuration">5.3.1 TLS Configuration<a class="headerlink" href="#531-tls-configuration" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">TLS Version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.3 (minimum 1.2)</span>
+<span class="nt">Cipher Suites</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TLS_AES_256_GCM_SHA384</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TLS_CHACHA20_POLY1305_SHA256</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TLS_AES_128_GCM_SHA256</span>
+<span class="nt">Certificate Validation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Full chain validation</span>
+<span class="nt">HSTS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Enabled with 1-year max-age</span>
+<span class="nt">OCSP Stapling</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Enabled</span>
+</code></pre></div>
+<h4 id="532-certificate-management">5.3.2 Certificate Management<a class="headerlink" href="#532-certificate-management" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Certificate Authority:</strong> Internal CA or trusted public CA</li>
+<li><strong>Certificate Types:</strong> RSA-4096 or ECDSA P-384</li>
+<li><strong>Validity Period:</strong> 90 days maximum</li>
+<li><strong>Automated Renewal:</strong> ACME protocol integration</li>
+<li><strong>Certificate Transparency:</strong> CT log monitoring</li>
+</ul>
+<h3 id="54-cryptographic-implementation">5.4 Cryptographic Implementation<a class="headerlink" href="#54-cryptographic-implementation" title="Permanent link">&para;</a></h3>
+<h4 id="541-random-number-generation">5.4.1 Random Number Generation<a class="headerlink" href="#541-random-number-generation" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Entropy Sources:</strong> Hardware RNG, OS entropy pool</li>
+<li><strong>PRNG:</strong> ChaCha20-based cryptographically secure PRNG</li>
+<li><strong>Seeding:</strong> Regular re-seeding from entropy sources</li>
+<li><strong>Testing:</strong> NIST statistical test suite validation</li>
+</ul>
+<h4 id="542-secure-coding-practices">5.4.2 Secure Coding Practices<a class="headerlink" href="#542-secure-coding-practices" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Constant-time algorithms</strong> to prevent timing attacks</li>
+<li><strong>Memory protection</strong> for cryptographic material</li>
+<li><strong>Secure random</strong> for all cryptographic operations</li>
+<li><strong>Side-channel resistance</strong> in implementation</li>
+</ul>
+<hr />
+<h2 id="6-authentication-and-authorization">6. Authentication and Authorization<a class="headerlink" href="#6-authentication-and-authorization" title="Permanent link">&para;</a></h2>
+<h3 id="61-authentication-mechanisms">6.1 Authentication Mechanisms<a class="headerlink" href="#61-authentication-mechanisms" title="Permanent link">&para;</a></h3>
+<h4 id="611-multi-factor-authentication-mfa">6.1.1 Multi-Factor Authentication (MFA)<a class="headerlink" href="#611-multi-factor-authentication-mfa" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Primary Factor:</strong> Username/password or certificate</li>
+<li><strong>Secondary Factor:</strong> TOTP, WebAuthn, or SMS</li>
+<li><strong>Risk-Based Authentication:</strong> Adaptive MFA based on context</li>
+<li><strong>Backup Codes:</strong> Secure recovery mechanisms</li>
+</ul>
+<h4 id="612-single-sign-on-sso-integration">6.1.2 Single Sign-On (SSO) Integration<a class="headerlink" href="#612-single-sign-on-sso-integration" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">Supported Protocols</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OIDC (OpenID Connect) 1.0</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SAML 2.0</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OAuth 2.0 with PKCE</span>
+
+<span class="nt">Identity Providers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Azure Active Directory</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Okta</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Auth0</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Google Workspace</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Generic OIDC providers</span>
+
+<span class="nt">Token Validation</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">JWT signature verification</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Token expiration checking</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Issuer validation</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Audience validation</span>
+</code></pre></div>
+<h4 id="613-api-authentication">6.1.3 API Authentication<a class="headerlink" href="#613-api-authentication" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Bearer Tokens:</strong> JWT with short expiration</li>
+<li><strong>API Keys:</strong> Long-lived keys with scoped permissions</li>
+<li><strong>Client Certificates:</strong> mTLS for service-to-service</li>
+<li><strong>Service Account Keys:</strong> Rotatable machine credentials</li>
+</ul>
+<h3 id="62-role-based-access-control-rbac">6.2 Role-Based Access Control (RBAC)<a class="headerlink" href="#62-role-based-access-control-rbac" title="Permanent link">&para;</a></h3>
+<h4 id="621-role-hierarchy">6.2.1 Role Hierarchy<a class="headerlink" href="#621-role-hierarchy" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Super Admin
+├── Admin
+│   ├── Agent Operator
+│   ├── Policy Manager
+│   └── Auditor
+├── Developer
+│   ├── Agent Developer
+│   └── Policy Developer
+└── Viewer
+    ├── Agent Viewer
+    └── Audit Viewer
+</code></pre></div>
+<h4 id="622-permission-matrix">6.2.2 Permission Matrix<a class="headerlink" href="#622-permission-matrix" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Agent Execute</th>
+<th>Agent Deploy</th>
+<th>Policy Edit</th>
+<th>Audit View</th>
+<th>Admin Access</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Super Admin</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Admin</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Agent Operator</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+</tr>
+<tr>
+<td>Policy Manager</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+</tr>
+<tr>
+<td>Auditor</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+<td>✗</td>
+</tr>
+<tr>
+<td>Developer</td>
+<td>✓</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+</tr>
+<tr>
+<td>Viewer</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+<td>✗</td>
+</tr>
+</tbody>
+</table>
+<h4 id="623-attribute-based-access-control-abac">6.2.3 Attribute-Based Access Control (ABAC)<a class="headerlink" href="#623-attribute-based-access-control-abac" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Subject Attributes:</strong> User ID, roles, groups, clearance level</li>
+<li><strong>Resource Attributes:</strong> Classification, owner, project</li>
+<li><strong>Environment Attributes:</strong> Time, location, network</li>
+<li><strong>Action Attributes:</strong> Operation type, risk level</li>
+</ul>
+<h3 id="63-session-management">6.3 Session Management<a class="headerlink" href="#63-session-management" title="Permanent link">&para;</a></h3>
+<h4 id="631-session-security">6.3.1 Session Security<a class="headerlink" href="#631-session-security" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Session Tokens:</strong> Cryptographically secure random IDs</li>
+<li><strong>Token Expiration:</strong> 8-hour default with configurable limits</li>
+<li><strong>Session Invalidation:</strong> Immediate logout capability</li>
+<li><strong>Concurrent Sessions:</strong> Configurable limits per user</li>
+<li><strong>Session Fixation Protection:</strong> Token regeneration on privilege change</li>
+</ul>
+<h4 id="632-jwt-token-security">6.3.2 JWT Token Security<a class="headerlink" href="#632-jwt-token-security" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;alg&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RS256&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;typ&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JWT&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;kid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;key-id-2025-01&quot;</span>
+<span class="p">}</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;iss&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://canopyiq.example.com&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;sub&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;aud&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;canopyiq-api&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;exp&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1735689600</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;iat&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1735603200</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;jti&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unique-token-id&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;roles&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;agent-operator&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;groups&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;engineering&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="7-audit-logging-and-monitoring">7. Audit Logging and Monitoring<a class="headerlink" href="#7-audit-logging-and-monitoring" title="Permanent link">&para;</a></h2>
+<h3 id="71-audit-framework">7.1 Audit Framework<a class="headerlink" href="#71-audit-framework" title="Permanent link">&para;</a></h3>
+<h4 id="711-audit-event-categories">7.1.1 Audit Event Categories<a class="headerlink" href="#711-audit-event-categories" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Authentication Events</strong> - Login, logout, MFA challenges</li>
+<li><strong>Authorization Events</strong> - Permission grants, denials</li>
+<li><strong>Data Access Events</strong> - Read, write, delete operations</li>
+<li><strong>Administrative Events</strong> - Configuration changes, user management</li>
+<li><strong>System Events</strong> - Service start/stop, errors, alerts</li>
+</ul>
+<h4 id="712-audit-event-structure">7.1.2 Audit Event Structure<a class="headerlink" href="#712-audit-event-structure" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-01-20T10:30:00.000Z&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;event_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uuid-v4&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;event_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;authentication.login.success&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;actor&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;user_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;session_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;session-uuid&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;source_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;user_agent&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Mozilla/5.0...&quot;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;resource_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user_session&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;resource_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;session-uuid&quot;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;login&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;risk_score&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;authentication_method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;oidc&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;mfa_used&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;login_duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.234</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="713-audit-trail-integrity">7.1.3 Audit Trail Integrity<a class="headerlink" href="#713-audit-trail-integrity" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Cryptographic Signing:</strong> HMAC-SHA256 or digital signatures</li>
+<li><strong>Immutable Storage:</strong> Write-only audit logs</li>
+<li><strong>Tamper Detection:</strong> Hash chains and merkle trees</li>
+<li><strong>Non-Repudiation:</strong> Digital signatures with timestamps</li>
+</ul>
+<h3 id="72-security-event-monitoring">7.2 Security Event Monitoring<a class="headerlink" href="#72-security-event-monitoring" title="Permanent link">&para;</a></h3>
+<h4 id="721-real-time-alerting">7.2.1 Real-Time Alerting<a class="headerlink" href="#721-real-time-alerting" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">High-Priority Alerts</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Authentication failures (threshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5 in 5 minutes)</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Privilege escalation attempts</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Unauthorized API access</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System security policy violations</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Data exfiltration indicators</span>
+
+<span class="nt">Medium-Priority Alerts</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Unusual access patterns</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Failed authorization attempts</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Policy violations</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Configuration changes</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service availability issues</span>
+
+<span class="nt">Low-Priority Alerts</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Informational events</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Successful authentications</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Normal operational events</span>
+</code></pre></div>
+<h4 id="722-security-metrics">7.2.2 Security Metrics<a class="headerlink" href="#722-security-metrics" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Authentication Success Rate</strong> - Percentage of successful logins</li>
+<li><strong>Failed Authentication Rate</strong> - Rate of failed login attempts</li>
+<li><strong>Privilege Escalation Attempts</strong> - Count of unauthorized elevation</li>
+<li><strong>API Error Rates</strong> - Percentage of API call failures</li>
+<li><strong>Response Time Anomalies</strong> - Unusual response time patterns</li>
+</ul>
+<h3 id="73-compliance-and-retention">7.3 Compliance and Retention<a class="headerlink" href="#73-compliance-and-retention" title="Permanent link">&para;</a></h3>
+<h4 id="731-retention-policies">7.3.1 Retention Policies<a class="headerlink" href="#731-retention-policies" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Security Events:</strong> 7 years retention minimum</li>
+<li><strong>Audit Logs:</strong> 5 years retention minimum</li>
+<li><strong>Access Logs:</strong> 2 years retention minimum</li>
+<li><strong>System Logs:</strong> 1 year retention minimum</li>
+</ul>
+<h4 id="732-compliance-standards">7.3.2 Compliance Standards<a class="headerlink" href="#732-compliance-standards" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>SOC 2 Type II</strong> - Security, availability, confidentiality</li>
+<li><strong>ISO 27001</strong> - Information security management</li>
+<li><strong>NIST Cybersecurity Framework</strong> - Security controls</li>
+<li><strong>GDPR</strong> - Data protection and privacy</li>
+</ul>
+<hr />
+<h2 id="8-observability-and-security-monitoring">8. Observability and Security Monitoring<a class="headerlink" href="#8-observability-and-security-monitoring" title="Permanent link">&para;</a></h2>
+<h3 id="81-security-monitoring-architecture">8.1 Security Monitoring Architecture<a class="headerlink" href="#81-security-monitoring-architecture" title="Permanent link">&para;</a></h3>
+<h4 id="811-data-collection">8.1.1 Data Collection<a class="headerlink" href="#811-data-collection" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Application Logs ──┐
+                   ├──→ Log Aggregator ──→ SIEM ──→ Security Dashboard
+System Metrics ────┘                        │
+                                             ├──→ Alerting System
+Network Flows ─────→ Flow Analyzer ─────────┘
+</code></pre></div>
+<h4 id="812-monitoring-components">8.1.2 Monitoring Components<a class="headerlink" href="#812-monitoring-components" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Log Aggregation:</strong> Centralized log collection and parsing</li>
+<li><strong>Metrics Collection:</strong> Prometheus-compatible metrics</li>
+<li><strong>Distributed Tracing:</strong> OpenTelemetry integration</li>
+<li><strong>Security Information and Event Management (SIEM):</strong> Security event correlation</li>
+</ul>
+<h3 id="82-security-metrics-and-kpis">8.2 Security Metrics and KPIs<a class="headerlink" href="#82-security-metrics-and-kpis" title="Permanent link">&para;</a></h3>
+<h4 id="821-security-posture-metrics">8.2.1 Security Posture Metrics<a class="headerlink" href="#821-security-posture-metrics" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">Authentication Metrics</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Login success rate</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span><span class="err">99%</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">MFA adoption rate</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span><span class="err">95%</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Session timeout compliance</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100%</span>
+
+<span class="nt">Authorization Metrics</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Access denial rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;1%</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Privilege escalation attempts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Policy violation rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;0.1%</span>
+
+<span class="nt">Incident Response Metrics</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Mean time to detection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;15 minutes</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Mean time to response</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;1 hour</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">False positive rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;5%</span>
+
+<span class="nt">System Security Metrics</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Vulnerability scan score</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span><span class="err">95%</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Patch compliance</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span><span class="err">98%</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Configuration drift</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;1%</span>
+</code></pre></div>
+<h4 id="822-threat-detection">8.2.2 Threat Detection<a class="headerlink" href="#822-threat-detection" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Anomaly Detection:</strong> Machine learning-based behavioral analysis</li>
+<li><strong>Signature Detection:</strong> Known attack pattern matching</li>
+<li><strong>Threat Intelligence:</strong> IOC and IOA correlation</li>
+<li><strong>User Behavior Analytics:</strong> Deviation from normal patterns</li>
+</ul>
+<h3 id="83-incident-detection-and-response">8.3 Incident Detection and Response<a class="headerlink" href="#83-incident-detection-and-response" title="Permanent link">&para;</a></h3>
+<h4 id="831-automated-response">8.3.1 Automated Response<a class="headerlink" href="#831-automated-response" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Account Lockout:</strong> Automatic suspension for suspicious activity</li>
+<li><strong>Rate Limiting:</strong> Dynamic throttling of malicious requests</li>
+<li><strong>Quarantine:</strong> Isolation of compromised components</li>
+<li><strong>Evidence Collection:</strong> Automatic forensic data gathering</li>
+</ul>
+<h4 id="832-alert-escalation">8.3.2 Alert Escalation<a class="headerlink" href="#832-alert-escalation" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Level 1: Automated Response
+    ↓ (if unresolved in 15 minutes)
+Level 2: Security Team Notification
+    ↓ (if unresolved in 1 hour)
+Level 3: Management Escalation
+    ↓ (if critical)
+Level 4: Executive Notification
+</code></pre></div>
+<hr />
+<h2 id="9-air-gapped-deployment-mode">9. Air-Gapped Deployment Mode<a class="headerlink" href="#9-air-gapped-deployment-mode" title="Permanent link">&para;</a></h2>
+<h3 id="91-air-gapped-architecture">9.1 Air-Gapped Architecture<a class="headerlink" href="#91-air-gapped-architecture" title="Permanent link">&para;</a></h3>
+<h4 id="911-network-isolation">9.1.1 Network Isolation<a class="headerlink" href="#911-network-isolation" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────┐
+│                  Air-Gapped Environment                 │
+│                                                         │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐      │
+│  │   Admin     │  │   Agent     │  │  Database   │      │
+│  │  Workstation│  │  Runtime    │  │   Server    │      │
+│  └─────────────┘  └─────────────┘  └─────────────┘      │
+│         │                │                │             │
+│  ┌─────────────────────────────────────────────────┐    │
+│  │           Isolated Network (VLAN)              │    │
+│  └─────────────────────────────────────────────────┘    │
+│                                                         │
+│  ┌─────────────┐                                        │
+│  │   Data      │  ← Sneakernet/Approved Media Transfer  │
+│  │  Transfer   │                                        │
+│  │   Station   │                                        │
+│  └─────────────┘                                        │
+└─────────────────────────────────────────────────────────┘
+                        ↑
+                 No Internet Connection
+</code></pre></div>
+<h4 id="912-security-considerations">9.1.2 Security Considerations<a class="headerlink" href="#912-security-considerations" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Physical Security:</strong> Secured facilities with access controls</li>
+<li><strong>Media Controls:</strong> Approved transfer media with scanning</li>
+<li><strong>Personnel Security:</strong> Background checks and training</li>
+<li><strong>Emanation Security:</strong> TEMPEST-compliant environments</li>
+</ul>
+<h3 id="92-offline-operations">9.2 Offline Operations<a class="headerlink" href="#92-offline-operations" title="Permanent link">&para;</a></h3>
+<h4 id="921-certificate-management">9.2.1 Certificate Management<a class="headerlink" href="#921-certificate-management" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Offline Root CA:</strong> Air-gapped certificate authority</li>
+<li><strong>Certificate Distribution:</strong> Manual or approved media transfer</li>
+<li><strong>CRL Distribution:</strong> Offline certificate revocation lists</li>
+<li><strong>Time Synchronization:</strong> Local NTP servers or manual sync</li>
+</ul>
+<h4 id="922-software-updates">9.2.2 Software Updates<a class="headerlink" href="#922-software-updates" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Update Verification:</strong> Digital signature validation</li>
+<li><strong>Staging Environment:</strong> Isolated testing before production</li>
+<li><strong>Rollback Procedures:</strong> Automated fallback mechanisms</li>
+<li><strong>Approval Workflows:</strong> Multi-person authorization</li>
+</ul>
+<h3 id="93-data-handling-in-air-gapped-mode">9.3 Data Handling in Air-Gapped Mode<a class="headerlink" href="#93-data-handling-in-air-gapped-mode" title="Permanent link">&para;</a></h3>
+<h4 id="931-data-importexport">9.3.1 Data Import/Export<a class="headerlink" href="#931-data-importexport" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Approved Media:</strong> Virus-scanned removable media</li>
+<li><strong>Data Validation:</strong> Integrity checks and format validation</li>
+<li><strong>Audit Trail:</strong> Complete transfer logging</li>
+<li><strong>Data Sanitization:</strong> Secure deletion of temporary data</li>
+</ul>
+<h4 id="932-backup-and-recovery">9.3.2 Backup and Recovery<a class="headerlink" href="#932-backup-and-recovery" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Offline Backups:</strong> Encrypted backup media storage</li>
+<li><strong>Geographic Distribution:</strong> Multiple secure locations</li>
+<li><strong>Recovery Testing:</strong> Regular disaster recovery drills</li>
+<li><strong>Business Continuity:</strong> Documented procedures</li>
+</ul>
+<hr />
+<h2 id="10-security-controls-matrix">10. Security Controls Matrix<a class="headerlink" href="#10-security-controls-matrix" title="Permanent link">&para;</a></h2>
+<h3 id="101-nist-cybersecurity-framework-mapping">10.1 NIST Cybersecurity Framework Mapping<a class="headerlink" href="#101-nist-cybersecurity-framework-mapping" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Category</th>
+<th>Control</th>
+<th>Implementation</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Identify</td>
+<td>Asset Management</td>
+<td>ID.AM-1</td>
+<td>Asset inventory and classification</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Identify</td>
+<td>Risk Assessment</td>
+<td>ID.RA-1</td>
+<td>Threat modeling and risk analysis</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Protect</td>
+<td>Access Control</td>
+<td>PR.AC-1</td>
+<td>Identity and credential management</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Protect</td>
+<td>Data Security</td>
+<td>PR.DS-1</td>
+<td>Data-at-rest encryption</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Protect</td>
+<td>Data Security</td>
+<td>PR.DS-2</td>
+<td>Data-in-transit encryption</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Detect</td>
+<td>Continuous Monitoring</td>
+<td>DE.CM-1</td>
+<td>Network monitoring</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Detect</td>
+<td>Detection Processes</td>
+<td>DE.DP-1</td>
+<td>Incident detection</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Respond</td>
+<td>Response Planning</td>
+<td>RS.RP-1</td>
+<td>Incident response plan</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Respond</td>
+<td>Communications</td>
+<td>RS.CO-1</td>
+<td>Stakeholder notifications</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Recover</td>
+<td>Recovery Planning</td>
+<td>RC.RP-1</td>
+<td>Business continuity plan</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table>
+<h3 id="102-security-control-implementation">10.2 Security Control Implementation<a class="headerlink" href="#102-security-control-implementation" title="Permanent link">&para;</a></h3>
+<h4 id="1021-technical-controls">10.2.1 Technical Controls<a class="headerlink" href="#1021-technical-controls" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Encryption:</strong> AES-256 for data at rest, TLS 1.3 for transit</li>
+<li><strong>Authentication:</strong> MFA with OIDC/SAML integration</li>
+<li><strong>Authorization:</strong> RBAC with attribute-based controls</li>
+<li><strong>Logging:</strong> Comprehensive audit trails with integrity protection</li>
+<li><strong>Monitoring:</strong> Real-time security event monitoring</li>
+<li><strong>Backup:</strong> Encrypted backups with geographic distribution</li>
+</ul>
+<h4 id="1022-administrative-controls">10.2.2 Administrative Controls<a class="headerlink" href="#1022-administrative-controls" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Policies:</strong> Documented security policies and procedures</li>
+<li><strong>Training:</strong> Security awareness and role-specific training</li>
+<li><strong>Incident Response:</strong> Documented procedures and playbooks</li>
+<li><strong>Change Management:</strong> Controlled change processes</li>
+<li><strong>Risk Management:</strong> Regular risk assessments and mitigation</li>
+<li><strong>Vendor Management:</strong> Third-party security assessments</li>
+</ul>
+<h4 id="1023-physical-controls">10.2.3 Physical Controls<a class="headerlink" href="#1023-physical-controls" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Facility Security:</strong> Physical access controls and monitoring</li>
+<li><strong>Equipment Security:</strong> Asset management and disposal</li>
+<li><strong>Environmental Controls:</strong> Power, cooling, and fire suppression</li>
+<li><strong>Media Protection:</strong> Secure handling and storage</li>
+<li><strong>Workspace Security:</strong> Clean desk and screen lock policies</li>
+</ul>
+<hr />
+<h2 id="11-compliance-and-standards">11. Compliance and Standards<a class="headerlink" href="#11-compliance-and-standards" title="Permanent link">&para;</a></h2>
+<h3 id="111-regulatory-compliance">11.1 Regulatory Compliance<a class="headerlink" href="#111-regulatory-compliance" title="Permanent link">&para;</a></h3>
+<h4 id="1111-data-protection-regulations">11.1.1 Data Protection Regulations<a class="headerlink" href="#1111-data-protection-regulations" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>GDPR (General Data Protection Regulation)</strong></li>
+<li>Data minimization and purpose limitation</li>
+<li>Right to erasure and data portability</li>
+<li>Privacy by design and default</li>
+<li>
+<p>Data protection impact assessments</p>
+</li>
+<li>
+<p><strong>CCPA (California Consumer Privacy Act)</strong></p>
+</li>
+<li>Consumer rights and transparency</li>
+<li>Data sale opt-out mechanisms</li>
+<li>Non-discrimination provisions</li>
+</ul>
+<h4 id="1112-industry-standards">11.1.2 Industry Standards<a class="headerlink" href="#1112-industry-standards" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>SOC 2 Type II</strong> - Service Organization Control reports</li>
+<li><strong>ISO 27001</strong> - Information Security Management System</li>
+<li><strong>PCI DSS</strong> - Payment Card Industry Data Security Standard (if applicable)</li>
+<li><strong>HIPAA</strong> - Health Insurance Portability and Accountability Act (if applicable)</li>
+</ul>
+<h4 id="1113-government-standards">11.1.3 Government Standards<a class="headerlink" href="#1113-government-standards" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>NIST Cybersecurity Framework</strong> - Risk-based security framework</li>
+<li><strong>FedRAMP</strong> - Federal Risk and Authorization Management Program</li>
+<li><strong>FISMA</strong> - Federal Information Security Management Act</li>
+<li><strong>Common Criteria</strong> - International security evaluation standard</li>
+</ul>
+<h3 id="112-security-certifications">11.2 Security Certifications<a class="headerlink" href="#112-security-certifications" title="Permanent link">&para;</a></h3>
+<h4 id="1121-external-assessments">11.2.1 External Assessments<a class="headerlink" href="#1121-external-assessments" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Third-Party Security Assessments</strong> - Annual penetration testing</li>
+<li><strong>Code Security Reviews</strong> - Static and dynamic analysis</li>
+<li><strong>Vulnerability Assessments</strong> - Regular security scanning</li>
+<li><strong>Compliance Audits</strong> - External audit and certification</li>
+</ul>
+<h4 id="1122-continuous-compliance">11.2.2 Continuous Compliance<a class="headerlink" href="#1122-continuous-compliance" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Automated Compliance Checking</strong> - Policy-as-code implementation</li>
+<li><strong>Control Testing</strong> - Regular control effectiveness testing</li>
+<li><strong>Gap Analysis</strong> - Identification and remediation of gaps</li>
+<li><strong>Management Reporting</strong> - Regular compliance status reports</li>
+</ul>
+<hr />
+<h2 id="12-incident-response">12. Incident Response<a class="headerlink" href="#12-incident-response" title="Permanent link">&para;</a></h2>
+<h3 id="121-incident-response-framework">12.1 Incident Response Framework<a class="headerlink" href="#121-incident-response-framework" title="Permanent link">&para;</a></h3>
+<h4 id="1211-incident-classification">12.1.1 Incident Classification<a class="headerlink" href="#1211-incident-classification" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">Severity Levels</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Critical (P0)</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Data breach or unauthorized access</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System compromise or malware</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Complete service outage</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Safety or life-threatening issues</span>
+
+<span class="w">  </span><span class="nt">High (P1)</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Significant functionality impairment</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Security policy violations</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Partial service degradation</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Customer-impacting issues</span>
+
+<span class="w">  </span><span class="nt">Medium (P2)</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Minor functionality issues</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Performance degradation</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Documentation discrepancies</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Low-impact security events</span>
+
+<span class="w">  </span><span class="nt">Low (P3)</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Cosmetic issues</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Enhancement requests</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Informational alerts</span>
+</code></pre></div>
+<h4 id="1212-response-procedures">12.1.2 Response Procedures<a class="headerlink" href="#1212-response-procedures" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>Detection and Analysis</strong></li>
+<li>Event identification and validation</li>
+<li>Impact assessment and classification</li>
+<li>
+<p>Initial containment measures</p>
+</li>
+<li>
+<p><strong>Containment, Eradication, and Recovery</strong></p>
+</li>
+<li>Isolation of affected systems</li>
+<li>Threat removal and system hardening</li>
+<li>
+<p>Service restoration and validation</p>
+</li>
+<li>
+<p><strong>Post-Incident Activities</strong></p>
+</li>
+<li>Lessons learned documentation</li>
+<li>Process improvement recommendations</li>
+<li>Control enhancement implementation</li>
+</ol>
+<h3 id="122-communication-and-escalation">12.2 Communication and Escalation<a class="headerlink" href="#122-communication-and-escalation" title="Permanent link">&para;</a></h3>
+<h4 id="1221-notification-matrix">12.2.1 Notification Matrix<a class="headerlink" href="#1221-notification-matrix" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Incident Severity</th>
+<th>Internal Teams</th>
+<th>Customers</th>
+<th>Regulators</th>
+<th>Media</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Critical</td>
+<td>≤15 minutes</td>
+<td>≤2 hours</td>
+<td>≤24 hours</td>
+<td>As required</td>
+</tr>
+<tr>
+<td>High</td>
+<td>≤30 minutes</td>
+<td>≤4 hours</td>
+<td>≤72 hours</td>
+<td>As required</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>≤2 hours</td>
+<td>≤24 hours</td>
+<td>As required</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Low</td>
+<td>≤24 hours</td>
+<td>As required</td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<h4 id="1222-documentation-requirements">12.2.2 Documentation Requirements<a class="headerlink" href="#1222-documentation-requirements" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Incident Timeline</strong> - Detailed chronology of events</li>
+<li><strong>Impact Assessment</strong> - Business and technical impact</li>
+<li><strong>Response Actions</strong> - Containment and recovery steps</li>
+<li><strong>Root Cause Analysis</strong> - Technical and process failures</li>
+<li><strong>Improvement Plan</strong> - Preventive measures and controls</li>
+</ul>
+<hr />
+<h2 id="13-security-development-lifecycle">13. Security Development Lifecycle<a class="headerlink" href="#13-security-development-lifecycle" title="Permanent link">&para;</a></h2>
+<h3 id="131-secure-development-practices">13.1 Secure Development Practices<a class="headerlink" href="#131-secure-development-practices" title="Permanent link">&para;</a></h3>
+<h4 id="1311-development-phase-security">13.1.1 Development Phase Security<a class="headerlink" href="#1311-development-phase-security" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Threat Modeling</strong> - Design-time security analysis</li>
+<li><strong>Secure Coding Standards</strong> - Language-specific guidelines</li>
+<li><strong>Code Reviews</strong> - Peer review with security focus</li>
+<li><strong>Static Analysis</strong> - Automated code security scanning</li>
+<li><strong>Dependency Scanning</strong> - Third-party component analysis</li>
+</ul>
+<h4 id="1312-testing-phase-security">13.1.2 Testing Phase Security<a class="headerlink" href="#1312-testing-phase-security" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Dynamic Testing</strong> - Runtime security testing</li>
+<li><strong>Penetration Testing</strong> - Simulated attack scenarios</li>
+<li><strong>Fuzzing</strong> - Input validation and error handling</li>
+<li><strong>Infrastructure Testing</strong> - Configuration and deployment security</li>
+</ul>
+<h4 id="1313-deployment-phase-security">13.1.3 Deployment Phase Security<a class="headerlink" href="#1313-deployment-phase-security" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Security Configuration</strong> - Hardened deployment settings</li>
+<li><strong>Secret Management</strong> - Secure credential handling</li>
+<li><strong>Access Controls</strong> - Least privilege implementation</li>
+<li><strong>Monitoring Setup</strong> - Security event detection</li>
+</ul>
+<h3 id="132-supply-chain-security">13.2 Supply Chain Security<a class="headerlink" href="#132-supply-chain-security" title="Permanent link">&para;</a></h3>
+<h4 id="1321-dependency-management">13.2.1 Dependency Management<a class="headerlink" href="#1321-dependency-management" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Software Bill of Materials (SBOM)</strong> - Complete dependency inventory</li>
+<li><strong>Vulnerability Scanning</strong> - Regular dependency security checks</li>
+<li><strong>License Compliance</strong> - Open source license validation</li>
+<li><strong>Update Management</strong> - Timely security patch application</li>
+</ul>
+<h4 id="1322-build-security">13.2.2 Build Security<a class="headerlink" href="#1322-build-security" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Reproducible Builds</strong> - Deterministic build processes</li>
+<li><strong>Build Environment Security</strong> - Isolated and monitored build systems</li>
+<li><strong>Artifact Signing</strong> - Cryptographic signing of build outputs</li>
+<li><strong>Supply Chain Verification</strong> - End-to-end integrity checking</li>
+</ul>
+<hr />
+<h2 id="14-conclusion">14. Conclusion<a class="headerlink" href="#14-conclusion" title="Permanent link">&para;</a></h2>
+<h3 id="141-security-posture-summary">14.1 Security Posture Summary<a class="headerlink" href="#141-security-posture-summary" title="Permanent link">&para;</a></h3>
+<p>CanopyIQ implements a comprehensive security architecture designed to protect against both traditional and AI-specific threats. The defense-in-depth approach ensures multiple layers of protection, while the zero-trust principles provide granular access controls and continuous verification.</p>
+<p>Key security strengths include:</p>
+<ul>
+<li><strong>Robust encryption</strong> for data protection at rest and in transit</li>
+<li><strong>Multi-factor authentication</strong> with enterprise SSO integration</li>
+<li><strong>Comprehensive audit logging</strong> with tamper-evident trails</li>
+<li><strong>Real-time monitoring</strong> with automated threat detection</li>
+<li><strong>Air-gapped deployment</strong> support for high-security environments</li>
+</ul>
+<h3 id="142-continuous-improvement">14.2 Continuous Improvement<a class="headerlink" href="#142-continuous-improvement" title="Permanent link">&para;</a></h3>
+<p>Security is an ongoing process, and CanopyIQ's security posture will continue to evolve through:</p>
+<ul>
+<li><strong>Regular security assessments</strong> and penetration testing</li>
+<li><strong>Threat intelligence integration</strong> for emerging threat awareness</li>
+<li><strong>Community feedback</strong> and security research collaboration</li>
+<li><strong>Compliance standard updates</strong> and regulatory requirement changes</li>
+<li><strong>Technology advancement</strong> adoption for enhanced security capabilities</li>
+</ul>
+<h3 id="143-contact-information">14.3 Contact Information<a class="headerlink" href="#143-contact-information" title="Permanent link">&para;</a></h3>
+<p>For security-related questions, vulnerabilities, or incidents:</p>
+<ul>
+<li><strong>Security Team:</strong> security@canopyiq.ai</li>
+<li><strong>Emergency Contact:</strong> +1-555-SECURITY (24/7)</li>
+<li><strong>PGP Key:</strong> Available at https://canopyiq.ai/.well-known/security.txt</li>
+<li><strong>Vulnerability Disclosure:</strong> See SECURITY.md in the repository</li>
+</ul>
+<hr />
+<p><strong>Document Classification:</strong> Public<br />
+<strong>Last Updated:</strong> January 2025<br />
+<strong>Next Review:</strong> July 2025<br />
+<strong>Document Owner:</strong> CanopyIQ Security Team</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/your-org/canopyiq" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/company/canopyiq" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+
+  
+
+
+<h4>Cookie consent</h4>
+<p>We use strictly necessary cookies to improve docs UX.</p>
+<input class="md-toggle" type="checkbox" id="__settings" >
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+    
+      
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="github" checked>
+      <span class="task-list-indicator"></span>
+      GitHub
+    </label>
+  </li>
+
+      
+    
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">Accept</button>
+    
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">Manage settings</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.sections", "navigation.tracking", "navigation.top", "content.code.copy", "content.action.edit", "content.tabs.link", "toc.integrate", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

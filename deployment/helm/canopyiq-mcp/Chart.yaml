@@ -1,0 +1,6 @@
+apiVersion: v2
+name: canopyiq-mcp
+description: CanopyIQ MCP Server (HTTP JSON-RPC + /metrics)
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
