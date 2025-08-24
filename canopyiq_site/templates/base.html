@@ -93,10 +93,8 @@
       <a href="/" class="flex items-center gap-3">
         <img src="/static/canopy-logo-with-text.svg?v={{ asset_ver }}" alt="CanopyIQ logo" class="h-10">
       </a>
-      <nav class="hidden md:flex items-center gap-8 text-sm font-semibold">
+      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold">
         <a class="text-navy-200 hover:text-coral-500 transition-colors" href="/product">Product</a>
-        <a class="text-navy-200 hover:text-coral-500 transition-colors" href="/security">Security</a>
-        <a class="text-navy-200 hover:text-coral-500 transition-colors" href="/pricing">Pricing</a>
         <a class="text-navy-200 hover:text-coral-500 transition-colors" href="/documentation">Docs</a>
         <a class="text-navy-200 hover:text-coral-500 transition-colors" href="/faq">FAQ</a>
         <a class="text-navy-200 hover:text-coral-500 transition-colors" href="/contact">Contact</a>
@@ -125,8 +123,18 @@
     <div id="mnav-panel" class="hidden md:hidden border-t border-navy-800 px-4 pb-3 bg-navy-900">
       <div class="flex flex-col gap-3 pt-3 text-sm font-semibold">
         <a class="text-navy-200 hover:text-coral-500 transition-colors" href="/product">Product</a>
-        <a class="text-navy-200 hover:text-coral-500 transition-colors" href="/security">Security</a>
-        <a class="text-navy-200 hover:text-coral-500 transition-colors" href="/pricing">Pricing</a>
+        <div class="space-y-2">
+          <div class="text-navy-200 font-semibold">Console</div>
+          <div class="pl-4 space-y-2">
+            <a class="text-navy-300 hover:text-coral-500 transition-colors block" href="/console">Dashboard</a>
+            <a class="text-navy-300 hover:text-coral-500 transition-colors block" href="/console/access">Access Control</a>
+            <a class="text-navy-300 hover:text-coral-500 transition-colors block" href="/console/approvals">Approvals</a>
+            <a class="text-navy-300 hover:text-coral-500 transition-colors block" href="/console/traces">Trace Analytics</a>
+            <a class="text-navy-300 hover:text-coral-500 transition-colors block" href="/console/agents">Agent Dependencies</a>
+            <a class="text-navy-300 hover:text-coral-500 transition-colors block" href="/console/simulator">Policy Simulator</a>
+            <a class="text-navy-300 hover:text-coral-500 transition-colors block" href="/console/policy">Policy Management</a>
+          </div>
+        </div>
         <a class="text-navy-200 hover:text-coral-500 transition-colors" href="/documentation">Docs</a>
         <a class="text-navy-200 hover:text-coral-500 transition-colors" href="/faq">FAQ</a>
         <a class="text-navy-200 hover:text-coral-500 transition-colors" href="/contact">Contact</a>
@@ -168,14 +176,12 @@
         <div class="font-bold mb-3 text-white">Product</div>
         <ul class="space-y-2 text-sm">
           <li><a class="text-navy-300 hover:text-coral-500 transition-colors font-semibold" href="/product">Overview</a></li>
-          <li><a class="text-navy-300 hover:text-coral-500 transition-colors font-semibold" href="/security">Security</a></li>
           <li><a class="text-navy-300 hover:text-coral-500 transition-colors font-semibold" href="/documentation">Docs</a></li>
         </ul>
       </div>
       <div>
         <div class="font-bold mb-3 text-white">Company</div>
         <ul class="space-y-2 text-sm">
-          <li><a class="text-navy-300 hover:text-coral-500 transition-colors font-semibold" href="/pricing">Pricing</a></li>
           <li><a class="text-navy-300 hover:text-coral-500 transition-colors font-semibold" href="/contact">Contact</a></li>
           <li><a class="text-navy-300 hover:text-coral-500 transition-colors font-semibold" href="/faq">FAQ</a></li>
           <li><a class="text-navy-300 hover:text-coral-500 transition-colors font-semibold" href="/terms">Terms</a></li>

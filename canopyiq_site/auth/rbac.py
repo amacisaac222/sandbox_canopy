@@ -26,6 +26,7 @@ def create_session_token(user: User) -> str:
         name=user.name,
         roles=user.roles,
         groups=user.groups,
+        company=getattr(user, 'company', None),
         expires_at=expires_at
     )
     

@@ -98,6 +98,46 @@ else:
 client.http_request("GET", "https://api.company.com/v1/users")
 ```
 
+## Console (Dev)
+
+The CanopyIQ Console provides a visual "Okta-for-Agents" interface for managing policies, approvals, and tool access.
+
+### Setup
+
+Set environment variables (Windows PowerShell):
+```powershell
+$env:MCP_BASE_URL="http://localhost:8080"
+$env:CONSOLE_BEARER="your-dev-token"
+```
+
+Or Linux/macOS:
+```bash
+export MCP_BASE_URL="http://localhost:8080"
+export CONSOLE_BEARER="your-dev-token"
+```
+
+### Run the Console
+
+```bash
+python -m uvicorn app:app --host 0.0.0.0 --port 8080 --reload
+```
+
+### Access
+
+Visit: http://localhost:8080/console
+
+### Features
+
+- **Access Dashboard**: Live tool permission tiles with policy simulation
+- **Approvals Queue**: Interactive approve/deny for pending requests
+- **Policy Simulator**: Test tool calls against live policies with trace output
+- **Policy Management**: Upload, diff, and rollout policy changes
+
+### Health Check
+
+Verify MCP server connection:
+- http://localhost:8080/healthz
+
 ## Testing
 
 ```bash

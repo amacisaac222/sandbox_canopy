@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-navy-900 min-h-screen">
+  <!-- Breadcrumb -->
+  <div class="bg-navy-800 border-b border-navy-700">
+    <div class="max-w-7xl mx-auto px-4 py-3">
+      <nav class="flex items-center space-x-2 text-sm">
+        <a href="/admin/console" class="text-navy-300 hover:text-coral-400 font-semibold">Console</a>
+        <svg class="w-4 h-4 text-navy-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+        <span class="text-white font-semibold">Trace Analytics</span>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Trace Analytics</h1>
+        <p class="text-navy-300 mt-2">Distributed tracing and workflow performance insights</p>
+      </div>
+      <div class="text-right">
+        <div class="text-sm text-navy-300">OpenTelemetry: <span class="text-indigo-400 font-semibold">Enabled</span></div>
+        <div class="text-sm text-navy-400">Last 24 hours</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="max-w-7xl mx-auto px-4 pb-12">
+    
+    <!-- Summary Stats -->
+    <div class="grid md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-navy-800 border border-navy-700 rounded-lg p-4">
+        <div class="text-sm text-navy-400 font-semibold mb-1">Total Traces</div>
+        <div class="text-2xl font-bold text-white">{{ stats.total_traces }}</div>
+        <div class="text-xs text-green-400 mt-1">{{ stats.success_rate }}% success rate</div>
+      </div>
+      <div class="bg-navy-800 border border-navy-700 rounded-lg p-4">
+        <div class="text-sm text-navy-400 font-semibold mb-1">Avg Duration</div>
+        <div class="text-2xl font-bold text-white">{{ stats.avg_duration_ms|round|int }}ms</div>
+        <div class="text-xs text-navy-400 mt-1">Per workflow</div>
+      </div>
+      <div class="bg-navy-800 border border-navy-700 rounded-lg p-4">
+        <div class="text-sm text-navy-400 font-semibold mb-1">Total Cost</div>
+        <div class="text-2xl font-bold text-white">${{ stats.total_cost_usd }}</div>
+        <div class="text-xs text-navy-400 mt-1">Last 24h</div>
+      </div>
+      <div class="bg-navy-800 border border-navy-700 rounded-lg p-4">
+        <div class="text-sm text-navy-400 font-semibold mb-1">Active Workflows</div>
+        <div class="text-2xl font-bold text-white">{{ workflow_stats|length }}</div>
+        <div class="text-xs text-navy-400 mt-1">Workflow types</div>
+      </div>
+    </div>
+
+    <!-- Workflow Performance -->
+    <div class="bg-navy-800 border border-navy-700 rounded-lg p-6 mb-8">
+      <h2 class="text-xl font-bold text-white mb-6">Workflow Performance</h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for wf_type, wf_data in workflow_stats.items() %}
+        <div class="bg-navy-700 border border-navy-600 rounded-lg p-4">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-semibold text-white">{{ wf_type.replace('-', ' ').title() }}</h3>
+            <span class="text-xs {% if wf_data.success_rate >= 95 %}text-green-400{% elif wf_data.success_rate >= 80 %}text-amber-400{% else %}text-red-400{% endif %} font-semibold">
+              {{ wf_data.success_rate|round(1) }}%
+            </span>
+          </div>
+          <div class="space-y-2 text-sm text-navy-300">
+            <div class="flex justify-between">
+              <span>Count:</span>
+              <span class="text-white font-semibold">{{ wf_data.count }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Avg Duration:</span>
+              <span class="text-white font-semibold">{{ wf_data.avg_duration|round|int }}ms</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Total Cost:</span>
+              <span class="text-white font-semibold">${{ wf_data.total_cost|round(2) }}</span>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Recent Traces -->
+    <div class="bg-navy-800 border border-navy-700 rounded-lg p-6">
+      <h2 class="text-xl font-bold text-white mb-6">Recent Traces</h2>
+      
+      <div class="space-y-4">
+        {% for trace in traces %}
+        <div class="bg-navy-700 border border-navy-600 rounded-lg p-4">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="text-sm font-mono text-indigo-400">{{ trace.trace_id[:12] }}...</span>
+                <span class="px-2 py-1 {% if trace.status == 'success' %}bg-green-500/20 text-green-400{% else %}bg-red-500/20 text-red-400{% endif %} text-xs font-semibold rounded">
+                  {{ trace.status.upper() }}
+                </span>
+                <span class="text-sm text-navy-300">{{ trace.workflow_type.replace('-', ' ').title() }}</span>
+              </div>
+              
+              <div class="grid md:grid-cols-4 gap-4 text-sm text-navy-300 mb-3">
+                <div>
+                  <span class="text-navy-400">Duration:</span>
+                  <span class="text-white font-semibold">{{ trace.duration_ms|round|int }}ms</span>
+                </div>
+                <div>
+                  <span class="text-navy-400">Agents:</span>
+                  <span class="text-white font-semibold">{{ trace.agent_count }}</span>
+                </div>
+                <div>
+                  <span class="text-navy-400">Cost:</span>
+                  <span class="text-white font-semibold">${{ trace.total_cost_usd|round(2) }}</span>
+                </div>
+                <div>
+                  <span class="text-navy-400">Started:</span>
+                  <span class="text-white font-semibold">{{ trace.start_time.split('T')[1][:8] }}</span>
+                </div>
+              </div>
+
+              {% if trace.approval_count > 0 %}
+              <div class="text-xs text-amber-400 mb-2">
+                {{ trace.approval_count }} approval{{ 's' if trace.approval_count != 1 else '' }} required
+              </div>
+              {% endif %}
+            </div>
+            
+            <details class="text-xs">
+              <summary class="text-coral-400 hover:text-coral-300 cursor-pointer font-semibold">View Spans</summary>
+              <div class="mt-3 space-y-2 max-w-md">
+                {% for span in trace.spans %}
+                <div class="bg-navy-800 rounded p-2">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <div class="font-semibold text-white text-xs">{{ span.operation_name }}</div>
+                      {% if span.attributes.get('canopy.agent_id') %}
+                        <div class="text-navy-400">{{ span.attributes['canopy.agent_id'] }}</div>
+                      {% endif %}
+                    </div>
+                    <div class="text-right">
+                      <div class="{% if span.status == 'ok' %}text-green-400{% else %}text-red-400{% endif %} font-semibold">{{ span.duration_ms|round|int }}ms</div>
+                      {% if span.get('cost_usd') %}
+                        <div class="text-navy-400">${{ span.cost_usd|round(2) }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% if span.attributes.get('canopy.decision') %}
+                    <div class="mt-1 text-xs">
+                      <span class="px-1 py-0.5 {% if span.attributes['canopy.decision'] == 'allow' %}bg-green-500/20 text-green-400{% elif span.attributes['canopy.decision'] == 'approval' %}bg-amber-500/20 text-amber-400{% else %}bg-red-500/20 text-red-400{% endif %} rounded">
+                        {{ span.attributes['canopy.decision'].upper() }}
+                      </span>
+                    </div>
+                  {% endif %}
+                </div>
+                {% endfor %}
+              </div>
+            </details>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Load More -->
+      <div class="text-center mt-6">
+        <button class="bg-navy-700 hover:bg-navy-600 text-navy-200 hover:text-white px-6 py-2 rounded font-semibold transition-colors">
+          Load More Traces
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

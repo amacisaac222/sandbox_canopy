@@ -13,6 +13,7 @@ class User(BaseModel):
     name: str
     roles: List[str] = []
     groups: List[str] = []
+    company: Optional[str] = None  # Company domain (e.g., "acme.com")
     created_at: datetime = None
     last_login: datetime = None
     is_active: bool = True
@@ -40,6 +41,7 @@ class SessionData(BaseModel):
     name: str
     roles: List[str]
     groups: List[str]
+    company: Optional[str] = None
     expires_at: datetime
     
     def to_user(self) -> User:
@@ -50,6 +52,7 @@ class SessionData(BaseModel):
             name=self.name,
             roles=self.roles,
             groups=self.groups,
+            company=self.company,
             last_login=datetime.utcnow(),
             is_active=True
         )

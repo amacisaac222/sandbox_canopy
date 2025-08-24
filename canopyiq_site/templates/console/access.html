@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-navy-900 min-h-screen">
+  <!-- Breadcrumb -->
+  <div class="bg-navy-800 border-b border-navy-700">
+    <div class="max-w-7xl mx-auto px-4 py-3">
+      <nav class="flex items-center space-x-2 text-sm">
+        <a href="/admin/console" class="text-navy-300 hover:text-coral-400 font-semibold">Console</a>
+        <svg class="w-4 h-4 text-navy-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+        <span class="text-white font-semibold">Access Dashboard</span>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Access Dashboard</h1>
+        <p class="text-navy-300 mt-2">Tool access permissions for tenant: <span class="text-coral-400 font-semibold">{{ tenant }}</span></p>
+      </div>
+      <div class="text-right">
+        <div class="text-sm text-navy-300">Policy: <span class="text-blue-400 font-semibold">v2.1.0</span></div>
+        <div class="text-sm text-navy-400">Last evaluated: Just now</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="max-w-7xl mx-auto px-4 pb-12">
+    <div class="bg-navy-800 border border-navy-700 rounded-lg p-6 mb-8">
+      <h2 class="text-xl font-bold text-white mb-6">Tool Permissions Overview</h2>
+      
+      <!-- Tool Grid -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% if tools %}
+          {% for tool in tools %}
+          <div class="bg-navy-700 border border-navy-600 rounded-lg p-4 hover:border-navy-500 transition-colors">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">{{ tool.icon }}</span>
+                <h3 class="font-semibold text-white">{{ tool.label }}</h3>
+              </div>
+              <span class="px-2 py-1 {{ tool.status_class }} text-xs font-semibold rounded">{{ tool.status.upper() }}</span>
+            </div>
+            <p class="text-navy-300 text-sm mb-3">{{ tool.explain }}</p>
+            <details class="text-xs">
+              <summary class="text-navy-400 hover:text-coral-400 font-semibold cursor-pointer">View details →</summary>
+              <div class="mt-2 p-2 bg-navy-800 rounded text-navy-300">
+                <div><strong>Tool:</strong> {{ tool.name }}</div>
+                <div><strong>Decision:</strong> {{ tool.decision }}</div>
+                <div class="mt-1 text-xs font-mono">{{ tool.probe.arguments | tojsonpretty }}</div>
+              </div>
+            </details>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="col-span-full bg-navy-700 border border-navy-600 rounded-lg p-8 text-center">
+            <div class="w-12 h-12 bg-navy-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-6 h-6 text-navy-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <h3 class="font-semibold text-white mb-2">Policy Simulator Unavailable</h3>
+            <p class="text-navy-400 text-sm">Unable to evaluate tool permissions. Check MCP connection.</p>
+            <a href="/console/access" class="inline-block mt-3 text-coral-400 hover:text-coral-300 text-sm font-semibold">Retry →</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

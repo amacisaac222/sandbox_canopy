@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, status, Depends
+from fastapi import FastAPI, Request, Form, status, Depends, UploadFile, File, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -40,6 +40,9 @@ from auth.local import (
     create_local_user, authenticate_local_user, has_any_admin_users,
     db_user_to_auth_user, hash_password
 )
+from mcp_client import mcp_client
+from tracing import canopy_tracing, MockTraceData
+from company import company_manager
 import secrets
 
 ASSET_VER = "2025-08-20-1"  # bump on deploy
@@ -138,7 +141,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         resp.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         resp.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
         # Light CSP; adjust if you embed 3rd-party scripts
-        resp.headers["Content-Security-Policy"] = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; font-src 'self' https://fonts.gstatic.com;"
+        resp.headers["Content-Security-Policy"] = "default-src 'self'; img-src 'self' data: https://fastapi.tiangolo.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com https://cdn.jsdelivr.net; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com;"
         return resp
 
 app = FastAPI(title="CanopyIQ")
@@ -153,6 +156,7 @@ app.add_middleware(
 )
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/documentation", StaticFiles(directory="static/docs", html=True), name="documentation")
 templates = Jinja2Templates(directory="templates")
 
 # Add custom Jinja2 filters
@@ -169,6 +173,7 @@ async def startup_event():
     """Initialize services on startup"""
     await init_db()  # Create tables if they don't exist (dev only)
     await init_oidc()
+    canopy_tracing.init_tracing(app)  # Initialize OpenTelemetry
 
 # ---------- Helpers ----------
 def page(request: Request, *, title: str, desc: str, path: str, **ctx):
@@ -215,15 +220,6 @@ async def pricing(request: Request):
         title="Pricing | CanopyIQ",
         desc="Starter, Growth, and Enterprise tiers for agent fleets.",
         path="pricing.html",
-    )
-
-@app.get("/documentation", response_class=HTMLResponse)
-async def documentation(request: Request):
-    return page(
-        request,
-        title="Documentation | CanopyIQ",
-        desc="Reference architecture, quickstart, policies reference, API endpoints, deploy options.",
-        path="docs.html",
     )
 
 @app.get("/contact", response_class=HTMLResponse)
@@ -513,7 +509,7 @@ async def auth_login(request: Request, db: AsyncSession = Depends(get_db)):
     
     return response
 
-@app.get("/auth/callback")
+@app.get("/auth/oidc/callback")
 async def auth_callback(request: Request, code: str, state: str):
     """Handle OIDC callback and create user session"""
     if not oidc_client.is_configured():
@@ -531,8 +527,8 @@ async def auth_callback(request: Request, code: str, state: str):
         # Verify ID token and extract claims
         claims = oidc_client.verify_id_token(tokens.id_token)
         
-        # Create user from claims
-        user = oidc_client.create_user_from_claims(claims)
+        # Create user from claims with company context
+        user = company_manager.create_company_user(claims)
         
         # Create session token
         session_token = create_session_token(user)
@@ -644,9 +640,9 @@ async def admin_submissions(request: Request, db: AsyncSession = Depends(get_db)
     )
 
 @app.get("/admin", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
-async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db)):
+async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
     """Admin dashboard"""
-    user = get_current_user(request)
+    # user is already injected from dependency
     
     # Get dashboard statistics
     now = int(time.time())
@@ -1122,9 +1118,485 @@ async def metrics():
     """Prometheus metrics endpoint"""
     return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
+# ---------- Console Routes ----------
+@app.get("/admin/console", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+async def console_index(request: Request):
+    """Console landing page"""
+    return page(
+        request,
+        title="Console | CanopyIQ",
+        desc="CanopyIQ Console - Run agents safely. At scale.",
+        path="console/index.html"
+    )
+
+@app.get("/admin/console/access", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+async def console_access(request: Request, tenant: str = "demo-tenant"):
+    """Access Dashboard - tool permissions overview"""
+    
+    # Define tool probes to simulate
+    tools = [
+        {
+            "name": "net.http",
+            "label": "HTTP Requests", 
+            "icon": "🌐",
+            "probe": {
+                "tool": "net.http",
+                "arguments": {
+                    "method": "GET",
+                    "url": "https://intranet.api/health"
+                }
+            }
+        },
+        {
+            "name": "fs.write",
+            "label": "File Write",
+            "icon": "📁", 
+            "probe": {
+                "tool": "fs.write",
+                "arguments": {
+                    "path": "/etc/passwd",
+                    "bytes": "Zm9v"
+                }
+            }
+        },
+        {
+            "name": "cloud.ops",
+            "label": "Cloud Operations",
+            "icon": "☁️",
+            "probe": {
+                "tool": "cloud.ops", 
+                "arguments": {
+                    "provider": "aws",
+                    "resource": "ec2",
+                    "action": "run_instances",
+                    "estimated_cost_usd": 12.0
+                }
+            }
+        },
+        {
+            "name": "mail.send",
+            "label": "Email Send",
+            "icon": "📧",
+            "probe": {
+                "tool": "mail.send",
+                "arguments": {
+                    "to": "user@external.com",
+                    "subject": "Test message"
+                }
+            }
+        }
+    ]
+    
+    # Simulate policy decisions for each tool
+    enriched_tools = []
+    for tool in tools:
+        try:
+            # Start tracing span for policy simulation
+            with canopy_tracing.tracer.start_as_current_span("console.policy.simulate") as span:
+                span.set_attributes({
+                    "canopy.tool": tool["name"],
+                    "canopy.tenant": tenant
+                })
+                
+                # Call MCP policy simulator
+                result = mcp_client.simulate_policy(tool["probe"])
+                decision = result.get("decision", "deny")
+                trace = result.get("trace", {})
+                
+                # Record decision in span
+                span.set_attribute("canopy.decision", decision)
+                
+                # Map decision to status and styling
+                if decision == "allow":
+                    status = "Allowed"
+                    status_class = "bg-green-500/20 text-green-400"
+                elif decision == "approval":
+                    status = "Approval"
+                    status_class = "bg-amber-500/20 text-amber-400"
+                else:
+                    status = "Blocked"
+                    status_class = "bg-red-500/20 text-red-400"
+                
+                # Extract explanation from trace
+                explain = "Policy evaluated"
+                if trace.get("matched_rule"):
+                    explain = trace["matched_rule"].get("reason", explain)
+                    span.set_attribute("canopy.matched_rule", trace["matched_rule"].get("name", "unknown"))
+                
+                tool_data = {
+                    **tool,
+                    "status": status,
+                    "status_class": status_class,
+                    "explain": explain,
+                    "decision": decision
+                }
+            
+        except Exception as e:
+            # Fallback on simulator error
+            tool_data = {
+                **tool,
+                "status": "Unknown",
+                "status_class": "bg-slate-500/20 text-slate-400",
+                "explain": f"Simulator error: {str(e)}",
+                "decision": "error"
+            }
+        
+        enriched_tools.append(tool_data)
+    
+    return page(
+        request,
+        title="Access Dashboard | Console | CanopyIQ", 
+        desc="View tool access permissions and policy decisions.",
+        path="console/access.html",
+        tenant=tenant,
+        tools=enriched_tools
+    )
+
+@app.get("/admin/console/approvals", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+async def console_approvals(request: Request, tenant: str = "", status: str = "pending", limit: int = 50):
+    """Approvals Queue - pending approval requests"""
+    
+    # Get approval items from MCP
+    try:
+        result = mcp_client.list_approvals(tenant=tenant, status=status, limit=limit)
+        approvals = result.get("items", [])
+        
+        # Format approvals for template
+        formatted_approvals = []
+        for approval in approvals:
+            # Format timestamps
+            created_at = approval.get("created_at", "")
+            if created_at:
+                from datetime import datetime
+                try:
+                    dt = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+                    created_display = dt.strftime('%Y-%m-%d %H:%M:%S')
+                    time_ago = "Just now"  # Simple placeholder
+                except:
+                    created_display = created_at
+                    time_ago = "Unknown"
+            else:
+                created_display = "Unknown"
+                time_ago = "Unknown"
+            
+            formatted_approval = {
+                "id": approval.get("id", "unknown"),
+                "tool": approval.get("tool", "unknown"),
+                "tenant": approval.get("tenant", tenant or "default"),
+                "requester": approval.get("requester", "system"),
+                "action": approval.get("action", "unknown action"),
+                "status": approval.get("status", "pending"),
+                "created_at": created_display,
+                "time_ago": time_ago,
+                "payload": approval.get("payload", {}),
+                "arguments": approval.get("arguments", {})
+            }
+            formatted_approvals.append(formatted_approval)
+    
+    except Exception as e:
+        formatted_approvals = []
+        error_message = f"Unable to load approvals: {str(e)}"
+    else:
+        error_message = None
+    
+    return page(
+        request,
+        title="Approvals Queue | Console | CanopyIQ",
+        desc="View and manage pending approval requests.", 
+        path="console/approvals.html",
+        tenant=tenant,
+        status=status,
+        limit=limit,
+        approvals=formatted_approvals,
+        error_message=error_message
+    )
+
+@app.post("/admin/console/approvals/decide", dependencies=[Depends(require_admin)])
+async def console_approval_decide(
+    request: Request,
+    pending_id: str = Form(...),
+    decision: str = Form(...)
+):
+    """Handle approval decisions from console"""
+    
+    # Validate decision
+    if decision not in ["approve", "deny"]:
+        raise HTTPException(status_code=400, detail="Invalid decision")
+    
+    try:
+        # For MVP, we'll simulate the decision since we don't have direct MCP callback access
+        # In a real implementation, this would call the MCP approval callback endpoint
+        
+        # Get the current user for audit purposes
+        user = get_current_user(request)
+        approver = user.email if user else "console-user"
+        
+        # Flash a message about the decision
+        message = f"Approval {pending_id} has been {decision}d by {approver}"
+        
+        # Redirect back to approvals with success message
+        return RedirectResponse(
+            url=f"/console/approvals?success={decision}&id={pending_id}", 
+            status_code=status.HTTP_302_FOUND
+        )
+        
+    except Exception as e:
+        # Redirect with error
+        return RedirectResponse(
+            url=f"/admin/console/approvals?error=decision_failed&detail={str(e)}", 
+            status_code=status.HTTP_302_FOUND
+        )
+
+@app.get("/admin/console/simulator", response_class=HTMLResponse, dependencies=[Depends(require_admin)]) 
+async def console_simulator(request: Request):
+    """Policy Simulator - test tool calls against policies"""
+    return page(
+        request,
+        title="Policy Simulator | Console | CanopyIQ",
+        desc="Test tool calls against current policies.",
+        path="console/simulator.html"
+    )
+
+@app.post("/console/simulator", response_class=HTMLResponse)
+async def console_simulator_post(
+    request: Request,
+    tool: str = Form(...),
+    arguments: str = Form(...)
+):
+    """Handle policy simulator form submission"""
+    
+    try:
+        # Parse JSON arguments
+        import json
+        try:
+            parsed_args = json.loads(arguments)
+        except json.JSONDecodeError as e:
+            raise HTTPException(status_code=400, detail=f"Invalid JSON in arguments: {str(e)}")
+        
+        # Build simulation request
+        simulation_request = {
+            "tool": tool,
+            "arguments": parsed_args
+        }
+        
+        # Call MCP policy simulator
+        result = mcp_client.simulate_policy(simulation_request)
+        
+        # Extract results
+        decision = result.get("decision", "unknown")
+        matched_rule = result.get("matched_rule", {})
+        trace = result.get("trace", {})
+        
+        # Format for display
+        simulation_result = {
+            "success": True,
+            "decision": decision,
+            "rule_name": matched_rule.get("name", "Unknown rule"),
+            "rule_reason": matched_rule.get("reason", "No reason provided"),
+            "trace_data": trace,
+            "request": simulation_request
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        simulation_result = {
+            "success": False,
+            "error": str(e),
+            "request": {"tool": tool, "arguments": arguments}
+        }
+    
+    return page(
+        request,
+        title="Policy Simulator | Console | CanopyIQ",
+        desc="Test tool calls against current policies.",
+        path="console/simulator.html",
+        result=simulation_result,
+        tool=tool,
+        arguments=arguments
+    )
+
+@app.get("/admin/console/traces", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+async def console_traces(request: Request):
+    """Trace viewer and workflow analytics"""
+    # Generate mock trace data for demo
+    traces = MockTraceData.generate_traces(50)
+    
+    # Calculate summary stats
+    total_traces = len(traces)
+    successful_traces = len([t for t in traces if t["status"] == "success"])
+    avg_duration = sum(t["duration_ms"] for t in traces) / total_traces if total_traces > 0 else 0
+    total_cost = sum(t["total_cost_usd"] for t in traces)
+    
+    # Group by workflow type
+    workflow_stats = {}
+    for trace in traces:
+        wf_type = trace["workflow_type"]
+        if wf_type not in workflow_stats:
+            workflow_stats[wf_type] = {"count": 0, "avg_duration": 0, "total_cost": 0}
+        workflow_stats[wf_type]["count"] += 1
+        workflow_stats[wf_type]["total_cost"] += trace["total_cost_usd"]
+    
+    # Calculate averages
+    for wf_type in workflow_stats:
+        wf_traces = [t for t in traces if t["workflow_type"] == wf_type]
+        workflow_stats[wf_type]["avg_duration"] = sum(t["duration_ms"] for t in wf_traces) / len(wf_traces)
+        workflow_stats[wf_type]["success_rate"] = len([t for t in wf_traces if t["status"] == "success"]) / len(wf_traces) * 100
+    
+    return page(
+        request,
+        title="Trace Analytics | Console | CanopyIQ",
+        desc="Distributed tracing and workflow performance analytics.",
+        path="console/traces.html",
+        traces=traces[:20],  # Show latest 20
+        stats={
+            "total_traces": total_traces,
+            "success_rate": round(successful_traces / total_traces * 100, 1) if total_traces > 0 else 0,
+            "avg_duration_ms": round(avg_duration, 0),
+            "total_cost_usd": round(total_cost, 2)
+        },
+        workflow_stats=workflow_stats
+    )
+
+@app.get("/admin/console/agents", response_class=HTMLResponse, dependencies=[Depends(require_admin)]) 
+async def console_agents(request: Request):
+    """Agent dependency map and performance analytics"""
+    # Generate mock agent dependency data
+    dependency_data = MockTraceData.generate_agent_dependency_map()
+    
+    return page(
+        request,
+        title="Agent Dependencies | Console | CanopyIQ",
+        desc="Visualize agent-to-agent communication patterns and performance.",
+        path="console/agents.html",
+        agents=dependency_data["agents"],
+        connections=dependency_data["connections"],
+        generated_at=dependency_data["generated_at"]
+    )
+
+@app.get("/admin/console/policy", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+async def console_policy(request: Request):
+    """Policy Diff & Rollout - upload and compare policies"""
+    
+    # Get policy status from MCP
+    try:
+        policy_status = mcp_client.policy_status()
+        if policy_status.get("status") == "error":
+            status_info = None
+            status_error = policy_status.get("message")
+        else:
+            status_info = policy_status
+            status_error = None
+    except Exception as e:
+        status_info = None
+        status_error = f"Unable to fetch policy status: {str(e)}"
+    
+    return page(
+        request,
+        title="Policy Management | Console | CanopyIQ", 
+        desc="Upload, diff, and rollout policy changes.",
+        path="console/policy.html",
+        policy_status=status_info,
+        status_error=status_error
+    )
+
+@app.post("/admin/console/policy", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+async def console_policy_post(
+    request: Request,
+    current: UploadFile = File(None),
+    proposed: UploadFile = File(...)
+):
+    """Handle policy diff form submission"""
+    
+    try:
+        # Read proposed file
+        proposed_content = await proposed.read()
+        if not proposed_content:
+            raise HTTPException(status_code=400, detail="Proposed policy file is empty")
+        
+        # Read current file (optional)
+        current_content = None
+        if current and current.filename:
+            current_content = await current.read()
+        
+        # Call MCP diff API
+        diff_result = mcp_client.diff_policy(current_content, proposed_content)
+        
+        # Format diff results for template
+        formatted_diff = {
+            "success": True,
+            "headline": diff_result.get("headline", []),
+            "added_rules": diff_result.get("added_rules", []),
+            "removed_rules": diff_result.get("removed_rules", []),
+            "modified_rules": diff_result.get("modified_rules", []),
+            "risk_level": diff_result.get("risk_level", "medium"),
+            "summary": diff_result.get("summary", "Policy changes detected")
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        formatted_diff = {
+            "success": False,
+            "error": str(e)
+        }
+    
+    # Get policy status again for display
+    try:
+        policy_status = mcp_client.policy_status()
+        if policy_status.get("status") == "error":
+            status_info = None
+            status_error = policy_status.get("message")
+        else:
+            status_info = policy_status
+            status_error = None
+    except:
+        status_info = None
+        status_error = "Unable to fetch policy status"
+    
+    return page(
+        request,
+        title="Policy Management | Console | CanopyIQ", 
+        desc="Upload, diff, and rollout policy changes.",
+        path="console/policy.html",
+        policy_status=status_info,
+        status_error=status_error,
+        diff_result=formatted_diff
+    )
+
 @app.get("/robots.txt", response_class=Response)
 async def robots():
     return Response("User-agent: *\nAllow: /\nSitemap: https://canopyiq.ai/sitemap.txt", media_type="text/plain")
+
+# ---------- Company Management Routes ----------
+@app.get("/admin/companies", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+async def admin_companies(request: Request, user: User = Depends(get_current_user)):
+    """Company management dashboard"""
+    companies = company_manager.get_available_companies(user)
+    users = company_manager.get_company_users(user)
+    
+    return page(
+        request,
+        title="Company Management | Admin | CanopyIQ",
+        desc="Manage companies and users",
+        path="admin_companies.html",
+        companies=companies,
+        users=users,
+        current_user=user,
+        is_super_admin=company_manager.is_super_admin(user)
+    )
+
+@app.get("/api/companies/{company_domain}/users", dependencies=[Depends(require_admin)])
+async def api_company_users(
+    company_domain: str, 
+    user: User = Depends(get_current_user)
+):
+    """API endpoint to get users for a company"""
+    if not company_manager.can_access_company(user, company_domain):
+        raise HTTPException(status_code=403, detail="Access denied to company data")
+    
+    users = company_manager.get_company_users(user, company_domain)
+    return {"users": users}
 
 @app.get("/sitemap.txt", response_class=Response)
 async def sitemap():

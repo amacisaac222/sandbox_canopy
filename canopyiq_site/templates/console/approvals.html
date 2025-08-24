@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-navy-900 min-h-screen">
+  <!-- Breadcrumb -->
+  <div class="bg-navy-800 border-b border-navy-700">
+    <div class="max-w-7xl mx-auto px-4 py-3">
+      <nav class="flex items-center space-x-2 text-sm">
+        <a href="/admin/console" class="text-navy-300 hover:text-coral-400 font-semibold">Console</a>
+        <svg class="w-4 h-4 text-navy-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+        <span class="text-white font-semibold">Approvals Queue</span>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Approvals Queue</h1>
+        <p class="text-navy-300 mt-2">Review and approve pending agent requests</p>
+      </div>
+      <div class="flex gap-3">
+        <select class="bg-navy-700 border border-navy-600 text-white rounded px-3 py-2 text-sm">
+          <option value="pending">Pending Only</option>
+          <option value="all">All Status</option>
+          <option value="approved">Approved</option>
+          <option value="denied">Denied</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="max-w-7xl mx-auto px-4 pb-12">
+    
+    <!-- Success/Error Messages -->
+    {% set success = request.query_params.get('success') %}
+    {% set error = request.query_params.get('error') %}
+    {% set pending_id = request.query_params.get('id') %}
+    
+    {% if success %}
+      <div class="bg-green-500/20 border border-green-500/30 rounded-lg p-4 mb-6">
+        <div class="flex items-center gap-2 text-green-400">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span class="font-semibold">Success!</span>
+        </div>
+        <p class="text-green-300 text-sm mt-1">Approval {{ pending_id }} has been {{ success }}d successfully.</p>
+      </div>
+    {% endif %}
+    
+    {% if error %}
+      <div class="bg-red-500/20 border border-red-500/30 rounded-lg p-4 mb-6">
+        <div class="flex items-center gap-2 text-red-400">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span class="font-semibold">Error</span>
+        </div>
+        <p class="text-red-300 text-sm mt-1">{{ error_message or "Failed to process approval decision." }}</p>
+      </div>
+    {% endif %}
+    
+    <div class="space-y-4">
+      
+      {% if approvals %}
+        <!-- Approval Items -->
+        {% for approval in approvals %}
+        <div class="bg-navy-800 border border-navy-700 rounded-lg p-6">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-3">
+                <h3 class="text-lg font-semibold text-white">{{ approval.tool }} • {{ approval.tenant }}</h3>
+                {% if approval.status == 'pending' %}
+                  <span class="px-2 py-1 bg-amber-500/20 text-amber-400 text-xs font-semibold rounded">PENDING</span>
+                {% elif approval.status == 'approved' %}
+                  <span class="px-2 py-1 bg-green-500/20 text-green-400 text-xs font-semibold rounded">APPROVED</span>
+                {% elif approval.status == 'denied' %}
+                  <span class="px-2 py-1 bg-red-500/20 text-red-400 text-xs font-semibold rounded">DENIED</span>
+                {% endif %}
+              </div>
+              <div class="text-navy-300 text-sm mb-3">
+                <p><strong>Requester:</strong> {{ approval.requester }}</p>
+                <p><strong>Created:</strong> {{ approval.created_at }}</p>
+                <p><strong>Action:</strong> {{ approval.action }}</p>
+              </div>
+              {% if approval.arguments %}
+              <div class="bg-navy-700 rounded p-3 mb-4">
+                <p class="text-navy-200 text-xs font-mono">{{ approval.arguments | tojsonpretty }}</p>
+              </div>
+              {% endif %}
+            </div>
+            {% if approval.status == 'pending' %}
+            <div class="flex gap-2 ml-4">
+              <form method="post" action="/admin/console/approvals/decide" style="display: inline;">
+                <input type="hidden" name="pending_id" value="{{ approval.id }}">
+                <input type="hidden" name="decision" value="approve">
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-semibold transition-colors">
+                  Approve
+                </button>
+              </form>
+              <form method="post" action="/admin/console/approvals/decide" style="display: inline;">
+                <input type="hidden" name="pending_id" value="{{ approval.id }}">
+                <input type="hidden" name="decision" value="deny">
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm font-semibold transition-colors">
+                  Deny
+                </button>
+              </form>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+        
+      {% elif error_message %}
+        <!-- Error State -->
+        <div class="bg-navy-800 border border-navy-700 rounded-lg p-12 text-center">
+          <div class="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-white mb-2">Unable to Load Approvals</h3>
+          <p class="text-navy-400">{{ error_message }}</p>
+          <a href="/console/approvals" class="inline-block mt-3 text-coral-400 hover:text-coral-300 text-sm font-semibold">Retry →</a>
+        </div>
+        
+      {% else %}
+        <!-- Empty State -->
+        <div class="bg-navy-800 border border-navy-700 rounded-lg p-12 text-center">
+          <div class="w-16 h-16 bg-navy-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-navy-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-white mb-2">No pending approvals</h3>
+          <p class="text-navy-400">All approval requests have been processed.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
