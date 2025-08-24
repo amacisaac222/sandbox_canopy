@@ -1,1 +1,1 @@
-web: cd canopyiq_site && python -m uvicorn app:app --host 0.0.0.0 --port $PORT
+web: cd canopyiq_site && uvicorn app:app --host 0.0.0.0 --port $PORT
