@@ -110,6 +110,26 @@ async def privacy(request: Request):
         path="privacy.html"
     )
 
+@app.get("/auth/login", response_class=HTMLResponse)
+async def login(request: Request):
+    return page(
+        request,
+        title="Sign In | CanopyIQ",
+        desc="Sign in to your CanopyIQ account to access the admin console.",
+        path="local_login.html"
+    )
+
+@app.post("/auth/login")
+async def login_post(request: Request):
+    # Placeholder for login functionality
+    return {"message": "Login functionality coming soon - this is the minimal site version"}
+
+@app.get("/auth/logout")
+async def logout(request: Request):
+    from fastapi.responses import RedirectResponse
+    response = RedirectResponse(url="/", status_code=302)
+    return response
+
 # Health endpoints
 @app.get("/health")
 async def health():
