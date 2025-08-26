@@ -330,6 +330,33 @@ async def contact(request: Request):
           path="contact.html",
       )
 
+@app.get("/terms", response_class=HTMLResponse)
+async def terms(request: Request):
+      return page(
+          request,
+          title="Terms of Service | CanopyIQ",
+          desc="Terms of Service for CanopyIQ platform.",
+          path="terms.html",
+      )
+
+@app.get("/privacy", response_class=HTMLResponse)
+async def privacy(request: Request):
+      return page(
+          request,
+          title="Privacy Policy | CanopyIQ",
+          desc="Privacy Policy for CanopyIQ platform.",
+          path="privacy.html",
+      )
+
+@app.get("/faq", response_class=HTMLResponse)
+async def faq(request: Request):
+      return page(
+          request,
+          title="Frequently Asked Questions | CanopyIQ",
+          desc="Common questions about AI agent security and CanopyIQ platform.",
+          path="faq.html",
+      )
+
 class ContactIn(BaseModel):
       name: constr(strip_whitespace=True, min_length=2)
       email: EmailStr
