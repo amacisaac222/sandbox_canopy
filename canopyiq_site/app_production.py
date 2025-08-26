@@ -69,10 +69,21 @@ try:
       )
 except ImportError:
       get_current_user = lambda request: None
-      require_auth = None
-      require_role = None
-      require_admin = None
-      require_auditor = None
+      
+      def require_auth():
+          raise HTTPException(status_code=503, detail="Authentication not configured")
+      
+      def require_role(role):
+          def dependency():
+              raise HTTPException(status_code=503, detail="Authentication not configured")
+          return dependency
+      
+      def require_admin():
+          raise HTTPException(status_code=503, detail="Admin authentication not configured")
+      
+      def require_auditor():
+          raise HTTPException(status_code=503, detail="Authentication not configured")
+      
       create_session_token = None
       SESSION_COOKIE_NAME = "session"
       SESSION_DURATION_HOURS = 24
@@ -577,15 +588,15 @@ async def auth_login(request: Request, db: AsyncSession = Depends(get_db)):
           return RedirectResponse(url="/setup", status_code=status.HTTP_302_FOUND)
 
       # If OIDC is configured, use that
-      if oidc_client.is_configured():
-          # OIDC authentication flow
-          pass  # Continue with existing OIDC logic below
+      if oidc_client and oidc_client.is_configured():
+          # OIDC authentication flow - continue with existing OIDC logic
+          pass
       else:
           # Use local authentication
           return RedirectResponse(url="/auth/local/login", status_code=status.HTTP_302_FOUND)
 
       # Original OIDC logic
-      if not oidc_client.is_configured():
+      if not oidc_client or not oidc_client.is_configured():
           raise HTTPException(status_code=503, detail="Authentication not configured")
 
       # Generate random state for CSRF protection
@@ -608,7 +619,7 @@ async def auth_login(request: Request, db: AsyncSession = Depends(get_db)):
 @app.get("/auth/oidc/callback")
 async def auth_callback(request: Request, code: str, state: str):
       """Handle OIDC callback and create user session"""
-      if not oidc_client.is_configured():
+      if not oidc_client or not oidc_client.is_configured():
           raise HTTPException(status_code=503, detail="Authentication not configured")
 
       # Verify CSRF state
@@ -656,7 +667,7 @@ async def auth_logout(request: Request):
       """Log out user and clear session"""
       # Get logout URL from provider if available
       logout_url = None
-      if oidc_client.is_configured():
+      if oidc_client and oidc_client.is_configured():
           logout_url = oidc_client.get_logout_url(redirect_url=str(request.base_url))
 
       # Clear session cookie and redirect
