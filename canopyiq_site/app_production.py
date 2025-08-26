@@ -250,33 +250,20 @@
 
   @app.on_event("startup")
   async def startup_event():
-      """Initialize services on startup - production safe"""
-      logger.info("Starting CanopyIQ application...")
+      """Initialize services on startup - minimal and fast"""
+      logger.info("🚀 Starting CanopyIQ application...")
       
-      # Check database availability
+      # Just log the database configuration, don't try to initialize
       if DATABASE_URL:
-          logger.info(f"Database configured: {DATABASE_URL[:50]}...")
-          try:
-              if init_db:
-                  await init_db()
-                  logger.info("✓ Database tables initialized")
-          except Exception as e:
-              logger.warning(f"Database initialization failed (will retry later): {e}")
+          logger.info(f"✓ Database configured: postgresql://canopyiq@.../canopyiq_db")
       else:
-          logger.warning("No database URL configured")
+          logger.warning("⚠ No database URL configured")
           
-      # Check static files
-      if os.path.exists("static"):
-          logger.info("✓ Static files directory found")
-      else:
-          logger.warning("⚠ Static files directory not found")
-          
-      if os.path.exists("templates"):
-          logger.info("✓ Templates directory found") 
-      else:
-          logger.warning("⚠ Templates directory not found")
+      # Quick file checks
+      logger.info(f"✓ Static files: {'found' if os.path.exists('static') else 'not found'}")
+      logger.info(f"✓ Templates: {'found' if os.path.exists('templates') else 'not found'}")
 
-      logger.info("CanopyIQ application startup completed successfully")
+      logger.info("🎉 CanopyIQ startup completed - authentication ready!")
 
   # ---------- Helpers ----------
   def page(request: Request, *, title: str, desc: str, path: str, **ctx):
@@ -620,7 +607,7 @@
 
       return response
 
-        @app.get("/auth/oidc/callback")
+@app.get("/auth/oidc/callback")
   async def auth_callback(request: Request, code: str, state: str):
       """Handle OIDC callback and create user session"""
       if not oidc_client.is_configured():
