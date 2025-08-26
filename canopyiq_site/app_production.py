@@ -1,38 +1,38 @@
-  from fastapi import FastAPI, Request, Form, status, Depends, UploadFile, File, HTTPException
-  from fastapi.responses import HTMLResponse, RedirectResponse
-  from fastapi.staticfiles import StaticFiles
-  from fastapi.templating import Jinja2Templates
-  from pydantic import BaseModel, EmailStr, constr
-  from pathlib import Path
-  import csv
-  import time
-  import secrets
-  import os
-  import uuid
-  import json
-  import logging
-  from datetime import datetime
-  from starlette.middleware.cors import CORSMiddleware
-  from starlette.middleware import Middleware
-  from starlette.responses import Response, PlainTextResponse
-  from starlette.middleware.base import BaseHTTPMiddleware
-  from fastapi.exceptions import RequestValidationError
-  from starlette.exceptions import HTTPException as StarletteHTTPException
-  from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
-  from sqlalchemy.ext.asyncio import AsyncSession
-  from sqlalchemy import select, desc
+from fastapi import FastAPI, Request, Form, status, Depends, UploadFile, File, HTTPException
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel, EmailStr, constr
+from pathlib import Path
+import csv
+import time
+import secrets
+import os
+import uuid
+import json
+import logging
+from datetime import datetime
+from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware import Middleware
+from starlette.responses import Response, PlainTextResponse
+from starlette.middleware.base import BaseHTTPMiddleware
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, desc
 
-  # Import authentication modules with fallbacks
-  try:
+# Import authentication modules with fallbacks
+try:
       from auth.oidc import oidc_client, init_oidc
-  except ImportError:
+except ImportError:
       oidc_client = None
       init_oidc = None
       
-  # Import database with fallbacks
-  try:
+# Import database with fallbacks
+try:
       from database import get_db, Submission, AuditLog, Approval, ApprovalStatus, init_db, DATABASE_URL
-  except ImportError:
+except ImportError:
       get_db = None
       Submission = None
       AuditLog = None
@@ -41,13 +41,13 @@
       init_db = None
       DATABASE_URL = None
       
-  # Import Slack utilities with fallbacks
-  try:
+# Import Slack utilities with fallbacks
+try:
       from slack_utils import (
           send_slack_webhook, create_contact_notification, create_approval_notification,
           verify_slack_signature, parse_slack_payload, extract_approval_action, update_approval_message
       )
-  except ImportError:
+except ImportError:
       send_slack_webhook = None
       create_contact_notification = None
       create_approval_notification = None
@@ -56,8 +56,8 @@
       extract_approval_action = None
       update_approval_message = None
       
-  # Import auth modules with fallbacks
-  try:
+# Import auth modules with fallbacks
+try:
       from auth.rbac import (
           get_current_user, require_auth, require_role, require_admin, require_auditor,
           create_session_token, SESSION_COOKIE_NAME, SESSION_DURATION_HOURS
@@ -67,7 +67,7 @@
           create_local_user, authenticate_local_user, has_any_admin_users,
           db_user_to_auth_user, hash_password
       )
-  except ImportError:
+except ImportError:
       get_current_user = lambda request: None
       require_auth = None
       require_role = None
@@ -83,76 +83,76 @@
       db_user_to_auth_user = None
       hash_password = None
       
-  # Import optional modules
-  try:
+# Import optional modules
+try:
       from mcp_client import mcp_client
-  except ImportError:
+except ImportError:
       mcp_client = None
       
-  try:
+try:
       from tracing import canopy_tracing, MockTraceData
-  except ImportError:
+except ImportError:
       canopy_tracing = None
       MockTraceData = None
       
-  try:
+try:
       from company import company_manager
-  except ImportError:
+except ImportError:
       company_manager = None
-  
-  import secrets
 
-  ASSET_VER = "2025-08-26-1"  # bump on deploy - fixed database resilience
+import secrets
 
-  # Configure structured logging
-  logging.basicConfig(level=logging.INFO)
-  logger = logging.getLogger(__name__)
+ASSET_VER = "2025-08-26-1"  # bump on deploy - fixed database resilience
 
-  # Create fallback functions for missing dependencies
-  if get_db is None:
+# Configure structured logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Create fallback functions for missing dependencies
+if get_db is None:
       async def get_db():
           """Fallback database dependency that returns None"""
           yield None
           
-  if has_any_admin_users is None:
+if has_any_admin_users is None:
       async def has_any_admin_users(db):
           """Fallback function - assume no admin users exist"""
           return False
           
-  if create_local_user is None:
+if create_local_user is None:
       async def create_local_user(db, email, name, password, role):
           """Fallback function - cannot create users"""
           raise HTTPException(status_code=503, detail="User creation not available")
           
-  if authenticate_local_user is None:
+if authenticate_local_user is None:
       async def authenticate_local_user(db, email, password):
           """Fallback function - cannot authenticate"""
           return None
 
-  # Prometheus metrics
-  http_requests_total = Counter(
+# Prometheus metrics
+http_requests_total = Counter(
       'http_requests_total',
       'Total HTTP requests',
       ['method', 'path', 'status']
-  )
+)
 
-  http_request_duration_seconds = Histogram(
+http_request_duration_seconds = Histogram(
       'http_request_duration_seconds',
       'HTTP request duration in seconds',
       ['method', 'path']
-  )
+)
 
-  contact_submissions_total = Counter(
+contact_submissions_total = Counter(
       'contact_submissions_total',
       'Total contact form submissions'
-  )
+)
 
-  auth_logins_total = Counter(
+auth_logins_total = Counter(
       'auth_logins_total',
       'Total authentication logins'
-  )
+)
 
-  class ObservabilityMiddleware(BaseHTTPMiddleware):
+class ObservabilityMiddleware(BaseHTTPMiddleware):
       async def dispatch(self, request, call_next):
           # Generate request ID
           request_id = str(uuid.uuid4())
@@ -211,7 +211,7 @@
 
           return response
 
-  class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
       async def dispatch(self, request, call_next):
           resp: Response = await call_next(request)
           resp.headers["X-Content-Type-Options"] = "nosniff"
@@ -219,37 +219,35 @@
           resp.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
           resp.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
           # Light CSP; adjust if you embed 3rd-party scripts
-          resp.headers["Content-Security-Policy"] = "default-src 'self'; img-src 'self' data: https://fastapi.tiangolo.com; style-src 'self' 'unsafe-inline'
-  https://fonts.googleapis.com https://cdn.tailwindcss.com https://cdn.jsdelivr.net; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com
-  https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com;"
+          resp.headers["Content-Security-Policy"] = "default-src 'self'; img-src 'self' data: https://fastapi.tiangolo.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com https://cdn.jsdelivr.net; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com;"
           return resp
 
-  app = FastAPI(title="CanopyIQ")
+app = FastAPI(title="CanopyIQ")
 
-  app.add_middleware(ObservabilityMiddleware)
-  app.add_middleware(SecurityHeadersMiddleware)
-  app.add_middleware(
+app.add_middleware(ObservabilityMiddleware)
+app.add_middleware(SecurityHeadersMiddleware)
+app.add_middleware(
       CORSMiddleware,
       allow_origins=["*"],
       allow_methods=["GET","POST"],
       allow_headers=["*"]
-  )
+)
 
-  app.mount("/static", StaticFiles(directory="static"), name="static")
-  app.mount("/documentation", StaticFiles(directory="static/docs", html=True), name="documentation")
-  templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/documentation", StaticFiles(directory="static/docs", html=True), name="documentation")
+templates = Jinja2Templates(directory="templates")
 
-  # Add custom Jinja2 filters
-  def tojsonpretty(value):
+# Add custom Jinja2 filters
+def tojsonpretty(value):
       """Convert value to pretty-printed JSON"""
       if value is None:
           return "null"
       return json.dumps(value, indent=2, default=str)
 
-  templates.env.filters["tojsonpretty"] = tojsonpretty
+templates.env.filters["tojsonpretty"] = tojsonpretty
 
-  @app.on_event("startup")
-  async def startup_event():
+@app.on_event("startup")
+async def startup_event():
       """Initialize services on startup - minimal and fast"""
       logger.info("🚀 Starting CanopyIQ application...")
       
@@ -265,8 +263,8 @@
 
       logger.info("🎉 CanopyIQ startup completed - authentication ready!")
 
-  # ---------- Helpers ----------
-  def page(request: Request, *, title: str, desc: str, path: str, **ctx):
+# ---------- Helpers ----------
+def page(request: Request, *, title: str, desc: str, path: str, **ctx):
       return templates.TemplateResponse(path, {
           "request": request,
           "meta": {"title": title, "desc": desc, "url_path": request.url.path},
@@ -275,9 +273,9 @@
           **ctx
       })
 
-  # ---------- Routes ----------
-  @app.get("/", response_class=HTMLResponse)
-  async def home(request: Request):
+# ---------- Routes ----------
+@app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
       return page(
           request,
           title="Run AI agents safely. At scale. | CanopyIQ",
@@ -285,8 +283,8 @@
           path="home.html",
       )
 
-  @app.get("/product", response_class=HTMLResponse)
-  async def product(request: Request):
+@app.get("/product", response_class=HTMLResponse)
+async def product(request: Request):
       return page(
           request,
           title="Product | CanopyIQ",
@@ -294,8 +292,8 @@
           path="product.html",
       )
 
-  @app.get("/security", response_class=HTMLResponse)
-  async def security(request: Request):
+@app.get("/security", response_class=HTMLResponse)
+async def security(request: Request):
       return page(
           request,
           title="Security & Compliance | CanopyIQ",
@@ -303,8 +301,8 @@
           path="security.html",
       )
 
-  @app.get("/pricing", response_class=HTMLResponse)
-  async def pricing(request: Request):
+@app.get("/pricing", response_class=HTMLResponse)
+async def pricing(request: Request):
       return page(
           request,
           title="Pricing | CanopyIQ",
@@ -312,8 +310,8 @@
           path="pricing.html",
       )
 
-  @app.get("/contact", response_class=HTMLResponse)
-  async def contact(request: Request):
+@app.get("/contact", response_class=HTMLResponse)
+async def contact(request: Request):
       return page(
           request,
           title="Contact / Book a Demo | CanopyIQ",
@@ -321,28 +319,28 @@
           path="contact.html",
       )
 
-  class ContactIn(BaseModel):
+class ContactIn(BaseModel):
       name: constr(strip_whitespace=True, min_length=2)
       email: EmailStr
       company: constr(strip_whitespace=True, min_length=2)
       message: constr(strip_whitespace=True, min_length=5)
 
-  class ApprovalRequest(BaseModel):
+class ApprovalRequest(BaseModel):
       action: constr(strip_whitespace=True, min_length=1)
       payload: dict = {}
 
-  DATA_DIR = Path("data"); DATA_DIR.mkdir(exist_ok=True)
-  CSV_PATH = DATA_DIR / "contact_submissions.csv"
+DATA_DIR = Path("data"); DATA_DIR.mkdir(exist_ok=True)
+CSV_PATH = DATA_DIR / "contact_submissions.csv"
 
-  @app.post("/contact")
-  async def submit_contact(
+@app.post("/contact")
+async def submit_contact(
       request: Request,
       name: str = Form(...),
       email: str = Form(...),
       company: str = Form(...),
       message: str = Form(...),
       db: AsyncSession = Depends(get_db)
-  ):
+):
       # Validate
       try:
           ContactIn(name=name, email=email, company=company, message=message)
@@ -387,9 +385,9 @@
 
       return RedirectResponse(url="/contact?success=1", status_code=status.HTTP_302_FOUND)
 
-  # ---------- Setup Routes ----------
-  @app.get("/setup")
-  async def setup_wizard(request: Request, db: AsyncSession = Depends(get_db)):
+# ---------- Setup Routes ----------
+@app.get("/setup")
+async def setup_wizard(request: Request, db: AsyncSession = Depends(get_db)):
       """First-run setup wizard"""
       # Check if admin users already exist
       if await has_any_admin_users(db):
@@ -402,8 +400,8 @@
           "error": None
       })
 
-  @app.post("/setup")
-  async def setup_wizard_post(
+@app.post("/setup")
+async def setup_wizard_post(
       request: Request,
       step: int = Form(...),
       db: AsyncSession = Depends(get_db),
@@ -418,7 +416,7 @@
       slack_webhook_url: str = Form(None),
       # Skip flag
       skip: bool = Form(False)
-  ):
+):
       """Handle setup wizard form submissions"""
 
       # Check if admin users already exist (except during setup)
@@ -524,22 +522,22 @@
       else:
           return RedirectResponse(url="/setup", status_code=status.HTTP_302_FOUND)
 
-  # ---------- Local Authentication Routes ----------
-  @app.get("/auth/local/login")
-  async def local_login_page(request: Request, error: str = None):
+# ---------- Local Authentication Routes ----------
+@app.get("/auth/local/login")
+async def local_login_page(request: Request, error: str = None):
       """Local login page"""
       return templates.TemplateResponse("local_login.html", {
           "request": request,
           "error": error
       })
 
-  @app.post("/auth/local/login")
-  async def local_login_post(
+@app.post("/auth/local/login")
+async def local_login_post(
       request: Request,
       email: str = Form(...),
       password: str = Form(...),
       db: AsyncSession = Depends(get_db)
-  ):
+):
       """Handle local login form submission"""
       # Authenticate user
       db_user = await authenticate_local_user(db, email, password)
@@ -570,9 +568,9 @@
 
       return response
 
-  # ---------- Authentication Routes ----------
-  @app.get("/auth/login")
-  async def auth_login(request: Request, db: AsyncSession = Depends(get_db)):
+# ---------- Authentication Routes ----------
+@app.get("/auth/login")
+async def auth_login(request: Request, db: AsyncSession = Depends(get_db)):
       """Redirect to appropriate authentication method"""
       # Check if any admin users exist - if not, redirect to setup
       if not await has_any_admin_users(db):
@@ -608,7 +606,7 @@
       return response
 
 @app.get("/auth/oidc/callback")
-  async def auth_callback(request: Request, code: str, state: str):
+async def auth_callback(request: Request, code: str, state: str):
       """Handle OIDC callback and create user session"""
       if not oidc_client.is_configured():
           raise HTTPException(status_code=503, detail="Authentication not configured")
@@ -653,8 +651,8 @@
       except Exception as e:
           raise HTTPException(status_code=400, detail=f"Authentication failed: {str(e)}")
 
-  @app.get("/auth/logout")
-  async def auth_logout(request: Request):
+@app.get("/auth/logout")
+async def auth_logout(request: Request):
       """Log out user and clear session"""
       # Get logout URL from provider if available
       logout_url = None
@@ -670,9 +668,9 @@
       response.delete_cookie(SESSION_COOKIE_NAME)
       return response
 
-  # ---------- Admin Routes (Protected) ----------
-  @app.get("/admin/contacts", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
-  async def admin_contacts(request: Request, db: AsyncSession = Depends(get_db)):
+# ---------- Admin Routes (Protected) ----------
+@app.get("/admin/contacts", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+async def admin_contacts(request: Request, db: AsyncSession = Depends(get_db)):
       """View contact submissions (admin only)"""
       # Get last 50 submissions, newest first
       result = await db.execute(
@@ -704,8 +702,8 @@
           contacts=contacts
       )
 
-  @app.get("/admin/submissions", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
-  async def admin_submissions(request: Request, db: AsyncSession = Depends(get_db)):
+@app.get("/admin/submissions", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+async def admin_submissions(request: Request, db: AsyncSession = Depends(get_db)):
       """View recent submissions (admin only)"""
 
       # Get last 50 submissions, newest first
@@ -737,8 +735,8 @@
           submissions=submissions_list
       )
 
-  @app.get("/admin", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
-  async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+@app.get("/admin", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
       """Admin dashboard"""
       # user is already injected from dependency
 
@@ -795,8 +793,8 @@
           recent_activity=recent_activity
       )
 
-  @app.get("/admin/audit", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
-  async def admin_audit(request: Request, db: AsyncSession = Depends(get_db)):
+@app.get("/admin/audit", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+async def admin_audit(request: Request, db: AsyncSession = Depends(get_db)):
       """Admin audit log viewer"""
       # Get last 100 audit logs
       result = await db.execute(
@@ -840,8 +838,8 @@
           total_logs=len(formatted_logs)
       )
 
-  @app.get("/admin/settings", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
-  async def admin_settings(request: Request, db: AsyncSession = Depends(get_db)):
+@app.get("/admin/settings", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+async def admin_settings(request: Request, db: AsyncSession = Depends(get_db)):
       """Admin settings page"""
       # Get current settings from database or environment
       settings = {
@@ -862,17 +860,21 @@
           settings=settings
       )
 
-  @app.get("/health")
-  async def health():
+@app.get("/health")
+async def health():
       return {"ok": True}
 
-  @app.get("/robots.txt", response_class=Response)
-  async def robots():
+@app.get("/metrics")
+async def metrics():
+      """Prometheus metrics endpoint"""
+      return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+@app.get("/robots.txt", response_class=Response)
+async def robots():
       return Response("User-agent: *\nAllow: /\nSitemap: https://canopyiq.ai/sitemap.txt", media_type="text/plain")
 
-  @app.exception_handler(StarletteHTTPException)
-  async def http_exc_handler(request, exc):
+@app.exception_handler(StarletteHTTPException)
+async def http_exc_handler(request, exc):
       if exc.status_code == 404:
-          return templates.TemplateResponse("404.html", {"request": request, "asset_ver": ASSET_VER, "meta": {"title": "Page Not Found | CanopyIQ", "desc": "The page       
-  you're looking for doesn't exist.", "url_path": request.url.path}}, status_code=404)
+          return templates.TemplateResponse("404.html", {"request": request, "asset_ver": ASSET_VER, "meta": {"title": "Page Not Found | CanopyIQ", "desc": "The page you're looking for doesn't exist.", "url_path": request.url.path}}, status_code=404)
       raise exc
