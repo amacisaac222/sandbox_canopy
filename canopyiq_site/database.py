@@ -9,8 +9,18 @@ from sqlalchemy import (
     Column, Integer, String, Text, DateTime, ForeignKey, JSON, Enum, 
     create_engine, BigInteger, Boolean, Index
 )
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+try:
+    from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+except ImportError:
+    from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+    from sqlalchemy.orm import sessionmaker
+    async_sessionmaker = sessionmaker
+
+try:
+    from sqlalchemy.ext.declarative import declarative_base
+except ImportError:
+    from sqlalchemy.orm import declarative_base
+
 from sqlalchemy.orm import relationship, sessionmaker
 
 # Get database URL from environment, fallback to SQLite for development
@@ -154,27 +164,38 @@ class Approval(Base):
     slack_ts = Column(String(255), nullable=True)  # Slack message timestamp for updates
 
 # Database engine and session configuration
-if DATABASE_URL.startswith("sqlite"):
-    # SQLite for development
-    engine = create_async_engine(DATABASE_URL, echo=False)
-else:
-    # PostgreSQL for production
-    engine = create_async_engine(
-        DATABASE_URL,
-        echo=False,
-        pool_pre_ping=True,
-        pool_recycle=300,
-    )
+try:
+    if DATABASE_URL.startswith("sqlite"):
+        # SQLite for development
+        engine = create_async_engine(DATABASE_URL, echo=False)
+    else:
+        # PostgreSQL for production
+        engine = create_async_engine(
+            DATABASE_URL,
+            echo=False,
+            pool_pre_ping=True,
+            pool_recycle=300,
+        )
+except Exception as e:
+    print(f"Warning: Could not create database engine: {e}")
+    engine = None
 
 # Async session maker
-AsyncSessionLocal = async_sessionmaker(
-    engine, 
-    class_=AsyncSession, 
-    expire_on_commit=False
-)
+if engine is not None:
+    AsyncSessionLocal = async_sessionmaker(
+        engine, 
+        class_=AsyncSession, 
+        expire_on_commit=False
+    )
+else:
+    AsyncSessionLocal = None
 
 # Dependency for getting database session
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    if AsyncSessionLocal is None:
+        yield None
+        return
+        
     async with AsyncSessionLocal() as session:
         try:
             yield session
