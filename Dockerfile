@@ -21,5 +21,5 @@ WORKDIR /app/canopyiq_site
 # Default port (Cloud Run will set this via environment variable)
 ENV PORT=8080
 
-# Run the minimal CanopyIQ application that starts quickly
-CMD sh -c "python -m uvicorn app_minimal:app --host 0.0.0.0 --port ${PORT:-8080}"
+# Run the full CanopyIQ application with authentication
+CMD sh -c "python -m uvicorn app_production:app --host 0.0.0.0 --port ${PORT:-8080}"

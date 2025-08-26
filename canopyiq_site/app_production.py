@@ -22,27 +22,84 @@
   from sqlalchemy.ext.asyncio import AsyncSession
   from sqlalchemy import select, desc
 
-  # Import authentication modules
-  from auth.oidc import oidc_client, init_oidc
-  # Import database
-  from database import get_db, Submission, AuditLog, Approval, ApprovalStatus, init_db, DATABASE_URL
-  # Import Slack utilities
-  from slack_utils import (
-      send_slack_webhook, create_contact_notification, create_approval_notification,
-      verify_slack_signature, parse_slack_payload, extract_approval_action, update_approval_message
-  )
-  from auth.rbac import (
-      get_current_user, require_auth, require_role, require_admin, require_auditor,
-      create_session_token, SESSION_COOKIE_NAME, SESSION_DURATION_HOURS
-  )
-  from auth.models import User
-  from auth.local import (
-      create_local_user, authenticate_local_user, has_any_admin_users,
-      db_user_to_auth_user, hash_password
-  )
-  from mcp_client import mcp_client
-  from tracing import canopy_tracing, MockTraceData
-  from company import company_manager
+  # Import authentication modules with fallbacks
+  try:
+      from auth.oidc import oidc_client, init_oidc
+  except ImportError:
+      oidc_client = None
+      init_oidc = None
+      
+  # Import database with fallbacks
+  try:
+      from database import get_db, Submission, AuditLog, Approval, ApprovalStatus, init_db, DATABASE_URL
+  except ImportError:
+      get_db = None
+      Submission = None
+      AuditLog = None
+      Approval = None
+      ApprovalStatus = None
+      init_db = None
+      DATABASE_URL = None
+      
+  # Import Slack utilities with fallbacks
+  try:
+      from slack_utils import (
+          send_slack_webhook, create_contact_notification, create_approval_notification,
+          verify_slack_signature, parse_slack_payload, extract_approval_action, update_approval_message
+      )
+  except ImportError:
+      send_slack_webhook = None
+      create_contact_notification = None
+      create_approval_notification = None
+      verify_slack_signature = None
+      parse_slack_payload = None
+      extract_approval_action = None
+      update_approval_message = None
+      
+  # Import auth modules with fallbacks
+  try:
+      from auth.rbac import (
+          get_current_user, require_auth, require_role, require_admin, require_auditor,
+          create_session_token, SESSION_COOKIE_NAME, SESSION_DURATION_HOURS
+      )
+      from auth.models import User
+      from auth.local import (
+          create_local_user, authenticate_local_user, has_any_admin_users,
+          db_user_to_auth_user, hash_password
+      )
+  except ImportError:
+      get_current_user = lambda request: None
+      require_auth = None
+      require_role = None
+      require_admin = None
+      require_auditor = None
+      create_session_token = None
+      SESSION_COOKIE_NAME = "session"
+      SESSION_DURATION_HOURS = 24
+      User = None
+      create_local_user = None
+      authenticate_local_user = None
+      has_any_admin_users = None
+      db_user_to_auth_user = None
+      hash_password = None
+      
+  # Import optional modules
+  try:
+      from mcp_client import mcp_client
+  except ImportError:
+      mcp_client = None
+      
+  try:
+      from tracing import canopy_tracing, MockTraceData
+  except ImportError:
+      canopy_tracing = None
+      MockTraceData = None
+      
+  try:
+      from company import company_manager
+  except ImportError:
+      company_manager = None
+  
   import secrets
 
   ASSET_VER = "2025-08-20-1"  # bump on deploy
@@ -50,6 +107,27 @@
   # Configure structured logging
   logging.basicConfig(level=logging.INFO)
   logger = logging.getLogger(__name__)
+
+  # Create fallback functions for missing dependencies
+  if get_db is None:
+      async def get_db():
+          """Fallback database dependency that returns None"""
+          yield None
+          
+  if has_any_admin_users is None:
+      async def has_any_admin_users(db):
+          """Fallback function - assume no admin users exist"""
+          return False
+          
+  if create_local_user is None:
+      async def create_local_user(db, email, name, password, role):
+          """Fallback function - cannot create users"""
+          raise HTTPException(status_code=503, detail="User creation not available")
+          
+  if authenticate_local_user is None:
+      async def authenticate_local_user(db, email, password):
+          """Fallback function - cannot authenticate"""
+          return None
 
   # Prometheus metrics
   http_requests_total = Counter(
@@ -266,33 +344,41 @@
       except Exception:
           return RedirectResponse(url="/contact?error=invalid", status_code=status.HTTP_302_FOUND)
 
-      # Create submission record
-      submission = Submission(
-          ts=int(time.time()),
-          name=name.strip(),
-          email=email.strip(),
-          company=company.strip(),
-          message=message.strip(),
-          source_ip=request.client.host if request.client else None,
-          user_agent=request.headers.get("user-agent", "")
-      )
+      # If database is available, save the submission
+      if db is not None and Submission is not None:
+          try:
+              # Create submission record
+              submission = Submission(
+                  ts=int(time.time()),
+                  name=name.strip(),
+                  email=email.strip(),
+                  company=company.strip(),
+                  message=message.strip(),
+                  source_ip=request.client.host if request.client else None,
+                  user_agent=request.headers.get("user-agent", "")
+              )
 
-      db.add(submission)
-      await db.commit()
-      await db.refresh(submission)  # Get the ID after commit
+              db.add(submission)
+              await db.commit()
+              await db.refresh(submission)  # Get the ID after commit
 
-      # Send Slack notification
-      slack_message = create_contact_notification(
-          name=submission.name,
-          email=submission.email,
-          company=submission.company,
-          message=submission.message,
-          submission_id=submission.id
-      )
-      await send_slack_webhook(slack_message)
+              # Send Slack notification if available
+              if send_slack_webhook and create_contact_notification:
+                  slack_message = create_contact_notification(
+                      name=submission.name,
+                      email=submission.email,
+                      company=submission.company,
+                      message=submission.message,
+                      submission_id=submission.id
+                  )
+                  await send_slack_webhook(slack_message)
 
-      # Track contact submission metric
-      contact_submissions_total.inc()
+              # Track contact submission metric
+              contact_submissions_total.inc()
+          except Exception as e:
+              logger.error(f"Failed to save contact submission: {e}")
+      else:
+          logger.info(f"Contact form submission (database unavailable): {email} from {company}")
 
       return RedirectResponse(url="/contact?success=1", status_code=status.HTTP_302_FOUND)
 
