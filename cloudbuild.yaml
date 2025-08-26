@@ -19,5 +19,9 @@ steps:
       '--allow-unauthenticated'
     ]
 
+# Use cloud logging only to avoid the service account issue
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 # Timeout for the entire build
 timeout: 1200s
