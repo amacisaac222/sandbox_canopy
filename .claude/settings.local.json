@@ -38,7 +38,9 @@
       "Bash(git commit:*)",
       "WebFetch(domain:docs.railway.app)",
       "WebFetch(domain:docs.railway.com)",
-      "Bash(git fetch:*)"
+      "Bash(git fetch:*)",
+      "Bash(gcloud logging read:*)",
+      "Bash(gcloud:*)"
     ],
     "deny": [],
     "ask": [],
