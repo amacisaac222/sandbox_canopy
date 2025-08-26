@@ -114,7 +114,7 @@ except ImportError:
 
 import secrets
 
-ASSET_VER = "2025-08-26-3"  # force new deployment - check latest code is active
+ASSET_VER = "2025-08-26-4"  # fix database name canopyiq_db in deployment
 
 # Configure structured logging
 logging.basicConfig(level=logging.INFO)
