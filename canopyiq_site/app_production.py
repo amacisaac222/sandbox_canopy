@@ -999,6 +999,35 @@ async def debug():
       
       return debug_info
 
+@app.get("/debug/admin-users")
+async def debug_admin_users(db: AsyncSession = Depends(get_db)):
+      """Check what admin users exist in the database - REMOVE IN PRODUCTION"""
+      try:
+          from auth.models import User, UserRole
+          from sqlalchemy import select
+          
+          # Query for admin users
+          query = select(User).where(User.role == UserRole.ADMIN)
+          result = await db.execute(query)
+          admin_users = result.scalars().all()
+          
+          return {
+              "admin_count": len(admin_users),
+              "admin_users": [
+                  {
+                      "id": user.id,
+                      "email": user.email,
+                      "name": user.name,
+                      "role": user.role.value,
+                      "created_at": user.created_at.isoformat() if user.created_at else None,
+                      "is_active": user.is_active
+                  }
+                  for user in admin_users
+              ]
+          }
+      except Exception as e:
+          return {"error": str(e), "admin_count": 0}
+
 @app.get("/metrics")
 async def metrics():
       """Prometheus metrics endpoint"""
