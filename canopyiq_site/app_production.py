@@ -102,7 +102,7 @@
   
   import secrets
 
-  ASSET_VER = "2025-08-20-1"  # bump on deploy
+  ASSET_VER = "2025-08-26-1"  # bump on deploy - fixed database resilience
 
   # Configure structured logging
   logging.basicConfig(level=logging.INFO)
