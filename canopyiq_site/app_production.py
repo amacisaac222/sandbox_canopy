@@ -114,7 +114,7 @@ except ImportError:
 
 import secrets
 
-ASSET_VER = "2025-08-26-1"  # bump on deploy - fixed database resilience
+ASSET_VER = "2025-08-26-2"  # bump on deploy - added startup resilience
 
 # Configure structured logging
 logging.basicConfig(level=logging.INFO)
