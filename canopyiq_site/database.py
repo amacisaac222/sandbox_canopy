@@ -209,5 +209,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 # Initialize database tables (for development)
 async def init_db():
     """Create all tables (development only)"""
+    if engine is None:
+        raise Exception("Database engine not available")
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

@@ -252,12 +252,30 @@
   async def startup_event():
       """Initialize services on startup - production safe"""
       logger.info("Starting CanopyIQ application...")
+      
+      # Check database availability
+      if DATABASE_URL:
+          logger.info(f"Database configured: {DATABASE_URL[:50]}...")
+          try:
+              if init_db:
+                  await init_db()
+                  logger.info("✓ Database tables initialized")
+          except Exception as e:
+              logger.warning(f"Database initialization failed (will retry later): {e}")
+      else:
+          logger.warning("No database URL configured")
+          
+      # Check static files
+      if os.path.exists("static"):
+          logger.info("✓ Static files directory found")
+      else:
+          logger.warning("⚠ Static files directory not found")
+          
+      if os.path.exists("templates"):
+          logger.info("✓ Templates directory found") 
+      else:
+          logger.warning("⚠ Templates directory not found")
 
-      # Skip all complex initialization for Railway deployment
-      # Just log what we would do
-      logger.info("Skipping database initialization for production deployment")
-      logger.info("Skipping OIDC initialization for production deployment")
-      logger.info("Skipping tracing initialization for production deployment")
       logger.info("CanopyIQ application startup completed successfully")
 
   # ---------- Helpers ----------
