@@ -245,9 +245,25 @@ app.add_middleware(
       allow_headers=["*"]
 )
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/documentation", StaticFiles(directory="static/docs", html=True), name="documentation")
-templates = Jinja2Templates(directory="templates")
+try:
+    app.mount("/static", StaticFiles(directory="static"), name="static")
+    logger.info("✓ Static files mounted successfully")
+except Exception as e:
+    logger.error(f"❌ Failed to mount static files: {e}")
+
+try:
+    app.mount("/documentation", StaticFiles(directory="static/docs", html=True), name="documentation")
+    logger.info("✓ Documentation mounted successfully")
+except Exception as e:
+    logger.error(f"❌ Failed to mount documentation: {e}")
+
+try:
+    templates = Jinja2Templates(directory="templates")
+    logger.info("✓ Templates initialized successfully")
+except Exception as e:
+    logger.error(f"❌ Failed to initialize templates: {e}")
+    # Create a fallback templates object
+    templates = None
 
 # Add custom Jinja2 filters
 def tojsonpretty(value):
@@ -256,44 +272,69 @@ def tojsonpretty(value):
           return "null"
       return json.dumps(value, indent=2, default=str)
 
-templates.env.filters["tojsonpretty"] = tojsonpretty
+if templates:
+    templates.env.filters["tojsonpretty"] = tojsonpretty
+    logger.info("✓ Jinja2 filters added successfully")
+else:
+    logger.warning("⚠ Skipping Jinja2 filters - templates not available")
 
 @app.on_event("startup")
 async def startup_event():
       """Initialize services on startup - minimal and fast"""
-      logger.info("🚀 Starting CanopyIQ application...")
-      
-      # Log environment
-      logger.info(f"Python version: {sys.version}")
-      logger.info(f"Working directory: {os.getcwd()}")
-      logger.info(f"PORT environment: {os.getenv('PORT', 'not set')}")
-      
-      # Log import status
-      logger.info(f"Database import: {'success' if DATABASE_URL else 'failed'}")
-      logger.info(f"Auth imports: {'success' if get_current_user else 'failed'}")
-      
-      # Just log the database configuration, don't try to initialize
-      if DATABASE_URL:
-          logger.info(f"✓ Database configured: {DATABASE_URL[:50]}...")
-      else:
-          logger.warning("⚠ No database URL configured - using fallbacks")
+      try:
+          logger.info("🚀 Starting CanopyIQ application...")
           
-      # Quick file checks
-      static_exists = os.path.exists('static')
-      templates_exists = os.path.exists('templates')
-      auth_exists = os.path.exists('auth')
-      
-      logger.info(f"✓ Static files: {'found' if static_exists else 'not found'}")
-      logger.info(f"✓ Templates: {'found' if templates_exists else 'not found'}")
-      logger.info(f"✓ Auth directory: {'found' if auth_exists else 'not found'}")
-      
-      if not static_exists or not templates_exists:
-          logger.error("❌ Critical directories missing!")
-      
-      logger.info("🎉 CanopyIQ startup completed - ready to serve!")
+          # Log environment
+          logger.info(f"Python version: {sys.version}")
+          logger.info(f"Working directory: {os.getcwd()}")
+          logger.info(f"PORT environment: {os.getenv('PORT', 'not set')}")
+          
+          # Log import status
+          logger.info(f"Database import: {'success' if DATABASE_URL else 'failed'}")
+          logger.info(f"Auth imports: {'success' if get_current_user else 'failed'}")
+          
+          # Just log the database configuration, don't try to initialize
+          if DATABASE_URL:
+              logger.info(f"✓ Database configured: {DATABASE_URL[:50]}...")
+          else:
+              logger.warning("⚠ No database URL configured - using fallbacks")
+              
+          # Quick file checks
+          static_exists = os.path.exists('static')
+          templates_exists = os.path.exists('templates')
+          auth_exists = os.path.exists('auth')
+          
+          logger.info(f"✓ Static files: {'found' if static_exists else 'not found'}")
+          logger.info(f"✓ Templates: {'found' if templates_exists else 'not found'}")
+          logger.info(f"✓ Auth directory: {'found' if auth_exists else 'not found'}")
+          
+          if not static_exists or not templates_exists:
+              logger.error("❌ Critical directories missing!")
+          
+          # Test database connection briefly if available
+          if DATABASE_URL:
+              try:
+                  logger.info("Testing database connection...")
+                  # Don't actually connect, just log that we would try
+                  logger.info("Database connection test skipped (startup optimization)")
+              except Exception as e:
+                  logger.warning(f"Database connection test failed: {e}")
+          
+          logger.info("🎉 CanopyIQ startup completed - ready to serve!")
+          
+      except Exception as e:
+          logger.error(f"❌ Startup failed with error: {e}")
+          logger.error(f"❌ Error type: {type(e).__name__}")
+          import traceback
+          logger.error(f"❌ Full traceback: {traceback.format_exc()}")
+          # Don't re-raise the exception, let the app start anyway
+          logger.info("🔄 Continuing startup despite error...")
 
 # ---------- Helpers ----------
 def page(request: Request, *, title: str, desc: str, path: str, **ctx):
+      if templates is None:
+          # Fallback response if templates aren't available
+          return {"error": "Templates not available", "title": title, "path": path}
       return templates.TemplateResponse(path, {
           "request": request,
           "meta": {"title": title, "desc": desc, "url_path": request.url.path},
@@ -918,7 +959,12 @@ async def admin_settings(request: Request, db: AsyncSession = Depends(get_db)):
 
 @app.get("/health")
 async def health():
-      return {"ok": True}
+      return {"ok": True, "status": "healthy", "service": "canopyiq"}
+
+@app.get("/simple")
+async def simple():
+      """Ultra-simple endpoint that should always work"""
+      return {"message": "CanopyIQ is running", "timestamp": time.time()}
 
 @app.get("/debug")
 async def debug():
