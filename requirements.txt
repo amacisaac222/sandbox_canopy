@@ -3,6 +3,7 @@ uvicorn[standard]
 jinja2
 python-multipart
 pydantic
+email-validator
 authlib
 python-jose[cryptography]
 passlib[bcrypt]
