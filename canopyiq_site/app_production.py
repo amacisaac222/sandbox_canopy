@@ -8,6 +8,7 @@ import csv
 import time
 import secrets
 import os
+import sys
 import uuid
 import json
 import logging
@@ -262,17 +263,34 @@ async def startup_event():
       """Initialize services on startup - minimal and fast"""
       logger.info("🚀 Starting CanopyIQ application...")
       
+      # Log environment
+      logger.info(f"Python version: {sys.version}")
+      logger.info(f"Working directory: {os.getcwd()}")
+      logger.info(f"PORT environment: {os.getenv('PORT', 'not set')}")
+      
+      # Log import status
+      logger.info(f"Database import: {'success' if DATABASE_URL else 'failed'}")
+      logger.info(f"Auth imports: {'success' if get_current_user else 'failed'}")
+      
       # Just log the database configuration, don't try to initialize
       if DATABASE_URL:
-          logger.info(f"✓ Database configured: postgresql://canopyiq@.../canopyiq_db")
+          logger.info(f"✓ Database configured: {DATABASE_URL[:50]}...")
       else:
-          logger.warning("⚠ No database URL configured")
+          logger.warning("⚠ No database URL configured - using fallbacks")
           
       # Quick file checks
-      logger.info(f"✓ Static files: {'found' if os.path.exists('static') else 'not found'}")
-      logger.info(f"✓ Templates: {'found' if os.path.exists('templates') else 'not found'}")
-
-      logger.info("🎉 CanopyIQ startup completed - authentication ready!")
+      static_exists = os.path.exists('static')
+      templates_exists = os.path.exists('templates')
+      auth_exists = os.path.exists('auth')
+      
+      logger.info(f"✓ Static files: {'found' if static_exists else 'not found'}")
+      logger.info(f"✓ Templates: {'found' if templates_exists else 'not found'}")
+      logger.info(f"✓ Auth directory: {'found' if auth_exists else 'not found'}")
+      
+      if not static_exists or not templates_exists:
+          logger.error("❌ Critical directories missing!")
+      
+      logger.info("🎉 CanopyIQ startup completed - ready to serve!")
 
 # ---------- Helpers ----------
 def page(request: Request, *, title: str, desc: str, path: str, **ctx):
@@ -901,6 +919,39 @@ async def admin_settings(request: Request, db: AsyncSession = Depends(get_db)):
 @app.get("/health")
 async def health():
       return {"ok": True}
+
+@app.get("/debug")
+async def debug():
+      """Diagnostic endpoint to check what's working"""
+      import os
+      import sys
+      
+      debug_info = {
+          "status": "running",
+          "python_version": sys.version,
+          "environment_vars": {
+              "CP_DB_URL": os.getenv("CP_DB_URL", "NOT_SET")[:50] + "..." if os.getenv("CP_DB_URL") else "NOT_SET",
+              "CP_TENANT_SECRET": "SET" if os.getenv("CP_TENANT_SECRET") else "NOT_SET",
+              "CP_PORT": os.getenv("CP_PORT", "NOT_SET"),
+              "PORT": os.getenv("PORT", "NOT_SET"),
+          },
+          "imports": {
+              "database": DATABASE_URL is not None,
+              "auth.rbac": get_current_user is not None,
+              "auth.oidc": oidc_client is not None,
+              "auth.local": authenticate_local_user is not None,
+          },
+          "database_url": DATABASE_URL[:50] + "..." if DATABASE_URL else None,
+          "working_directory": os.getcwd(),
+          "files_exist": {
+              "static": os.path.exists("static"),
+              "templates": os.path.exists("templates"),
+              "auth": os.path.exists("auth"),
+              "database.py": os.path.exists("database.py"),
+          }
+      }
+      
+      return debug_info
 
 @app.get("/metrics")
 async def metrics():
