@@ -821,6 +821,141 @@ async def auth_logout(request: Request):
       response.delete_cookie(SESSION_COOKIE_NAME)
       return response
 
+# ---------- User Registration Routes ----------
+@app.get("/signup", response_class=HTMLResponse)
+async def signup_page(request: Request):
+    """User registration page"""
+    return page(
+        request,
+        title="Sign Up | CanopyIQ",
+        desc="Create your CanopyIQ account to secure your AI agents",
+        path="signup.html"
+    )
+
+@app.post("/signup")
+async def create_account(
+    request: Request,
+    email: str = Form(...),
+    name: str = Form(...),
+    password: str = Form(...),
+    company: str = Form(default=""),
+    db: AsyncSession = Depends(get_db)
+):
+    """Create new user account"""
+    
+    # Validate input
+    if not email or "@" not in email:
+        return page(
+            request,
+            title="Sign Up | CanopyIQ",
+            desc="Create your CanopyIQ account",
+            path="signup.html",
+            error="Please enter a valid email address"
+        )
+    
+    if len(password) < 8:
+        return page(
+            request,
+            title="Sign Up | CanopyIQ", 
+            desc="Create your CanopyIQ account",
+            path="signup.html",
+            error="Password must be at least 8 characters"
+        )
+    
+    # Check if user already exists
+    result = await db.execute(select(User).where(User.email == email.lower()))
+    existing_user = result.scalar_one_or_none()
+    
+    if existing_user:
+        return page(
+            request,
+            title="Sign Up | CanopyIQ",
+            desc="Create your CanopyIQ account", 
+            path="signup.html",
+            error="An account with this email already exists. Please sign in instead."
+        )
+    
+    # Hash password
+    password_hash = hash_password(password)
+    
+    # Create new user
+    new_user = User(
+        email=email.lower(),
+        name=name,
+        password_hash=password_hash,
+        auth_provider="local",
+        role=UserRole.USER,  # Regular user, not admin
+        is_active="true"
+    )
+    
+    db.add(new_user)
+    await db.commit()
+    await db.refresh(new_user)
+    
+    # Convert to auth user and create session
+    auth_user = db_user_to_auth_user(new_user)
+    session_token = create_session_token(auth_user)
+    
+    # Redirect to user dashboard with session
+    response = RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
+    response.set_cookie(
+        key=SESSION_COOKIE_NAME,
+        value=session_token,
+        max_age=SESSION_DURATION_HOURS * 3600,
+        httponly=True,
+        secure=True,
+        samesite="lax"
+    )
+    
+    return response
+
+@app.get("/dashboard", response_class=HTMLResponse) 
+async def user_dashboard(request: Request, user: AuthUser = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    """User dashboard - personal MCP config and activity"""
+    
+    # Redirect to login if not authenticated
+    if not user:
+        return RedirectResponse(url="/auth/login", status_code=status.HTTP_302_FOUND)
+    
+    # Generate user's personal API key
+    user_api_key = f"ciq_user_{user.id}_{secrets.token_hex(12)}"
+    
+    # Get user's MCP activity (mock for now)
+    mcp_activity = [
+        {
+            "timestamp": "2025-01-27 10:30:45",
+            "action": "Tool call logged",
+            "tool": "file_write",
+            "status": "approved"
+        },
+        {
+            "timestamp": "2025-01-27 10:28:12", 
+            "action": "Policy check",
+            "tool": "bash_execute",
+            "status": "denied"
+        }
+    ]
+    
+    dashboard_data = {
+        "user": user,
+        "api_key": user_api_key,
+        "mcp_activity": mcp_activity,
+        "stats": {
+            "total_calls": 47,
+            "approved_calls": 42,
+            "denied_calls": 5,
+            "uptime": "99.8%"
+        }
+    }
+    
+    return page(
+        request,
+        title=f"Dashboard | {user.name} | CanopyIQ",
+        desc="Your personal CanopyIQ dashboard and MCP configuration",
+        path="dashboard.html",
+        **dashboard_data
+    )
+
 # ---------- Admin Routes (Protected) ----------
 @app.get("/admin/contacts", response_class=HTMLResponse)
 async def admin_contacts(request: Request, db: AsyncSession = Depends(get_db)):
@@ -1019,6 +1154,29 @@ async def admin_settings(request: Request, db: AsyncSession = Depends(get_db)):
           desc="Configure your CanopyIQ system.",
           path="admin_settings.html",
           settings=settings
+      )
+
+@app.get("/admin/mcp", response_class=HTMLResponse)
+async def admin_mcp(request: Request, db: AsyncSession = Depends(get_db)):
+      """MCP Server configuration page"""
+      # Generate or get API key for this user/admin
+      api_key = "ciq_demo_" + secrets.token_hex(16)
+      
+      mcp_config = {
+          "api_key": api_key,
+          "server_status": "Available",
+          "npm_package": "canopyiq-mcp-server",
+          "version": "1.0.0",
+          "claude_config_path_mac": "~/Library/Application Support/Claude/claude_desktop_config.json",
+          "claude_config_path_windows": "%APPDATA%\\Claude\\claude_desktop_config.json"
+      }
+
+      return page(
+          request,
+          title="MCP Server | Admin | CanopyIQ",
+          desc="Configure CanopyIQ MCP server for Claude Desktop integration.",
+          path="admin_mcp.html",
+          mcp_config=mcp_config
       )
 
 @app.get("/health")

@@ -105,6 +105,109 @@
   </div>
 </section>
 
+<!-- MCP Integration Spotlight -->
+<section class="max-w-7xl mx-auto px-4 py-20 bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-2xl border border-blue-500/30">
+  <div class="text-center mb-12">
+    <div class="inline-flex items-center gap-3 bg-blue-500/10 border border-blue-500/30 rounded-full px-6 py-2 mb-6">
+      <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+      </svg>
+      <span class="text-blue-400 font-bold text-sm uppercase tracking-wide">Model Control Protocol Ready</span>
+    </div>
+    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Claude Desktop <span class="text-blue-400">Security Layer</span></h2>
+    <p class="text-xl text-navy-300 font-bold mb-8 max-w-3xl mx-auto">
+      Already using Claude Desktop? Add CanopyIQ as an MCP server to instantly secure all tool usage with human approvals.
+    </p>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-12 items-center">
+    <div>
+      <h3 class="text-2xl font-black text-white mb-6">30-Second MCP Setup</h3>
+      <div class="space-y-4">
+        <div class="flex items-start gap-4">
+          <div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+          <div>
+            <p class="text-white font-semibold">Add to your Claude Desktop config:</p>
+            <div class="bg-navy-800 rounded-lg p-4 mt-2 font-mono text-sm overflow-x-auto">
+              <div class="text-navy-400 mb-2"># ~/.claude_desktop_config.json</div>
+              <div class="text-white">{</div>
+              <div class="text-white ml-2">"mcpServers": {</div>
+              <div class="text-white ml-4">"canopy": {</div>
+              <div class="text-white ml-6">"command": "npx",</div>
+              <div class="text-white ml-6">"args": ["@canopyiq/mcp-server"]</div>
+              <div class="text-white ml-4">}</div>
+              <div class="text-white ml-2">}</div>
+              <div class="text-white">}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4">
+          <div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+          <div>
+            <p class="text-white font-semibold">Restart Claude Desktop</p>
+            <p class="text-navy-300 text-sm font-semibold mt-1">CanopyIQ will appear in your available tools</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4">
+          <div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+          <div>
+            <p class="text-white font-semibold">Claude's tools now require approval</p>
+            <p class="text-navy-300 text-sm font-semibold mt-1">Get Slack notifications for risky operations</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8">
+        <a href="/documentation/mcp-setup" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition font-bold mr-4">
+          📚 MCP Setup Guide
+        </a>
+        <a href="https://github.com/canopyiq/mcp-server" class="border border-blue-500 text-blue-400 px-6 py-3 rounded-lg hover:bg-blue-500 hover:text-white transition font-bold">
+          📦 MCP Server Repo
+        </a>
+      </div>
+    </div>
+
+    <div class="bg-navy-800 rounded-lg border border-blue-500/30 p-6">
+      <h4 class="text-xl font-black text-white mb-4">What You Get</h4>
+      <div class="space-y-4">
+        <div class="flex items-center gap-3 p-3 bg-blue-500/10 rounded">
+          <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="text-white font-semibold">All Claude tool usage logged & monitored</span>
+        </div>
+        
+        <div class="flex items-center gap-3 p-3 bg-blue-500/10 rounded">
+          <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+          <span class="text-white font-semibold">Human approval for risky operations</span>
+        </div>
+        
+        <div class="flex items-center gap-3 p-3 bg-blue-500/10 rounded">
+          <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z"></path>
+          </svg>
+          <span class="text-white font-semibold">Slack notifications with approve/deny buttons</span>
+        </div>
+
+        <div class="flex items-center gap-3 p-3 bg-blue-500/10 rounded">
+          <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+          <span class="text-white font-semibold">Real-time dashboard with tool usage analytics</span>
+        </div>
+      </div>
+
+      <div class="mt-6 p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
+        <p class="text-green-400 font-bold text-sm">✨ Perfect for Claude Desktop power users who want to add safety guardrails</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Quick Start Integration -->
 <section class="max-w-7xl mx-auto px-4 py-20" id="quick-start">
   <div class="text-center mb-16">
@@ -281,7 +384,7 @@
     <a href="/admin/console" class="bg-coral-500 text-white px-8 py-4 rounded-lg hover:bg-coral-600 transition font-bold text-lg mr-4">
       🎮 Launch Full Console
     </a>
-    <a href="/contact" class="border border-coral-500 text-coral-500 px-8 py-4 rounded-lg hover:bg-coral-500 hover:text-white transition font-bold">
+    <a href="/signup" class="border border-coral-500 text-coral-500 px-8 py-4 rounded-lg hover:bg-coral-500 hover:text-white transition font-bold">
       Get Your API Key
     </a>
   </div>
@@ -322,8 +425,8 @@
       Get early access, influence the roadmap, and help make AI agents safer for everyone. Plus, you'll be grandfathered into our best pricing when we launch commercially.
     </p>
     <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-      <a href="/contact" class="w-full sm:w-auto bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600 transition font-bold">
-        Request Beta Access
+      <a href="/signup" class="w-full sm:w-auto bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600 transition font-bold">
+        Create Free Account
       </a>
       <a href="/documentation" class="w-full sm:w-auto border border-coral-500 text-coral-500 px-6 py-3 rounded-lg hover:bg-coral-500 hover:text-white transition font-bold">
         Read Documentation
@@ -442,12 +545,96 @@ document.addEventListener('DOMContentLoaded', () => {
       Join hundreds of developers who are making AI agents safer and more reliable.
     </p>
     <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-      <a href="/contact" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-white text-coral-600 px-8 py-4 hover:bg-coral-50 transition font-black text-lg">
+      <a href="/signup" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-white text-coral-600 px-8 py-4 hover:bg-coral-50 transition font-black text-lg">
         🚀 Get Started Free
       </a>
       <a href="/documentation" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-white text-white px-8 py-4 hover:bg-white hover:text-coral-600 transition font-bold text-lg">
         📚 View Docs
       </a>
+    </div>
+  </div>
+</section>
+
+<!-- MCP Integration Spotlight -->
+<section class="max-w-7xl mx-auto px-4 py-20 bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-2xl border border-blue-500/30 mb-20">
+  <div class="text-center mb-12">
+    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">
+      Claude Desktop <span class="text-blue-400">Security Layer</span>
+    </h2>
+    <p class="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
+      Instantly secure your Claude Desktop tools with our MCP server. 30-second setup, zero code changes.
+    </p>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-12 items-center">
+    <!-- Setup Steps -->
+    <div class="space-y-6">
+      <div class="flex items-start gap-4">
+        <div class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">1</div>
+        <div>
+          <h3 class="text-white font-bold text-lg mb-2">Install CanopyIQ MCP Server</h3>
+          <div class="bg-navy-900 rounded-lg p-4 font-mono text-sm text-green-400">
+            npm install -g canopyiq-mcp-server
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-4">
+        <div class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">2</div>
+        <div>
+          <h3 class="text-white font-bold text-lg mb-2">Add to Claude Desktop Config</h3>
+          <div class="bg-navy-900 rounded-lg p-4 font-mono text-xs text-green-400">
+{
+  "mcpServers": {
+    "canopyiq": {
+      "command": "canopyiq-mcp-server",
+      "args": ["--api-key", "your-canopyiq-key"]
+    }
+  }
+}
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-4">
+        <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">✓</div>
+        <div>
+          <h3 class="text-white font-bold text-lg mb-2">Secured in 30 seconds</h3>
+          <p class="text-blue-200">All your Claude Desktop tool usage now logs to CanopyIQ with approval workflows.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Benefits -->
+    <div class="bg-white/10 backdrop-blur rounded-xl p-8 border border-white/20">
+      <h3 class="text-white font-bold text-xl mb-6">🛡️ Instant Protection</h3>
+      <div class="space-y-4 text-blue-100">
+        <div class="flex items-center gap-3">
+          <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+          <span>Log every tool call with context</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+          <span>Require human approval for risky actions</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+          <span>Slack/email notifications on policy violations</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+          <span>Rate limiting and usage quotas</span>
+        </div>
+      </div>
+
+      <div class="mt-8 pt-6 border-t border-white/20">
+        <a href="/signup" class="inline-flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition font-bold">
+          🔑 Get Your API Key
+        </a>
+        <a href="/documentation" class="ml-4 text-blue-300 hover:text-blue-200 transition font-semibold">
+          📖 Setup Guide →
+        </a>
+      </div>
     </div>
   </div>
 </section>

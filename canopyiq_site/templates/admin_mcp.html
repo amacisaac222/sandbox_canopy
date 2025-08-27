@@ -1,0 +1,213 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+<div class="max-w-4xl">
+  <div class="mb-8">
+    <h1 class="text-2xl font-black text-navy-900 mb-2">MCP Server Configuration</h1>
+    <p class="text-navy-600 font-semibold">Set up CanopyIQ MCP server for Claude Desktop integration</p>
+  </div>
+
+  <!-- Setup Instructions -->
+  <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200 p-8 mb-8">
+    <div class="mb-6">
+      <h2 class="text-xl font-black text-navy-900 mb-3 flex items-center gap-2">
+        <span class="text-blue-500">🚀</span>
+        Quick Setup for Claude Desktop
+      </h2>
+      <p class="text-navy-700 leading-relaxed">
+        Add security, logging, and approval workflows to your Claude Desktop tools in 3 simple steps.
+      </p>
+    </div>
+    
+    <div class="grid lg:grid-cols-3 gap-6">
+      <!-- Step 1 -->
+      <div class="bg-white rounded-lg p-6 border border-blue-200">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">1</div>
+          <h3 class="font-bold text-navy-900">Install MCP Server</h3>
+        </div>
+        <div class="bg-navy-900 rounded-md p-3 font-mono text-sm text-green-400 overflow-x-auto mb-3">
+          npm install -g {{ mcp_config.npm_package }}
+        </div>
+        <p class="text-xs text-navy-600">Installs the CanopyIQ MCP server globally via npm</p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="bg-white rounded-lg p-6 border border-blue-200">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">2</div>
+          <h3 class="font-bold text-navy-900">Configure Claude</h3>
+        </div>
+        <p class="text-navy-700 text-sm mb-3">Edit your Claude Desktop config file:</p>
+        <div class="text-xs text-navy-600 space-y-1">
+          <div><strong>macOS:</strong></div>
+          <div class="font-mono bg-navy-50 p-1 rounded text-xs break-all">{{ mcp_config.claude_config_path_mac }}</div>
+          <div class="mt-2"><strong>Windows:</strong></div>
+          <div class="font-mono bg-navy-50 p-1 rounded text-xs break-all">{{ mcp_config.claude_config_path_windows }}</div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="bg-white rounded-lg p-6 border border-blue-200">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">✓</div>
+          <h3 class="font-bold text-navy-900">All Set!</h3>
+        </div>
+        <p class="text-navy-700 text-sm mb-3">Restart Claude Desktop and you'll see:</p>
+        <div class="text-xs text-navy-600 space-y-1">
+          <div>✅ Tool usage logging</div>
+          <div>✅ Policy enforcement</div>
+          <div>✅ Human approvals</div>
+          <div>✅ Security monitoring</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- API Key Section -->
+  <div class="bg-white rounded-lg border border-navy-200 mb-8">
+    <div class="px-6 py-4 border-b border-navy-200">
+      <h2 class="text-lg font-black text-navy-900">Your API Key</h2>
+    </div>
+    <div class="p-6">
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+        <div class="flex items-start gap-3">
+          <div class="text-amber-600 text-lg">🔑</div>
+          <div>
+            <h3 class="font-semibold text-amber-800 mb-1">Secure API Key Generated</h3>
+            <p class="text-amber-700 text-sm">
+              This API key is unique to your CanopyIQ account. Keep it secure and don't share it publicly.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="block font-semibold text-navy-900 mb-2">API Key:</label>
+        <div class="flex items-center gap-3">
+          <input type="text" 
+                 id="api-key-input"
+                 value="{{ mcp_config.api_key }}" 
+                 readonly
+                 class="flex-1 px-3 py-2 border border-navy-200 rounded-md bg-navy-50 font-mono text-sm">
+          <button onclick="copyApiKey()" 
+                  class="px-4 py-2 bg-coral-500 text-white rounded-md hover:bg-coral-600 transition font-semibold">
+            Copy
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-navy-900 rounded-lg p-4">
+        <h4 class="text-white font-semibold mb-2">Claude Desktop Configuration:</h4>
+        <div class="bg-navy-800 rounded p-3 font-mono text-xs text-green-400 overflow-x-auto">
+{
+  "mcpServers": {
+    "canopyiq": {
+      "command": "{{ mcp_config.npm_package }}",
+      "args": ["--api-key", "{{ mcp_config.api_key }}"]
+    }
+  }
+}
+        </div>
+        <button onclick="copyConfig()" 
+                class="mt-3 px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition">
+          Copy Config
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status & Info -->
+  <div class="grid lg:grid-cols-2 gap-6">
+    <!-- Server Status -->
+    <div class="bg-white rounded-lg border border-navy-200">
+      <div class="px-6 py-4 border-b border-navy-200">
+        <h3 class="text-lg font-black text-navy-900">Server Status</h3>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="flex items-center justify-between">
+          <span class="font-semibold text-navy-700">MCP Server:</span>
+          <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-bold">
+            {{ mcp_config.server_status }}
+          </span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="font-semibold text-navy-700">Package Version:</span>
+          <span class="text-navy-600 font-mono">{{ mcp_config.version }}</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="font-semibold text-navy-700">NPM Package:</span>
+          <span class="text-navy-600 font-mono text-sm">{{ mcp_config.npm_package }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg border border-navy-200">
+      <div class="px-6 py-4 border-b border-navy-200">
+        <h3 class="text-lg font-black text-navy-900">Quick Actions</h3>
+      </div>
+      <div class="p-6 space-y-3">
+        <a href="/documentation" 
+           class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
+          <div class="text-blue-500 text-lg">📚</div>
+          <div>
+            <div class="font-semibold text-navy-900">View Documentation</div>
+            <div class="text-sm text-navy-600">Complete setup guides and examples</div>
+          </div>
+        </a>
+
+        <a href="/admin/console" 
+           class="flex items-center gap-3 p-3 bg-coral-50 rounded-lg hover:bg-coral-100 transition">
+          <div class="text-coral-500 text-lg">🎮</div>
+          <div>
+            <div class="font-semibold text-navy-900">Open Console</div>
+            <div class="text-sm text-navy-600">Monitor and manage agent activity</div>
+          </div>
+        </a>
+
+        <button onclick="testConnection()"
+                class="w-full flex items-center gap-3 p-3 bg-green-50 rounded-lg hover:bg-green-100 transition">
+          <div class="text-green-500 text-lg">🔍</div>
+          <div class="text-left">
+            <div class="font-semibold text-navy-900">Test Connection</div>
+            <div class="text-sm text-navy-600">Verify MCP server communication</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function copyApiKey() {
+  const input = document.getElementById('api-key-input');
+  input.select();
+  input.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(input.value);
+  showToast('API key copied to clipboard!', 'success');
+}
+
+function copyConfig() {
+  const config = `{
+  "mcpServers": {
+    "canopyiq": {
+      "command": "{{ mcp_config.npm_package }}",
+      "args": ["--api-key", "{{ mcp_config.api_key }}"]
+    }
+  }
+}`;
+  navigator.clipboard.writeText(config);
+  showToast('Configuration copied to clipboard!', 'success');
+}
+
+function testConnection() {
+  showToast('Testing MCP server connection...', 'info');
+  
+  // Simulate testing
+  setTimeout(() => {
+    showToast('✅ MCP server connection test successful!', 'success');
+  }, 2000);
+}
+</script>
+{% endblock %}

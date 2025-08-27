@@ -106,8 +106,9 @@
           <!-- Authenticated user menu -->
           <div class="flex items-center gap-3 ml-2 pl-2 border-l border-navy-700">
             <span class="text-navy-300 text-xs font-semibold">{{ user.name }}</span>
+            <a href="/dashboard" class="text-coral-500 hover:text-coral-400 transition-colors text-xs font-bold" title="Your Dashboard">Dashboard</a>
             {% if user.is_admin() %}
-              <a href="/admin" class="text-coral-500 hover:text-coral-400 transition-colors text-xs font-bold" title="Admin Dashboard">Admin</a>
+              <a href="/admin" class="text-blue-400 hover:text-blue-300 transition-colors text-xs font-bold" title="Admin Panel">Admin</a>
             {% endif %}
             <a href="/auth/logout" class="inline-flex items-center rounded border border-navy-700 text-navy-200 px-3 py-1.5 hover:bg-navy-800 hover:text-white transition text-xs font-semibold">Sign Out</a>
           </div>
@@ -115,7 +116,7 @@
           <!-- Unauthenticated menu -->
           <div class="flex items-center gap-3 ml-2">
             <a href="/auth/login" class="inline-flex items-center rounded border border-navy-700 text-navy-200 px-3 py-1.5 hover:bg-navy-800 hover:text-white transition text-xs font-semibold">Sign In</a>
-            <a href="/contact" class="inline-flex items-center rounded bg-gradient-coral text-white px-4 py-2 hover:opacity-90 transition font-bold text-xs">Book Demo</a>
+            <a href="/signup" class="inline-flex items-center rounded bg-gradient-coral text-white px-4 py-2 hover:opacity-90 transition font-bold text-xs">Sign Up</a>
           </div>
         {% endif %}
       </nav>
@@ -137,8 +138,9 @@
           <!-- Authenticated mobile menu -->
           <div class="pt-2 border-t border-navy-800 flex flex-col gap-3">
             <div class="text-navy-300 text-xs font-semibold">Signed in as {{ user.name }}</div>
+            <a class="text-coral-500 hover:text-coral-400 transition-colors font-bold" href="/dashboard">Your Dashboard</a>
             {% if user.is_admin() %}
-              <a class="text-coral-500 hover:text-coral-400 transition-colors font-bold" href="/admin">Admin Dashboard</a>
+              <a class="text-blue-400 hover:text-blue-300 transition-colors font-bold" href="/admin">Admin Panel</a>
             {% endif %}
             <a href="/auth/logout" class="inline-flex items-center rounded border border-navy-700 text-navy-200 px-3 py-2 w-max hover:bg-navy-800 hover:text-white transition text-xs font-semibold">Sign Out</a>
           </div>
@@ -146,7 +148,7 @@
           <!-- Unauthenticated mobile menu -->
           <div class="pt-2 border-t border-navy-800 flex flex-col gap-3">
             <a href="/auth/login" class="inline-flex items-center rounded border border-navy-700 text-navy-200 px-3 py-2 w-max hover:bg-navy-800 hover:text-white transition text-xs font-semibold">Sign In</a>
-            <a href="/contact" class="inline-flex items-center rounded bg-gradient-coral text-white px-4 py-2 w-max hover:opacity-90 transition font-bold">Book Demo</a>
+            <a href="/signup" class="inline-flex items-center rounded bg-gradient-coral text-white px-4 py-2 w-max hover:opacity-90 transition font-bold">Sign Up</a>
           </div>
         {% endif %}
       </div>
