@@ -32,7 +32,7 @@ except ImportError:
       
 # Import database with fallbacks
 try:
-      from database import get_db, Submission, AuditLog, Approval, ApprovalStatus, init_db, DATABASE_URL
+      from database import get_db, Submission, AuditLog, Approval, ApprovalStatus, init_db, DATABASE_URL, User, UserRole
 except ImportError:
       get_db = None
       Submission = None
@@ -884,7 +884,7 @@ async def create_account(
         name=name,
         password_hash=password_hash,
         auth_provider="local",
-        role=UserRole.USER,  # Regular user, not admin
+        role=UserRole.VIEWER,  # Regular user, not admin
         is_active="true"
     )
     

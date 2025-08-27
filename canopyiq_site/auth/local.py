@@ -95,6 +95,6 @@ def db_user_to_auth_user(db_user: User) -> AuthUser:
         roles=roles,
         groups=[],  # TODO: Implement groups for local users
         created_at=db_user.created_at,
-        last_login=db_user.last_login,
+        last_login=db_user.last_login or db_user.created_at,
         is_active=db_user.is_active == "true"
     )
