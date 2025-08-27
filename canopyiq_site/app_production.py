@@ -1689,21 +1689,13 @@ async def documentation_redirect():
 
 @app.get("/documentation/", response_class=HTMLResponse)
 async def documentation_index(request: Request):
-      """Serve documentation index with custom navigation"""
-      from pathlib import Path
-      
-      docs_path = Path("static/docs/index.html")
-      if docs_path.exists():
-          with open(docs_path, 'r', encoding='utf-8') as f:
-              html_content = f.read()
-          
-          # Inject custom navigation script before closing body tag
-          nav_script = '''<script src="/documentation/canopy-nav.js"></script>'''
-          html_content = html_content.replace('</body>', nav_script + '\n</body>')
-          
-          return HTMLResponse(content=html_content)
-      
-      return HTMLResponse("<h1>Documentation not found</h1>", status_code=404)
+      """Serve documentation with MCP quick-start guide"""
+      return page(
+          request,
+          title="Documentation | CanopyIQ",
+          desc="Complete CanopyIQ setup guides and API documentation", 
+          path="docs.html"
+      )
 
 @app.get("/admin-simple", response_class=HTMLResponse)
 async def admin_simple():
