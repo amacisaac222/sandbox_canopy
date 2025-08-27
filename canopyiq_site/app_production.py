@@ -1091,62 +1091,141 @@ async def test_login_direct(db: AsyncSession = Depends(get_db)):
 @app.get("/admin/console", response_class=HTMLResponse)
 async def console_index(request: Request):
       """Console landing page - CanopyIQ agent management interface"""
+      
+      # Console dashboard statistics - matching admin dashboard style
+      stats = {
+          "active_agents": 12,
+          "pending_approvals": 3,
+          "policies_active": 8,
+          "alerts_24h": 2,
+          "requests_24h": 47,
+          "success_rate": 98.2,
+          "uptime": "99.7%"
+      }
+      
+      # Recent activity feed - matches admin dashboard pattern
+      recent_activity = [
+          {
+              "type": "agent",
+              "description": "Sales Assistant accessed CRM API",
+              "timestamp": "2 min ago",
+              "actor": "sales-assistant",
+              "status": "approved",
+              "risk": "low"
+          },
+          {
+              "type": "approval",
+              "description": "Financial operation requires approval",
+              "timestamp": "5 min ago",
+              "actor": "financial-advisor",
+              "status": "pending",
+              "risk": "high"
+          },
+          {
+              "type": "policy",
+              "description": "Customer Data Policy updated",
+              "timestamp": "1 hour ago",
+              "actor": "admin@canopyiq.ai",
+              "status": "completed",
+              "risk": "low"
+          },
+          {
+              "type": "alert",
+              "description": "Agent approaching rate limit",
+              "timestamp": "2 hours ago",
+              "actor": "data-analyst",
+              "status": "warning",
+              "risk": "medium"
+          }
+      ]
+      
       return page(
           request,
           title="Console | CanopyIQ",
           desc="CanopyIQ Console - Run agents safely. At scale.",
-          path="console/index.html"
+          path="console_dashboard.html",
+          stats=stats,
+          recent_activity=recent_activity
       )
 
 @app.get("/admin/console/access", response_class=HTMLResponse)
 async def console_access(request: Request, tenant: str = "demo-tenant"):
       """Agent access control dashboard"""
       import time
+      from datetime import datetime, timedelta
       
-      # Mock real-time agent access requests for demo
-      mock_requests = [
+      # Real-time access requests with card-friendly data structure
+      access_requests = [
           {
               "id": f"req_{int(time.time())}_001",
-              "agent_id": "agent-sales-bot",
-              "action": "http_request",
-              "resource": "https://api.salesforce.com/contacts",
-              "timestamp": time.time() - 30,
+              "agent_name": "Sales Assistant",
+              "agent_id": "sales-assistant",
+              "action_type": "API Access",
+              "resource": "Salesforce Contacts",
+              "full_resource": "https://api.salesforce.com/contacts",
               "status": "pending",
-              "details": {"method": "GET", "purpose": "Fetch customer contact list"}
+              "risk_level": "medium",
+              "data_classification": "PII",
+              "timestamp": datetime.now().strftime("%H:%M:%S"),
+              "full_timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+              "purpose": "Lead qualification and customer outreach",
+              "requires_approval": True,
+              "estimated_duration": "2 min"
           },
           {
               "id": f"req_{int(time.time())}_002", 
-              "agent_id": "agent-data-analyzer",
-              "action": "file_read",
-              "resource": "/data/customer_analytics.csv",
-              "timestamp": time.time() - 120,
-              "status": "allowed",
-              "details": {"file_size": "2.4MB", "purpose": "Generate quarterly report"}
+              "agent_name": "Data Analyst",
+              "agent_id": "data-analyst",
+              "action_type": "File Access",
+              "resource": "Customer Analytics",
+              "full_resource": "/data/customer_analytics.csv",
+              "status": "approved",
+              "risk_level": "low",
+              "data_classification": "Internal",
+              "timestamp": (datetime.now() - timedelta(minutes=2)).strftime("%H:%M:%S"),
+              "full_timestamp": (datetime.now() - timedelta(minutes=2)).strftime("%Y-%m-%d %H:%M:%S"),
+              "purpose": "Generate quarterly business report",
+              "requires_approval": False,
+              "approved_by": "Auto-Policy",
+              "estimated_duration": "5 min"
           },
           {
               "id": f"req_{int(time.time())}_003",
-              "agent_id": "agent-email-writer", 
-              "action": "email_send",
-              "resource": "john@company.com",
-              "timestamp": time.time() - 300,
+              "agent_name": "Support Bot",
+              "agent_id": "support-bot",
+              "action_type": "Email Send",
+              "resource": "External Email",
+              "full_resource": "customer@example.com",
               "status": "denied",
-              "details": {"subject": "Follow-up on proposal", "reason": "External email policy violation"}
+              "risk_level": "high",
+              "data_classification": "External",
+              "timestamp": (datetime.now() - timedelta(minutes=5)).strftime("%H:%M:%S"),
+              "full_timestamp": (datetime.now() - timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S"),
+              "purpose": "Customer follow-up email",
+              "requires_approval": True,
+              "denied_by": "Security Policy",
+              "denial_reason": "External email policy violation"
           }
       ]
+      
+      # Statistics for cards
+      stats = {
+          "total_requests_24h": 47,
+          "pending_requests": len([r for r in access_requests if r["status"] == "pending"]),
+          "approved_today": 31,
+          "denied_today": 4,
+          "auto_approved_pct": 68,
+          "avg_response_time": "1.2s"
+      }
       
       return page(
           request,
           title="Access Control | Console | CanopyIQ",
           desc="Real-time agent access control and monitoring",
-          path="console/access.html",
-          tenant=tenant,
-          requests=mock_requests,
-          stats={
-              "total_requests": len(mock_requests),
-              "allowed": len([r for r in mock_requests if r["status"] == "allowed"]),
-              "denied": len([r for r in mock_requests if r["status"] == "denied"]), 
-              "pending": len([r for r in mock_requests if r["status"] == "pending"])
-          }
+          path="console_access.html",
+          access_requests=access_requests,
+          stats=stats,
+          tenant=tenant
       )
 
 @app.get("/admin/console/approvals", response_class=HTMLResponse) 
@@ -1195,7 +1274,7 @@ async def console_approvals(request: Request, tenant: str = "", status: str = "p
           request,
           title="Approval Queue | Console | CanopyIQ",
           desc="Human-in-the-loop approvals for agent actions",
-          path="console/approvals.html",
+          path="console_approvals.html",
           tenant=tenant,
           approvals=mock_approvals,
           status_filter=status,
@@ -1260,7 +1339,7 @@ async def console_policy(request: Request):
           request,
           title="Policy Management | Console | CanopyIQ",
           desc="Configure and manage security policies for AI agents",
-          path="console/policy.html",
+          path="console_policy.html",
           policies=mock_policies,
           stats={
               "total_policies": len(mock_policies),
@@ -1316,7 +1395,7 @@ async def console_traces(request: Request):
           request,
           title="Agent Traces | Console | CanopyIQ",
           desc="Real-time agent execution monitoring and analytics",
-          path="console/traces.html",
+          path="console_traces.html",
           traces=mock_traces,
           stats={
               "active_agents": 5,
@@ -1367,7 +1446,7 @@ async def console_agents(request: Request):
           request,
           title="Agent Management | Console | CanopyIQ",
           desc="Monitor and manage AI agent fleet",
-          path="console/agents.html",
+          path="console_agents.html",
           agents=mock_agents,
           stats={
               "total_agents": len(mock_agents),

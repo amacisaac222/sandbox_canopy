@@ -40,7 +40,8 @@
       "WebFetch(domain:docs.railway.com)",
       "Bash(git fetch:*)",
       "Bash(gcloud logging read:*)",
-      "Bash(gcloud:*)"
+      "Bash(gcloud:*)",
+      "WebFetch(domain:canopyiq.ai)"
     ],
     "deny": [],
     "ask": [],

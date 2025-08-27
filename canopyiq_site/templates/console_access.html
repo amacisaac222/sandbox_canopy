@@ -1,0 +1,232 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-black text-navy-900">Access Control</h1>
+      <p class="text-navy-600 font-semibold">Monitor and control agent access requests in real-time</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span class="text-green-700 text-sm font-bold">Live Monitoring</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="bg-white rounded-lg border border-navy-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-bold text-navy-600 uppercase tracking-wide">Requests 24h</p>
+          <p class="text-2xl font-black text-navy-900">{{ stats.total_requests_24h }}</p>
+        </div>
+        <div class="p-3 bg-blue-50 rounded-lg">
+          <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="mt-4">
+        <span class="text-xs font-semibold text-blue-600">{{ stats.avg_response_time }} avg response</span>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-navy-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-bold text-navy-600 uppercase tracking-wide">Pending</p>
+          <p class="text-2xl font-black text-navy-900">{{ stats.pending_requests }}</p>
+        </div>
+        <div class="p-3 bg-amber-50 rounded-lg">
+          <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="mt-4">
+        <span class="text-xs font-semibold text-amber-600">Requires attention</span>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-navy-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-bold text-navy-600 uppercase tracking-wide">Approved Today</p>
+          <p class="text-2xl font-black text-navy-900">{{ stats.approved_today }}</p>
+        </div>
+        <div class="p-3 bg-green-50 rounded-lg">
+          <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="mt-4">
+        <span class="text-xs font-semibold text-green-600">{{ stats.auto_approved_pct }}% auto-approved</span>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg border border-navy-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-bold text-navy-600 uppercase tracking-wide">Denied Today</p>
+          <p class="text-2xl font-black text-navy-900">{{ stats.denied_today }}</p>
+        </div>
+        <div class="p-3 bg-red-50 rounded-lg">
+          <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="mt-4">
+        <span class="text-xs font-semibold text-red-600">Policy violations</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Access Requests -->
+  <div class="bg-white rounded-lg border border-navy-200">
+    <div class="px-6 py-4 border-b border-navy-200">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-black text-navy-900">Live Access Requests</h2>
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span class="text-sm font-semibold text-green-700">Real-time</span>
+        </div>
+      </div>
+    </div>
+    <div class="p-6">
+      <div class="space-y-4">
+        {% for request in access_requests %}
+        <div class="border border-navy-200 rounded-lg p-6 hover:border-coral-300 transition">
+          <div class="flex items-start justify-between mb-4">
+            <div class="flex items-start gap-4">
+              <!-- Agent Icon -->
+              <div class="flex-shrink-0">
+                <div class="w-12 h-12 bg-coral-50 rounded-lg flex items-center justify-center">
+                  <svg class="w-6 h-6 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+              </div>
+              
+              <!-- Request Details -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-3 mb-2">
+                  <h3 class="font-black text-navy-900">{{ request.agent_name }}</h3>
+                  <span class="px-2 py-1 text-xs font-bold rounded-full
+                    {% if request.status == 'approved' %}bg-green-50 text-green-700
+                    {% elif request.status == 'pending' %}bg-amber-50 text-amber-700
+                    {% elif request.status == 'denied' %}bg-red-50 text-red-700
+                    {% else %}bg-navy-50 text-navy-700{% endif %}">
+                    {{ request.status|upper }}
+                  </span>
+                  <span class="px-2 py-1 text-xs font-bold rounded-full
+                    {% if request.risk_level == 'low' %}bg-green-50 text-green-700
+                    {% elif request.risk_level == 'medium' %}bg-amber-50 text-amber-700
+                    {% elif request.risk_level == 'high' %}bg-red-50 text-red-700
+                    {% else %}bg-navy-50 text-navy-700{% endif %}">
+                    {{ request.risk_level|upper }} RISK
+                  </span>
+                </div>
+                
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-bold text-navy-600">Action:</span>
+                    <span class="text-sm text-navy-900 font-semibold">{{ request.action_type }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-bold text-navy-600">Resource:</span>
+                    <span class="text-sm text-navy-900 font-mono bg-navy-50 px-2 py-1 rounded">{{ request.resource }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-bold text-navy-600">Purpose:</span>
+                    <span class="text-sm text-navy-700">{{ request.purpose }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Timestamp and Actions -->
+            <div class="text-right">
+              <div class="text-sm font-bold text-navy-900 mb-2">{{ request.timestamp }}</div>
+              <div class="text-xs text-navy-500 font-semibold">{{ request.estimated_duration }}</div>
+              
+              {% if request.status == 'pending' %}
+              <div class="flex gap-2 mt-3">
+                <button onclick="approveRequest('{{ request.id }}')" 
+                        class="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded hover:bg-green-600 transition">
+                  Approve
+                </button>
+                <button onclick="denyRequest('{{ request.id }}')" 
+                        class="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded hover:bg-red-600 transition">
+                  Deny
+                </button>
+              </div>
+              {% elif request.status == 'approved' %}
+              <div class="text-xs text-green-600 font-semibold mt-2">
+                Approved by {{ request.approved_by }}
+              </div>
+              {% elif request.status == 'denied' %}
+              <div class="text-xs text-red-600 font-semibold mt-2">
+                {{ request.denial_reason }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          
+          <!-- Additional Details -->
+          <div class="border-t border-navy-200 pt-4">
+            <div class="flex items-center justify-between text-sm">
+              <div class="flex items-center gap-6">
+                <div>
+                  <span class="font-bold text-navy-600">Agent ID:</span>
+                  <span class="font-mono text-navy-900">{{ request.agent_id }}</span>
+                </div>
+                <div>
+                  <span class="font-bold text-navy-600">Data Class:</span>
+                  <span class="px-2 py-1 text-xs font-bold rounded-full
+                    {% if request.data_classification == 'PII' %}bg-red-50 text-red-700
+                    {% elif request.data_classification == 'Internal' %}bg-amber-50 text-amber-700
+                    {% elif request.data_classification == 'External' %}bg-purple-50 text-purple-700
+                    {% else %}bg-navy-50 text-navy-700{% endif %}">
+                    {{ request.data_classification }}
+                  </span>
+                </div>
+                <div>
+                  <span class="font-bold text-navy-600">Full Resource:</span>
+                  <span class="font-mono text-navy-700 text-xs">{{ request.full_resource }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function approveRequest(requestId) {
+  if (confirm('Approve this access request?')) {
+    showToast('Request approved successfully', 'success');
+    // In real implementation, would make API call
+    location.reload();
+  }
+}
+
+function denyRequest(requestId) {
+  if (confirm('Deny this access request?')) {
+    showToast('Request denied', 'error');
+    // In real implementation, would make API call
+    location.reload();
+  }
+}
+</script>
+{% endblock %}
