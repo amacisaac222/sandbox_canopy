@@ -1028,6 +1028,39 @@ async def debug_admin_users(db: AsyncSession = Depends(get_db)):
       except Exception as e:
           return {"error": str(e), "admin_count": 0, "traceback": str(e)}
 
+@app.get("/debug/test-login")
+async def test_login_direct(db: AsyncSession = Depends(get_db)):
+      """Direct login test bypassing complex auth - REMOVE IN PRODUCTION"""
+      try:
+          from database import User
+          from sqlalchemy import select
+          import bcrypt
+          
+          # Get the admin user
+          query = select(User).where(User.email == 'admin@canopyiq.ai')
+          result = await db.execute(query)
+          user = result.scalar_one_or_none()
+          
+          if not user:
+              return {"error": "User not found"}
+          
+          # Test password
+          password_bytes = "Admin123".encode('utf-8')
+          hash_bytes = user.password_hash.encode('utf-8')
+          password_matches = bcrypt.checkpw(password_bytes, hash_bytes)
+          
+          return {
+              "user_exists": True,
+              "email": user.email,
+              "name": user.name,
+              "role": str(user.role),
+              "password_matches": password_matches,
+              "password_hash": user.password_hash[:20] + "..."
+          }
+      except Exception as e:
+          import traceback
+          return {"error": str(e), "traceback": traceback.format_exc()}
+
 @app.get("/metrics")
 async def metrics():
       """Prometheus metrics endpoint"""
