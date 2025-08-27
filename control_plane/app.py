@@ -26,6 +26,10 @@ async def homepage(request: Request):
 async def dashboard_page(request: Request):
     return templates.TemplateResponse("pages/dashboard.html", {"request": request})
 
+@app.get("/user-dashboard", response_class=HTMLResponse)
+async def user_dashboard_page(request: Request):
+    return templates.TemplateResponse("user_dashboard.html", {"request": request})
+
 @app.get("/demo", response_class=HTMLResponse)  
 async def demo_page(request: Request):
     return templates.TemplateResponse("pages/demo.html", {"request": request})
@@ -227,6 +231,145 @@ async def log_tool_call(body: ToolCallIn, x_agent_key: str = Header(None)):
         await s.refresh(tool_call)
         
         return {"id": tool_call.id, "status": "logged"}
+
+# User Registration and Management
+import secrets
+
+class UserSignupIn(BaseModel):
+    name: str
+    email: str = None
+
+@app.post("/api/v1/signup")
+async def user_signup(body: UserSignupIn):
+    """Create a new user with their own tenant and agent"""
+    async with async_session() as s:
+        # Create tenant for user
+        tenant = Tenant(name=body.name)
+        s.add(tenant)
+        await s.commit()
+        await s.refresh(tenant)
+        
+        # Generate API key
+        api_key = f"ciq_user_{tenant.id}_{secrets.token_hex(12)}"
+        
+        # Create agent for user
+        agent = Agent(tenant_id=tenant.id, agent_id=f"user_{tenant.id}_agent")
+        agent.set_api_key(api_key)
+        s.add(agent)
+        await s.commit()
+        await s.refresh(agent)
+        
+        return {
+            "tenant_id": tenant.id,
+            "agent_id": agent.agent_id,
+            "api_key": api_key,
+            "message": "Account created! Use this API key with canopyiq-mcp-server"
+        }
+
+# Helper function to get agent from API key
+async def get_agent_from_key(api_key: str, session):
+    if not api_key:
+        return None
+    res = await session.execute(select(Agent).where(Agent.api_key_hash.isnot(None)))
+    agents = res.scalars().all()
+    for agent in agents:
+        if agent.verify_api_key(api_key):
+            return agent
+    return None
+
+# User Dashboard - View their own data
+@app.get("/api/v1/user/tool-calls")
+async def get_user_tool_calls(x_agent_key: str = Header(None)):
+    """Get tool calls for the authenticated user"""
+    async with async_session() as s:
+        agent = await get_agent_from_key(x_agent_key, s)
+        if not agent:
+            raise HTTPException(401, "Invalid API key")
+        
+        res = await s.execute(
+            select(ToolCall).where(ToolCall.agent_id == agent.id).order_by(ToolCall.created_at.desc())
+        )
+        tool_calls = res.scalars().all()
+        
+        return [
+            {
+                "id": tc.id,
+                "timestamp": tc.timestamp,
+                "tool": tc.tool,
+                "arguments": tc.arguments,
+                "result": tc.result,
+                "status": tc.status,
+                "source": tc.source,
+                "created_at": tc.created_at
+            }
+            for tc in tool_calls
+        ]
+
+@app.get("/api/v1/user/approvals")
+async def get_user_approvals(x_agent_key: str = Header(None)):
+    """Get approvals for the authenticated user"""
+    async with async_session() as s:
+        agent = await get_agent_from_key(x_agent_key, s)
+        if not agent:
+            raise HTTPException(401, "Invalid API key")
+        
+        res = await s.execute(
+            select(Approval).where(Approval.agent_id == agent.id).order_by(Approval.created_at.desc())
+        )
+        approvals = res.scalars().all()
+        
+        return [
+            {
+                "id": a.id,
+                "tool": a.tool,
+                "params_hash": a.params_hash,
+                "status": a.status,
+                "payload_redacted": a.payload_redacted,
+                "created_at": a.created_at
+            }
+            for a in approvals
+        ]
+
+# User Policy Management
+@app.put("/api/v1/user/policy")
+async def upload_user_policy(request: Request, x_agent_key: str = Header(None)):
+    """Upload policy for authenticated user"""
+    async with async_session() as s:
+        agent = await get_agent_from_key(x_agent_key, s)
+        if not agent:
+            raise HTTPException(401, "Invalid API key")
+        
+        yaml_bytes = await request.body()
+        if not yaml_bytes:
+            raise HTTPException(400, "Empty body")
+        
+        bundle = {"agent_id": agent.agent_id, "yaml": yaml_bytes.decode("utf-8"), "ts": int(time.time())}
+        signature = sign_payload(bundle, TENANT_SECRET)
+        
+        policy = Policy(agent_id=agent.id, yaml=bundle["yaml"], json_bundle=bundle, signature=signature)
+        s.add(policy)
+        await s.commit()
+        await s.refresh(policy)
+        
+        return {"policy_id": policy.id, "signature": signature, "message": "Policy uploaded successfully"}
+
+@app.get("/api/v1/user/policy")
+async def get_user_policy(x_agent_key: str = Header(None)):
+    """Get current policy for authenticated user"""
+    async with async_session() as s:
+        agent = await get_agent_from_key(x_agent_key, s)
+        if not agent:
+            raise HTTPException(401, "Invalid API key")
+        
+        res = await s.execute(
+            select(Policy).where(Policy.agent_id == agent.id).order_by(Policy.created_at.desc())
+        )
+        policy = res.scalars().first()
+        
+        if not policy:
+            return {"message": "No policy found"}
+        
+        return {"bundle": policy.json_bundle, "signature": policy.signature}
 
 @app.get("/contact", response_class=HTMLResponse)
 async def contact_page(request: Request):

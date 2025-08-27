@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CanopyIQ - User Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .user-form { max-width: 600px; }
+        .api-key-display { 
+            font-family: 'Courier New', monospace; 
+            background: #f3f4f6; 
+            padding: 12px; 
+            border-radius: 6px; 
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="bg-white shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">🔒</span>
+                <h1 class="text-xl font-semibold">CanopyIQ</h1>
+            </div>
+            <nav class="flex gap-4">
+                <a href="/" class="text-gray-600 hover:text-gray-900">Home</a>
+                <a href="/user-dashboard" class="text-blue-600 font-medium">Dashboard</a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Account Setup -->
+        <div id="signup-section" class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Create Your CanopyIQ Account</h2>
+            <div class="user-form">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Your Name</label>
+                    <input type="text" id="user-name" class="w-full border rounded px-3 py-2" placeholder="Enter your name">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Email (optional)</label>
+                    <input type="email" id="user-email" class="w-full border rounded px-3 py-2" placeholder="your@email.com">
+                </div>
+                <button onclick="createAccount()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    Create Account & Get API Key
+                </button>
+            </div>
+        </div>
+
+        <!-- API Key Display -->
+        <div id="api-key-section" class="bg-white rounded-lg shadow p-6 mb-6" style="display: none;">
+            <h2 class="text-xl font-semibold mb-4">Your API Key</h2>
+            <div class="mb-4">
+                <div class="api-key-display" id="api-key-display"></div>
+                <p class="text-sm text-gray-600 mt-2">Save this API key! Use it with canopyiq-mcp-server.</p>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Test Your API Key</label>
+                <button onclick="loadUserData()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    Load Dashboard
+                </button>
+            </div>
+        </div>
+
+        <!-- Manual API Key Entry -->
+        <div id="api-key-entry" class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Already Have An API Key?</h2>
+            <div class="user-form">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Enter Your API Key</label>
+                    <input type="text" id="existing-api-key" class="w-full border rounded px-3 py-2" placeholder="ciq_user_...">
+                </div>
+                <button onclick="setApiKey()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    Load Dashboard
+                </button>
+            </div>
+        </div>
+
+        <!-- User Dashboard Content -->
+        <div id="dashboard-content" style="display: none;">
+            <!-- Tool Calls -->
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">Your Tool Calls</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="text-left p-2">Time</th>
+                                <th class="text-left p-2">Tool</th>
+                                <th class="text-left p-2">Status</th>
+                                <th class="text-left p-2">Source</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tool-calls-table">
+                            <tr>
+                                <td colspan="4" class="text-center p-4 text-gray-500">No tool calls yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Policy Management -->
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">Policy Management</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-medium mb-2">Upload New Policy</h3>
+                        <textarea id="policy-yaml" rows="8" class="w-full border rounded px-3 py-2 font-mono text-sm" placeholder="# Example YAML policy:
+tools:
+  allow:
+    - canopyiq_log
+    - file_read
+  deny:
+    - system_exec
+
+network:
+  allowed_domains:
+    - api.example.com
+    - safe-service.com"></textarea>
+                        <button onclick="uploadPolicy()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-2">
+                            Upload Policy
+                        </button>
+                    </div>
+                    <div>
+                        <h3 class="font-medium mb-2">Current Policy</h3>
+                        <div id="current-policy" class="border rounded px-3 py-2 bg-gray-50 h-48 overflow-y-auto text-sm font-mono"></div>
+                        <button onclick="loadCurrentPolicy()" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 mt-2">
+                            Refresh Policy
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Approvals -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Pending Approvals</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="text-left p-2">Tool</th>
+                                <th class="text-left p-2">Status</th>
+                                <th class="text-left p-2">Created</th>
+                                <th class="text-left p-2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="approvals-table">
+                            <tr>
+                                <td colspan="4" class="text-center p-4 text-gray-500">No approvals needed</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentApiKey = '';
+
+        async function createAccount() {
+            const name = document.getElementById('user-name').value;
+            const email = document.getElementById('user-email').value;
+            
+            if (!name.trim()) {
+                alert('Please enter your name');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/v1/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name.trim(), email: email.trim() || null })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    currentApiKey = data.api_key;
+                    document.getElementById('api-key-display').textContent = data.api_key;
+                    document.getElementById('signup-section').style.display = 'none';
+                    document.getElementById('api-key-section').style.display = 'block';
+                    document.getElementById('api-key-entry').style.display = 'none';
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to create account'));
+                }
+            } catch (error) {
+                alert('Error creating account: ' + error.message);
+            }
+        }
+
+        function setApiKey() {
+            const apiKey = document.getElementById('existing-api-key').value;
+            if (!apiKey.trim()) {
+                alert('Please enter your API key');
+                return;
+            }
+            currentApiKey = apiKey.trim();
+            loadUserData();
+        }
+
+        async function loadUserData() {
+            if (!currentApiKey) {
+                alert('No API key set');
+                return;
+            }
+
+            try {
+                // Load tool calls
+                const toolCallsResponse = await fetch('/api/v1/user/tool-calls', {
+                    headers: { 'X-Agent-Key': currentApiKey }
+                });
+                
+                if (toolCallsResponse.ok) {
+                    const toolCalls = await toolCallsResponse.json();
+                    displayToolCalls(toolCalls);
+                    
+                    // Load approvals
+                    const approvalsResponse = await fetch('/api/v1/user/approvals', {
+                        headers: { 'X-Agent-Key': currentApiKey }
+                    });
+                    
+                    if (approvalsResponse.ok) {
+                        const approvals = await approvalsResponse.json();
+                        displayApprovals(approvals);
+                    }
+                    
+                    // Load current policy
+                    loadCurrentPolicy();
+                    
+                    // Show dashboard
+                    document.getElementById('signup-section').style.display = 'none';
+                    document.getElementById('api-key-section').style.display = 'none';
+                    document.getElementById('api-key-entry').style.display = 'none';
+                    document.getElementById('dashboard-content').style.display = 'block';
+                } else {
+                    alert('Invalid API key or error loading data');
+                }
+            } catch (error) {
+                alert('Error loading data: ' + error.message);
+            }
+        }
+
+        function displayToolCalls(toolCalls) {
+            const tbody = document.getElementById('tool-calls-table');
+            if (toolCalls.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500">No tool calls yet</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = toolCalls.map(tc => `
+                <tr class="border-b">
+                    <td class="p-2">${new Date(tc.timestamp).toLocaleString()}</td>
+                    <td class="p-2">${tc.tool}</td>
+                    <td class="p-2">
+                        <span class="px-2 py-1 rounded text-sm ${tc.status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${tc.status}</span>
+                    </td>
+                    <td class="p-2">${tc.source}</td>
+                </tr>
+            `).join('');
+        }
+
+        function displayApprovals(approvals) {
+            const tbody = document.getElementById('approvals-table');
+            if (approvals.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500">No approvals needed</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = approvals.map(a => `
+                <tr class="border-b">
+                    <td class="p-2">${a.tool}</td>
+                    <td class="p-2">
+                        <span class="px-2 py-1 rounded text-sm ${a.status === 'approved' ? 'bg-green-100 text-green-800' : a.status === 'denied' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}">${a.status}</span>
+                    </td>
+                    <td class="p-2">${new Date(a.created_at * 1000).toLocaleString()}</td>
+                    <td class="p-2">
+                        ${a.status === 'pending' ? `
+                            <button onclick="approveAction(${a.id})" class="bg-green-600 text-white px-2 py-1 rounded text-sm mr-1">Approve</button>
+                            <button onclick="denyAction(${a.id})" class="bg-red-600 text-white px-2 py-1 rounded text-sm">Deny</button>
+                        ` : '-'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function uploadPolicy() {
+            const yaml = document.getElementById('policy-yaml').value;
+            if (!yaml.trim()) {
+                alert('Please enter a policy');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/v1/user/policy', {
+                    method: 'PUT',
+                    headers: { 'X-Agent-Key': currentApiKey },
+                    body: yaml
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Policy uploaded successfully!');
+                    loadCurrentPolicy();
+                } else {
+                    alert('Error uploading policy: ' + (data.message || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Error uploading policy: ' + error.message);
+            }
+        }
+
+        async function loadCurrentPolicy() {
+            try {
+                const response = await fetch('/api/v1/user/policy', {
+                    headers: { 'X-Agent-Key': currentApiKey }
+                });
+                
+                const data = await response.json();
+                if (response.ok && data.bundle) {
+                    document.getElementById('current-policy').textContent = data.bundle.yaml;
+                } else {
+                    document.getElementById('current-policy').textContent = data.message || 'No policy found';
+                }
+            } catch (error) {
+                document.getElementById('current-policy').textContent = 'Error loading policy';
+            }
+        }
+
+        async function approveAction(approvalId) {
+            try {
+                const response = await fetch(`/v1/approvals/${approvalId}/decision`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'decision=approve'
+                });
+                
+                if (response.ok) {
+                    loadUserData(); // Refresh the data
+                } else {
+                    alert('Error approving action');
+                }
+            } catch (error) {
+                alert('Error approving action: ' + error.message);
+            }
+        }
+
+        async function denyAction(approvalId) {
+            try {
+                const response = await fetch(`/v1/approvals/${approvalId}/decision`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'decision=deny'
+                });
+                
+                if (response.ok) {
+                    loadUserData(); // Refresh the data
+                } else {
+                    alert('Error denying action');
+                }
+            } catch (error) {
+                alert('Error denying action: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
