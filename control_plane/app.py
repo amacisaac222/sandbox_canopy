@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from sqlalchemy import select
 from .db import async_session, init_db
-from .models import Tenant, Agent, Policy, Approval
+from .models import Tenant, Agent, Policy, Approval, ToolCall
 from .signer import sign_payload
 
 app = FastAPI(title="Agent Sandbox Control Plane")
@@ -37,6 +37,10 @@ async def api_info():
 @app.get("/health")
 async def health():
     return {"ok": True}
+
+@app.get("/api/v1/health")
+async def api_health():
+    return {"ok": True, "status": "healthy", "service": "canopyiq-api"}
 
 @app.get("/favicon.ico")
 async def favicon():
@@ -185,6 +189,44 @@ async def audit_export(frm: int = 0, to: int = 9999999999):
             for r in rows
         ]
         return out
+
+# Tool Call Logging API for MCP Server
+class ToolCallIn(BaseModel):
+    timestamp: str
+    tool: str
+    arguments: dict
+    result: str
+    status: str  # approved|denied
+    source: str  # mcp-server, sdk, etc
+
+@app.post("/api/v1/logs/tool-calls")
+async def log_tool_call(body: ToolCallIn, x_agent_key: str = Header(None)):
+    async with async_session() as s:
+        # Try to find agent by API key if provided
+        agent_id = None
+        if x_agent_key:
+            res = await s.execute(select(Agent).where(Agent.api_key_hash.isnot(None)))
+            agents = res.scalars().all()
+            for agent in agents:
+                if agent.verify_api_key(x_agent_key):
+                    agent_id = agent.id
+                    break
+        
+        # Create tool call log entry
+        tool_call = ToolCall(
+            agent_id=agent_id,
+            timestamp=body.timestamp,
+            tool=body.tool,
+            arguments=body.arguments,
+            result=body.result,
+            status=body.status,
+            source=body.source
+        )
+        s.add(tool_call)
+        await s.commit()
+        await s.refresh(tool_call)
+        
+        return {"id": tool_call.id, "status": "logged"}
 
 @app.get("/contact", response_class=HTMLResponse)
 async def contact_page(request: Request):

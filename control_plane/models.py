@@ -45,3 +45,16 @@ class Approval(Base):
     payload_redacted: Mapped[dict|None] = mapped_column(JSON, nullable=True)
     created_at: Mapped[int] = mapped_column(Integer, server_default=func.strftime("%s","now"))
     agent = relationship("Agent", backref="approvals")
+
+class ToolCall(Base):
+    __tablename__ = "tool_calls"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    agent_id: Mapped[int|None] = mapped_column(ForeignKey("agents.id"), nullable=True)
+    timestamp: Mapped[str] = mapped_column(String(32), nullable=False)
+    tool: Mapped[str] = mapped_column(String(255), nullable=False)
+    arguments: Mapped[dict] = mapped_column(JSON, nullable=False)
+    result: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)  # approved|denied
+    source: Mapped[str] = mapped_column(String(64), nullable=False)  # mcp-server, sdk, etc
+    created_at: Mapped[int] = mapped_column(Integer, server_default=func.strftime("%s","now"))
+    agent = relationship("Agent", backref="tool_calls")
