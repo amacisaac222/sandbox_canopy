@@ -264,14 +264,52 @@ app.add_middleware(
 )
 
 try:
-    app.mount("/static", StaticFiles(directory="static"), name="static")
-    logger.info("✓ Static files mounted successfully")
+    # Mount static files with proper MIME type handling
+    class MainStaticFiles(StaticFiles):
+        async def get_response(self, path: str, scope):
+            response = await super().get_response(path, scope)
+            # Fix MIME types for common assets
+            if path.endswith('.css'):
+                response.headers['content-type'] = 'text/css'
+            elif path.endswith('.js'):
+                response.headers['content-type'] = 'application/javascript'
+            elif path.endswith('.svg'):
+                response.headers['content-type'] = 'image/svg+xml'
+            elif path.endswith('.png'):
+                response.headers['content-type'] = 'image/png'
+            elif path.endswith('.jpg') or path.endswith('.jpeg'):
+                response.headers['content-type'] = 'image/jpeg'
+            return response
+    
+    app.mount("/static", MainStaticFiles(directory="static"), name="static")
+    logger.info("✓ Static files mounted successfully with proper MIME types")
 except Exception as e:
     logger.error(f"❌ Failed to mount static files: {e}")
 
 try:
-    app.mount("/documentation", StaticFiles(directory="static/docs", html=True), name="documentation")
-    logger.info("✓ Documentation mounted successfully")
+    # Mount documentation with proper MIME type handling
+    from fastapi.staticfiles import StaticFiles
+    class DocumentationStaticFiles(StaticFiles):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+        
+        async def get_response(self, path: str, scope):
+            response = await super().get_response(path, scope)
+            # Fix MIME types for common web assets
+            if path.endswith('.css'):
+                response.headers['content-type'] = 'text/css'
+            elif path.endswith('.js'):
+                response.headers['content-type'] = 'application/javascript'
+            elif path.endswith('.svg'):
+                response.headers['content-type'] = 'image/svg+xml'
+            elif path.endswith('.map'):
+                response.headers['content-type'] = 'application/json'
+            elif path.endswith('.json'):
+                response.headers['content-type'] = 'application/json'
+            return response
+    
+    app.mount("/documentation", DocumentationStaticFiles(directory="static/docs", html=True), name="documentation")
+    logger.info("✓ Documentation mounted successfully with proper MIME types")
 except Exception as e:
     logger.error(f"❌ Failed to mount documentation: {e}")
 
@@ -1486,43 +1524,28 @@ async def console_simulator_post(request: Request, test_scenario: str = Form(...
           simulation_result=result
       )
 
-@app.get("/documentation", response_class=HTMLResponse)
-async def documentation_redirect(request: Request):
-      """Custom docs page with navigation back to main site"""
+@app.get("/documentation")
+async def documentation_redirect():
+      """Redirect to documentation with navigation"""
+      return RedirectResponse(url="/documentation/", status_code=302)
+
+@app.get("/documentation/", response_class=HTMLResponse)
+async def documentation_index(request: Request):
+      """Serve documentation index with custom navigation"""
       from pathlib import Path
       
-      # Read the original docs index.html
       docs_path = Path("static/docs/index.html")
       if docs_path.exists():
-          with open(docs_path, 'r') as f:
+          with open(docs_path, 'r', encoding='utf-8') as f:
               html_content = f.read()
           
-          # Inject custom navigation script
-          custom_script = '''
-          <script>
-          document.addEventListener('DOMContentLoaded', function() {
-              // Add "Back to Main Site" button to docs header
-              const header = document.querySelector('.md-header__inner');
-              if (header) {
-                  const backButton = document.createElement('div');
-                  backButton.style.position = 'absolute';
-                  backButton.style.right = '60px';
-                  backButton.style.top = '50%';
-                  backButton.style.transform = 'translateY(-50%)';
-                  backButton.innerHTML = '<a href="/" style="color: #ff6f61; font-weight: bold; text-decoration: none; font-size: 14px; padding: 8px 16px; border: 1px solid #ff6f61; border-radius: 4px; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor=\\'#ff6f61\\'; this.style.color=\\'white\\';" onmouseout="this.style.backgroundColor=\\'transparent\\'; this.style.color=\\'#ff6f61\\';"> ← Main Site</a>';
-                  header.appendChild(backButton);
-              }
-          });
-          </script>
-          '''
-          
-          # Insert before closing </body>
-          html_content = html_content.replace('</body>', custom_script + '</body>')
+          # Inject custom navigation script before closing body tag
+          nav_script = '''<script src="/documentation/canopy-nav.js"></script>'''
+          html_content = html_content.replace('</body>', nav_script + '\n</body>')
           
           return HTMLResponse(content=html_content)
       
-      # Fallback to static file mount
-      return RedirectResponse(url="/documentation/")
+      return HTMLResponse("<h1>Documentation not found</h1>", status_code=404)
 
 @app.get("/admin-simple", response_class=HTMLResponse)
 async def admin_simple():
