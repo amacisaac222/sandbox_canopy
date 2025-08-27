@@ -35,9 +35,9 @@ elif DATABASE_URL.startswith("postgresql://"):
 Base = declarative_base()
 
 class UserRole(enum.Enum):
-    ADMIN = "admin"
-    AUDITOR = "auditor" 
-    VIEWER = "viewer"
+    ADMIN = "ADMIN"
+    AUDITOR = "AUDITOR" 
+    VIEWER = "VIEWER"
 
 class ApprovalStatus(enum.Enum):
     PENDING = "pending"

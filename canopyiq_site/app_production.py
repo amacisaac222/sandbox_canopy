@@ -1003,11 +1003,11 @@ async def debug():
 async def debug_admin_users(db: AsyncSession = Depends(get_db)):
       """Check what admin users exist in the database - REMOVE IN PRODUCTION"""
       try:
-          from auth.models import User
+          from database import User, UserRole
           from sqlalchemy import select
           
-          # Query for admin users using string comparison
-          query = select(User).where(User.role == 'ADMIN')
+          # Query for admin users using enum comparison
+          query = select(User).where(User.role == UserRole.ADMIN)
           result = await db.execute(query)
           admin_users = result.scalars().all()
           
