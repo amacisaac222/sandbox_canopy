@@ -1087,6 +1087,7 @@ async def test_login_direct(db: AsyncSession = Depends(get_db)):
           import traceback
           return {"error": str(e), "traceback": traceback.format_exc()}
 
+# ---------- Console Routes (Agent Management) ----------
 @app.get("/admin/console", response_class=HTMLResponse)
 async def console_index(request: Request):
       """Console landing page - CanopyIQ agent management interface"""
@@ -1095,6 +1096,315 @@ async def console_index(request: Request):
           title="Console | CanopyIQ",
           desc="CanopyIQ Console - Run agents safely. At scale.",
           path="console/index.html"
+      )
+
+@app.get("/admin/console/access", response_class=HTMLResponse)
+async def console_access(request: Request, tenant: str = "demo-tenant"):
+      """Agent access control dashboard"""
+      import time
+      
+      # Mock real-time agent access requests for demo
+      mock_requests = [
+          {
+              "id": f"req_{int(time.time())}_001",
+              "agent_id": "agent-sales-bot",
+              "action": "http_request",
+              "resource": "https://api.salesforce.com/contacts",
+              "timestamp": time.time() - 30,
+              "status": "pending",
+              "details": {"method": "GET", "purpose": "Fetch customer contact list"}
+          },
+          {
+              "id": f"req_{int(time.time())}_002", 
+              "agent_id": "agent-data-analyzer",
+              "action": "file_read",
+              "resource": "/data/customer_analytics.csv",
+              "timestamp": time.time() - 120,
+              "status": "allowed",
+              "details": {"file_size": "2.4MB", "purpose": "Generate quarterly report"}
+          },
+          {
+              "id": f"req_{int(time.time())}_003",
+              "agent_id": "agent-email-writer", 
+              "action": "email_send",
+              "resource": "john@company.com",
+              "timestamp": time.time() - 300,
+              "status": "denied",
+              "details": {"subject": "Follow-up on proposal", "reason": "External email policy violation"}
+          }
+      ]
+      
+      return page(
+          request,
+          title="Access Control | Console | CanopyIQ",
+          desc="Real-time agent access control and monitoring",
+          path="console/access.html",
+          tenant=tenant,
+          requests=mock_requests,
+          stats={
+              "total_requests": len(mock_requests),
+              "allowed": len([r for r in mock_requests if r["status"] == "allowed"]),
+              "denied": len([r for r in mock_requests if r["status"] == "denied"]), 
+              "pending": len([r for r in mock_requests if r["status"] == "pending"])
+          }
+      )
+
+@app.get("/admin/console/approvals", response_class=HTMLResponse) 
+async def console_approvals(request: Request, tenant: str = "", status: str = "pending", limit: int = 50):
+      """Approval queue for agent actions requiring human review"""
+      import time
+      from datetime import datetime
+      
+      # Mock approval queue
+      mock_approvals = [
+          {
+              "id": f"approval_{int(time.time())}_001",
+              "agent_id": "agent-financial-advisor",
+              "action": "stock_purchase",
+              "details": {
+                  "symbol": "TSLA",
+                  "quantity": 100,
+                  "estimated_value": "$25,000",
+                  "reason": "Portfolio optimization recommendation"
+              },
+              "created_at": datetime.fromtimestamp(time.time() - 1800).strftime("%Y-%m-%d %H:%M:%S"),
+              "status": "pending",
+              "priority": "high"
+          },
+          {
+              "id": f"approval_{int(time.time())}_002",
+              "agent_id": "agent-customer-service",
+              "action": "refund_request", 
+              "details": {
+                  "customer_id": "CUST-12345",
+                  "amount": "$1,200",
+                  "reason": "Product defect reported by customer",
+                  "order_id": "ORD-98765"
+              },
+              "created_at": datetime.fromtimestamp(time.time() - 3600).strftime("%Y-%m-%d %H:%M:%S"),
+              "status": "pending",
+              "priority": "medium"
+          }
+      ]
+      
+      # Filter by status if specified
+      if status != "all":
+          mock_approvals = [a for a in mock_approvals if a["status"] == status]
+      
+      return page(
+          request,
+          title="Approval Queue | Console | CanopyIQ",
+          desc="Human-in-the-loop approvals for agent actions",
+          path="console/approvals.html",
+          tenant=tenant,
+          approvals=mock_approvals,
+          status_filter=status,
+          stats={
+              "pending": 2,
+              "approved": 15,
+              "denied": 3,
+              "total": 20
+          }
+      )
+
+@app.post("/admin/console/approvals/decide")
+async def console_approval_decide(
+      request: Request,
+      approval_id: str = Form(...),
+      decision: str = Form(...),
+      comments: str = Form(None)
+):
+      """Handle approval decisions"""
+      # In a real app, this would update the database and notify the agent
+      # For now, just redirect back with a success message
+      
+      return RedirectResponse(
+          url=f"/admin/console/approvals?success={decision}&id={approval_id}",
+          status_code=status.HTTP_302_FOUND
+      )
+
+@app.get("/admin/console/policy", response_class=HTMLResponse)
+async def console_policy(request: Request):
+      """Policy management interface"""
+      # Mock policy data
+      mock_policies = [
+          {
+              "id": "policy_001",
+              "name": "Financial Operations Policy", 
+              "description": "Controls access to financial APIs and transactions",
+              "rules": [
+                  "Allow read-only access to account balances",
+                  "Require approval for transactions > $1000",
+                  "Deny access to external payment APIs"
+              ],
+              "status": "active",
+              "agents_affected": 3,
+              "last_updated": "2025-01-15"
+          },
+          {
+              "id": "policy_002",
+              "name": "Customer Data Policy",
+              "description": "Governs access to customer PII and sensitive data",
+              "rules": [
+                  "Allow access to customer support data",
+                  "Require encryption for data exports", 
+                  "Log all PII access attempts"
+              ],
+              "status": "active",
+              "agents_affected": 7,
+              "last_updated": "2025-01-10"
+          }
+      ]
+      
+      return page(
+          request,
+          title="Policy Management | Console | CanopyIQ",
+          desc="Configure and manage security policies for AI agents",
+          path="console/policy.html",
+          policies=mock_policies,
+          stats={
+              "total_policies": len(mock_policies),
+              "active_policies": len([p for p in mock_policies if p["status"] == "active"]),
+              "total_agents": 12,
+              "policy_violations": 0
+          }
+      )
+
+@app.post("/admin/console/policy")
+async def console_policy_post(request: Request, policy_name: str = Form(...), policy_rules: str = Form(...)):
+      """Handle policy creation/updates"""
+      # In a real app, this would save to database
+      return RedirectResponse(url="/admin/console/policy?success=created", status_code=status.HTTP_302_FOUND)
+
+@app.get("/admin/console/traces", response_class=HTMLResponse)
+async def console_traces(request: Request):
+      """Agent execution traces and analytics"""
+      import time
+      from datetime import datetime, timedelta
+      
+      # Mock trace data
+      mock_traces = [
+          {
+              "trace_id": f"trace_{int(time.time())}_001",
+              "agent_id": "agent-sales-bot",
+              "operation": "customer_outreach",
+              "started_at": (datetime.now() - timedelta(minutes=5)).strftime("%H:%M:%S"),
+              "duration": "2.3s",
+              "status": "completed",
+              "actions": [
+                  {"action": "fetch_leads", "status": "success", "duration": "0.8s"},
+                  {"action": "personalize_message", "status": "success", "duration": "1.2s"},
+                  {"action": "send_email", "status": "success", "duration": "0.3s"}
+              ]
+          },
+          {
+              "trace_id": f"trace_{int(time.time())}_002", 
+              "agent_id": "agent-data-analyzer",
+              "operation": "quarterly_report",
+              "started_at": (datetime.now() - timedelta(minutes=15)).strftime("%H:%M:%S"),
+              "duration": "45.2s",
+              "status": "running",
+              "actions": [
+                  {"action": "load_data", "status": "success", "duration": "12.1s"},
+                  {"action": "analyze_trends", "status": "success", "duration": "28.3s"},
+                  {"action": "generate_charts", "status": "running", "duration": "4.8s"}
+              ]
+          }
+      ]
+      
+      return page(
+          request,
+          title="Agent Traces | Console | CanopyIQ",
+          desc="Real-time agent execution monitoring and analytics",
+          path="console/traces.html",
+          traces=mock_traces,
+          stats={
+              "active_agents": 5,
+              "completed_today": 127,
+              "avg_response_time": "1.8s",
+              "success_rate": "98.2%"
+          }
+      )
+
+@app.get("/admin/console/agents", response_class=HTMLResponse)
+async def console_agents(request: Request):
+      """Agent management and monitoring"""
+      # Mock agent data
+      mock_agents = [
+          {
+              "id": "agent-sales-bot",
+              "name": "Sales Assistant",
+              "status": "active",
+              "last_active": "2 minutes ago",
+              "total_actions": 1250,
+              "success_rate": "94%",
+              "policies": ["Financial Operations", "Customer Data"],
+              "capabilities": ["email", "crm_access", "lead_generation"]
+          },
+          {
+              "id": "agent-data-analyzer", 
+              "name": "Data Analytics Agent",
+              "status": "active",
+              "last_active": "1 minute ago",
+              "total_actions": 840,
+              "success_rate": "99%",
+              "policies": ["Customer Data", "Internal Systems"],
+              "capabilities": ["data_analysis", "report_generation", "visualization"]
+          },
+          {
+              "id": "agent-customer-service",
+              "name": "Customer Support Bot",
+              "status": "idle",
+              "last_active": "15 minutes ago", 
+              "total_actions": 2100,
+              "success_rate": "96%",
+              "policies": ["Customer Data", "Support Operations"],
+              "capabilities": ["ticket_management", "knowledge_base", "escalation"]
+          }
+      ]
+      
+      return page(
+          request,
+          title="Agent Management | Console | CanopyIQ",
+          desc="Monitor and manage AI agent fleet",
+          path="console/agents.html",
+          agents=mock_agents,
+          stats={
+              "total_agents": len(mock_agents),
+              "active_agents": len([a for a in mock_agents if a["status"] == "active"]),
+              "idle_agents": len([a for a in mock_agents if a["status"] == "idle"]),
+              "total_actions_today": 892
+          }
+      )
+
+@app.get("/admin/console/simulator", response_class=HTMLResponse)
+async def console_simulator(request: Request):
+      """Policy testing and simulation interface"""
+      return page(
+          request,
+          title="Policy Simulator | Console | CanopyIQ", 
+          desc="Test and simulate security policies before deployment",
+          path="console/simulator.html"
+      )
+
+@app.post("/admin/console/simulator")
+async def console_simulator_post(request: Request, test_scenario: str = Form(...), policy_id: str = Form(...)):
+      """Handle policy simulation requests"""
+      # Mock simulation results
+      result = {
+          "scenario": test_scenario,
+          "policy": policy_id,
+          "result": "ALLOWED" if "read" in test_scenario.lower() else "DENIED",
+          "reason": "Policy allows read operations but requires approval for write operations",
+          "execution_time": "12ms"
+      }
+      
+      return page(
+          request,
+          title="Policy Simulator | Console | CanopyIQ",
+          desc="Test and simulate security policies before deployment", 
+          path="console/simulator.html",
+          simulation_result=result
       )
 
 @app.get("/documentation", response_class=HTMLResponse)
