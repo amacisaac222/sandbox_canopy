@@ -1097,6 +1097,44 @@ async def console_index(request: Request):
           path="console/index.html"
       )
 
+@app.get("/documentation", response_class=HTMLResponse)
+async def documentation_redirect(request: Request):
+      """Custom docs page with navigation back to main site"""
+      from pathlib import Path
+      
+      # Read the original docs index.html
+      docs_path = Path("static/docs/index.html")
+      if docs_path.exists():
+          with open(docs_path, 'r') as f:
+              html_content = f.read()
+          
+          # Inject custom navigation script
+          custom_script = '''
+          <script>
+          document.addEventListener('DOMContentLoaded', function() {
+              // Add "Back to Main Site" button to docs header
+              const header = document.querySelector('.md-header__inner');
+              if (header) {
+                  const backButton = document.createElement('div');
+                  backButton.style.position = 'absolute';
+                  backButton.style.right = '60px';
+                  backButton.style.top = '50%';
+                  backButton.style.transform = 'translateY(-50%)';
+                  backButton.innerHTML = '<a href="/" style="color: #ff6f61; font-weight: bold; text-decoration: none; font-size: 14px; padding: 8px 16px; border: 1px solid #ff6f61; border-radius: 4px; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor=\\'#ff6f61\\'; this.style.color=\\'white\\';" onmouseout="this.style.backgroundColor=\\'transparent\\'; this.style.color=\\'#ff6f61\\';"> ← Main Site</a>';
+                  header.appendChild(backButton);
+              }
+          });
+          </script>
+          '''
+          
+          # Insert before closing </body>
+          html_content = html_content.replace('</body>', custom_script + '</body>')
+          
+          return HTMLResponse(content=html_content)
+      
+      # Fallback to static file mount
+      return RedirectResponse(url="/documentation/")
+
 @app.get("/admin-simple", response_class=HTMLResponse)
 async def admin_simple():
       """Simple admin page without complex dependencies"""
