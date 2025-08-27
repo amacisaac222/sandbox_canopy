@@ -1,6 +1,111 @@
 {% extends "admin_base.html" %}
 
 {% block content %}
+<!-- First-time User Onboarding Modal -->
+<div id="onboarding-modal" class="fixed inset-0 bg-navy-900/75 backdrop-blur flex items-center justify-center z-50" style="display: none;">
+  <div class="bg-white rounded-lg max-w-2xl w-full mx-4 p-8">
+    <div id="onboarding-step-1">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 bg-coral-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+        </div>
+        <h2 class="text-2xl font-black text-navy-900 mb-2">Welcome to CanopyIQ! 🎉</h2>
+        <p class="text-navy-600 font-semibold">Let's get your AI agent security set up in 2 minutes</p>
+      </div>
+      
+      <div class="space-y-4 mb-8">
+        <h3 class="text-lg font-black text-navy-900">What type of agents do you work with?</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="agent-type-option flex items-center gap-3 p-3 border border-navy-200 rounded-lg cursor-pointer hover:border-coral-300 transition">
+            <input type="checkbox" name="agent_type" value="customer_service" class="text-coral-500">
+            <div>
+              <div class="font-bold text-navy-900">Customer Service</div>
+              <div class="text-sm text-navy-600">Support bots, chat agents</div>
+            </div>
+          </label>
+          
+          <label class="agent-type-option flex items-center gap-3 p-3 border border-navy-200 rounded-lg cursor-pointer hover:border-coral-300 transition">
+            <input type="checkbox" name="agent_type" value="data_analysis" class="text-coral-500">
+            <div>
+              <div class="font-bold text-navy-900">Data Analysis</div>
+              <div class="text-sm text-navy-600">BI agents, data processors</div>
+            </div>
+          </label>
+          
+          <label class="agent-type-option flex items-center gap-3 p-3 border border-navy-200 rounded-lg cursor-pointer hover:border-coral-300 transition">
+            <input type="checkbox" name="agent_type" value="financial" class="text-coral-500">
+            <div>
+              <div class="font-bold text-navy-900">Financial</div>
+              <div class="text-sm text-navy-600">Trading bots, payment agents</div>
+            </div>
+          </label>
+          
+          <label class="agent-type-option flex items-center gap-3 p-3 border border-navy-200 rounded-lg cursor-pointer hover:border-coral-300 transition">
+            <input type="checkbox" name="agent_type" value="marketing" class="text-coral-500">
+            <div>
+              <div class="font-bold text-navy-900">Marketing</div>
+              <div class="text-sm text-navy-600">Email agents, social media bots</div>
+            </div>
+          </label>
+        </div>
+      </div>
+      
+      <div class="flex justify-between">
+        <button onclick="skipOnboarding()" class="text-navy-500 hover:text-navy-700 font-semibold">Skip for now</button>
+        <button onclick="nextOnboardingStep()" class="bg-coral-500 text-white px-6 py-2 rounded-lg hover:bg-coral-600 transition font-bold">
+          Next Step →
+        </button>
+      </div>
+    </div>
+
+    <div id="onboarding-step-2" style="display: none;">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 bg-coral-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <h2 class="text-2xl font-black text-navy-900 mb-2">Choose Your Starter Policy</h2>
+        <p class="text-navy-600 font-semibold">Pick a pre-built policy to get started quickly</p>
+      </div>
+      
+      <div class="space-y-3 mb-8">
+        <label class="policy-option flex items-start gap-3 p-4 border border-navy-200 rounded-lg cursor-pointer hover:border-coral-300 transition">
+          <input type="radio" name="starter_policy" value="approval_required" class="mt-1 text-coral-500">
+          <div>
+            <div class="font-bold text-navy-900">🛡️ Require Approval for High-Risk Actions</div>
+            <div class="text-sm text-navy-600">Database writes, financial transactions, external API calls need human approval</div>
+          </div>
+        </label>
+        
+        <label class="policy-option flex items-start gap-3 p-4 border border-navy-200 rounded-lg cursor-pointer hover:border-coral-300 transition">
+          <input type="radio" name="starter_policy" value="monitor_only" class="mt-1 text-coral-500">
+          <div>
+            <div class="font-bold text-navy-900">👀 Monitor All Actions (No Blocking)</div>
+            <div class="text-sm text-navy-600">Log everything, block nothing - perfect for getting started safely</div>
+          </div>
+        </label>
+        
+        <label class="policy-option flex items-start gap-3 p-4 border border-navy-200 rounded-lg cursor-pointer hover:border-coral-300 transition">
+          <input type="radio" name="starter_policy" value="financial_protection" class="mt-1 text-coral-500">
+          <div>
+            <div class="font-bold text-navy-900">💰 Financial Protection</div>
+            <div class="text-sm text-navy-600">Block transactions over $100, require approval for any money movement</div>
+          </div>
+        </label>
+      </div>
+      
+      <div class="flex justify-between">
+        <button onclick="prevOnboardingStep()" class="text-navy-500 hover:text-navy-700 font-semibold">← Back</button>
+        <button onclick="finishOnboarding()" class="bg-coral-500 text-white px-6 py-2 rounded-lg hover:bg-coral-600 transition font-bold">
+          Complete Setup 🎉
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="space-y-6">
   <!-- Welcome Header -->
   <div class="flex items-center justify-between">
@@ -279,4 +384,87 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Onboarding functionality
+let onboardingData = {
+  agentTypes: [],
+  policy: null
+};
+
+function showOnboarding() {
+  document.getElementById('onboarding-modal').style.display = 'flex';
+}
+
+function hideOnboarding() {
+  document.getElementById('onboarding-modal').style.display = 'none';
+  localStorage.setItem('canopy_onboarding_completed', 'true');
+}
+
+function nextOnboardingStep() {
+  // Collect selected agent types
+  const checkedTypes = document.querySelectorAll('input[name="agent_type"]:checked');
+  onboardingData.agentTypes = Array.from(checkedTypes).map(input => input.value);
+  
+  if (onboardingData.agentTypes.length === 0) {
+    showToast('Please select at least one agent type', 'warning');
+    return;
+  }
+  
+  // Show step 2
+  document.getElementById('onboarding-step-1').style.display = 'none';
+  document.getElementById('onboarding-step-2').style.display = 'block';
+}
+
+function prevOnboardingStep() {
+  document.getElementById('onboarding-step-2').style.display = 'none';
+  document.getElementById('onboarding-step-1').style.display = 'block';
+}
+
+function finishOnboarding() {
+  // Collect selected policy
+  const checkedPolicy = document.querySelector('input[name="starter_policy"]:checked');
+  if (!checkedPolicy) {
+    showToast('Please select a starter policy', 'warning');
+    return;
+  }
+  
+  onboardingData.policy = checkedPolicy.value;
+  
+  // Simulate saving onboarding data
+  console.log('Onboarding completed:', onboardingData);
+  
+  // Show success message
+  showToast('🎉 Welcome to CanopyIQ! Your agent security is now set up.', 'success');
+  
+  // Close modal
+  hideOnboarding();
+  
+  // Redirect to Console after a moment
+  setTimeout(() => {
+    showToast('💡 Pro tip: Check out the Console to see your agent management features!', 'info');
+  }, 2000);
+}
+
+function skipOnboarding() {
+  if (confirm('Skip setup? You can always configure your agent policies later in the Console.')) {
+    hideOnboarding();
+    showToast('You can complete setup anytime in the Console tab', 'info');
+  }
+}
+
+// Check if this is a first-time user
+document.addEventListener('DOMContentLoaded', function() {
+  const hasCompletedOnboarding = localStorage.getItem('canopy_onboarding_completed');
+  
+  // Show onboarding modal for first-time users after a short delay
+  if (!hasCompletedOnboarding) {
+    setTimeout(() => {
+      showOnboarding();
+    }, 1000);
+  }
+});
+</script>
 {% endblock %}

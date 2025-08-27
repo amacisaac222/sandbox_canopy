@@ -1,433 +1,452 @@
 {% extends "base.html" %}
 {% block content %}
-<!-- Hero Section -->
+<!-- Developer-First Hero Section -->
 <section class="relative bg-gradient-to-b from-navy-800 to-navy-900 overflow-hidden">
   <div class="absolute inset-0 bg-gradient-to-r from-coral-500/10 via-transparent to-coral-500/5"></div>
-  <div class="relative max-w-7xl mx-auto px-4 py-24 lg:py-32">
-    <div class="max-w-4xl mx-auto text-center">
-      <h1 class="text-5xl lg:text-7xl font-black tracking-tight text-white mb-6">
-        Your Agents, <span class="text-transparent bg-clip-text bg-gradient-to-r from-coral-500 to-coral-400">Under Control</span>
-      </h1>
-      <p class="text-xl lg:text-2xl text-navy-200 mb-8 max-w-3xl mx-auto leading-relaxed font-bold">
-        Enterprise AI is powerful—but risky. CanopyIQ makes it safe by default, with sandboxing, policy enforcement, and compliance guardrails that scale from 10 to 10,000+ agents.
-      </p>
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a href="/contact" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-gradient-coral text-white px-8 py-4 hover:opacity-90 transition font-black text-lg">
-          Get Started
-        </a>
-        <a href="/contact" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-coral-500 text-coral-500 px-8 py-4 hover:bg-coral-500 hover:text-white transition font-bold">
-          Book a Demo
-        </a>
+  <div class="relative max-w-7xl mx-auto px-4 py-16 lg:py-24">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-12">
+        <h1 class="text-4xl lg:text-6xl font-black tracking-tight text-white mb-6">
+          Stop AI Agents from <span class="text-transparent bg-clip-text bg-gradient-to-r from-coral-500 to-coral-400">Breaking Things</span>
+        </h1>
+        <p class="text-xl lg:text-2xl text-navy-200 mb-8 max-w-4xl mx-auto leading-relaxed font-bold">
+          Get human approval before your agents access databases, send emails, or make financial transactions. <span class="text-coral-400">One line of code.</span>
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="#try-demo" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-gradient-coral text-white px-8 py-4 hover:opacity-90 transition font-black text-lg">
+            🚀 Try Live Demo
+          </a>
+          <a href="#quick-start" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-coral-500 text-coral-500 px-8 py-4 hover:bg-coral-500 hover:text-white transition font-bold">
+            ⚡ 5-Min Setup
+          </a>
+        </div>
+      </div>
+
+      <!-- Code Example Hero -->
+      <div class="bg-navy-800 rounded-lg border border-navy-600 p-6 mb-8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+          <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+          <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+          <span class="text-navy-400 text-sm font-bold ml-3">your_agent.py</span>
+        </div>
+        <div class="font-mono text-sm">
+          <div class="text-navy-400 mb-2"># Add one line to your existing agent:</div>
+          <div class="text-white">
+            <span class="text-purple-400">await</span> 
+            <span class="text-blue-400">canopy</span><span class="text-white">.</span><span class="text-yellow-400">require_approval</span><span class="text-white">(</span>
+          </div>
+          <div class="text-white ml-4">
+            <span class="text-green-400">"database_write"</span><span class="text-white">,</span> <span class="text-white">{</span>
+          </div>
+          <div class="text-white ml-8">
+            <span class="text-blue-400">table</span><span class="text-white">:</span> <span class="text-green-400">"users"</span><span class="text-white">,</span>
+          </div>
+          <div class="text-white ml-8">
+            <span class="text-blue-400">action</span><span class="text-white">:</span> <span class="text-green-400">"DELETE FROM users WHERE..."</span>
+          </div>
+          <div class="text-white ml-4"><span class="text-white">}</span></div>
+          <div class="text-white"><span class="text-white">)</span></div>
+          <div class="text-coral-400 mt-2"># Now requires human approval via Slack ✨</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- The Problem -->
+<!-- Developer Pain Points -->
 <section class="max-w-7xl mx-auto px-4 py-20">
   <div class="text-center mb-16">
-    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Agents Move Fast. <span class="text-coral-500">Risks Move Faster.</span></h2>
-    <div class="max-w-4xl mx-auto">
-      <p class="text-xl text-navy-300 mb-8 font-bold">AI agents unlock efficiency, but they also introduce new challenges:</p>
-      
-      <div class="grid md:grid-cols-2 gap-6 text-left">
-        <div class="flex items-start gap-4">
-          <div class="w-8 h-8 rounded-full bg-coral-500/20 flex items-center justify-center flex-shrink-0 mt-1">
-            <svg class="w-4 h-4 text-coral-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"/>
-            </svg>
-          </div>
-          <div>
-            <h3 class="text-lg font-black text-white mb-2">Sensitive data leaking to the wrong place</h3>
-          </div>
-        </div>
-        
-        <div class="flex items-start gap-4">
-          <div class="w-8 h-8 rounded-full bg-coral-500/20 flex items-center justify-center flex-shrink-0 mt-1">
-            <svg class="w-4 h-4 text-coral-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"/>
-            </svg>
-          </div>
-          <div>
-            <h3 class="text-lg font-black text-white mb-2">Unbounded cloud costs and runaway automation</h3>
-          </div>
-        </div>
-        
-        <div class="flex items-start gap-4">
-          <div class="w-8 h-8 rounded-full bg-coral-500/20 flex items-center justify-center flex-shrink-0 mt-1">
-            <svg class="w-4 h-4 text-coral-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"/>
-            </svg>
-          </div>
-          <div>
-            <h3 class="text-lg font-black text-white mb-2">Compliance violations that regulators won't forgive</h3>
-          </div>
-        </div>
-        
-        <div class="flex items-start gap-4">
-          <div class="w-8 h-8 rounded-full bg-coral-500/20 flex items-center justify-center flex-shrink-0 mt-1">
-            <svg class="w-4 h-4 text-coral-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"/>
-            </svg>
-          </div>
-          <div>
-            <h3 class="text-lg font-black text-white mb-2">Downtime caused by unintended agent actions</h3>
-          </div>
-        </div>
-      </div>
-      
-      <p class="text-xl text-coral-400 mt-8 font-black">Without control, enterprises hesitate to scale.</p>
-    </div>
-  </div>
-</section>
-
-<!-- Our Solution -->
-<section class="max-w-7xl mx-auto px-4 py-20">
-  <div class="text-center mb-16">
-    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">The Safety Layer for <span class="text-coral-500">Enterprise AI</span></h2>
-    <p class="text-xl text-navy-300 max-w-4xl mx-auto font-bold mb-8">
-      CanopyIQ makes agent adoption safe, fast, and compliant. Every agent action is checked in real-time against your policies. Risky behaviors are blocked or routed for human approval—without slowing down innovation.
-    </p>
-    
-    <!-- MCP Integration Highlight -->
-    <div class="bg-navy-800 border border-navy-700 rounded-xl p-6 max-w-2xl mx-auto mb-12">
-      <div class="flex items-center justify-center gap-3 mb-3">
-        <svg class="w-6 h-6 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-        </svg>
-        <h3 class="text-lg font-black text-white">Model Control Protocol (MCP) Ready</h3>
-      </div>
-      <p class="text-navy-300 text-sm font-bold">
-        Native MCP server integration enables seamless agent connectivity with Claude Desktop, VS Code, and any MCP-compatible platform. One line of code connects your entire agent fleet to CanopyIQ's security layer.
-      </p>
-    </div>
-  </div>
-  
-  <div class="grid lg:grid-cols-2 xl:grid-cols-4 gap-6">
-    <div class="group p-6 rounded-xl bg-navy-800 border border-navy-700 hover:border-coral-500/50 transition-all duration-300">
-      <div class="w-12 h-12 rounded-lg bg-gradient-coral flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-        </svg>
-      </div>
-      <h3 class="text-xl font-black text-white mb-2">Sandbox Every Action</h3>
-      <p class="text-navy-300 font-bold">Contain agents so they only act where permitted.</p>
-    </div>
-    
-    <div class="group p-6 rounded-xl bg-navy-800 border border-navy-700 hover:border-coral-500/50 transition-all duration-300">
-      <div class="w-12 h-12 rounded-lg bg-gradient-coral flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-        </svg>
-      </div>
-      <h3 class="text-xl font-black text-white mb-2">Policy Enforcement</h3>
-      <p class="text-navy-300 font-bold">Apply guardrails across thousands of agents instantly.</p>
-    </div>
-    
-    <div class="group p-6 rounded-xl bg-navy-800 border border-navy-700 hover:border-coral-500/50 transition-all duration-300">
-      <div class="w-12 h-12 rounded-lg bg-gradient-coral flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-        </svg>
-      </div>
-      <h3 class="text-xl font-black text-white mb-2">Audit & Approvals</h3>
-      <p class="text-navy-300 font-bold">Every decision logged, every high-risk step approved.</p>
-    </div>
-    
-    <div class="group p-6 rounded-xl bg-navy-800 border border-navy-700 hover:border-coral-500/50 transition-all duration-300">
-      <div class="w-12 h-12 rounded-lg bg-gradient-coral flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-        </svg>
-      </div>
-      <h3 class="text-xl font-black text-white mb-2">Compliance Ready</h3>
-      <p class="text-navy-300 font-bold">HIPAA, GDPR, SOX templates included.</p>
-    </div>
-  </div>
-</section>
-
-<!-- Interactive Sandbox Demo - Auto-show first example -->
-<section class="max-w-7xl mx-auto px-4 py-20" id="product-demos">
-  <div class="text-center mb-16">
-    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">See It In Action</h2>
-    <p class="text-xl text-navy-300 max-w-3xl mx-auto font-bold">
-      Experience how CanopyIQ secures agent operations in real-time. Click through the steps below or explore other demo scenarios.
+    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Common AI Agent <span class="text-coral-500">Disasters</span></h2>
+    <p class="text-xl text-navy-300 mb-8 font-bold max-w-3xl mx-auto">
+      These real scenarios happen every day. Don't learn the hard way.
     </p>
   </div>
 
-  <!-- Auto-displayed Sandbox Demo -->
-  <div class="bg-navy-800 rounded-2xl p-8 border border-navy-700 mb-16">
-    <div class="text-center mb-8">
-      <h3 class="text-3xl font-black text-white mb-4">🛡️ Sandbox Every Action</h3>
-      <p class="text-lg text-navy-300 font-bold">See how CanopyIQ creates secure boundaries for AI agent operations</p>
+  <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+    <div class="bg-navy-800 border border-red-500/20 rounded-lg p-6 hover:border-red-500/50 transition">
+      <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mb-4">
+        <span class="text-2xl">😱</span>
+      </div>
+      <h3 class="text-lg font-black text-white mb-2">"Agent deleted production data"</h3>
+      <p class="text-navy-300 text-sm font-semibold">AI hallucinated a DROP TABLE command</p>
     </div>
-    
-    <div class="grid lg:grid-cols-2 gap-8 mb-8">
-      <div class="space-y-6">
-        <div class="bg-navy-900 rounded-lg p-6">
-          <h4 class="text-xl font-black text-white mb-4">Scenario: File System Access</h4>
-          <p class="text-navy-300 font-bold mb-4">An AI agent needs to process customer documents stored in various directories.</p>
-          
-          <div class="space-y-3">
-            <button class="sandbox-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all border-coral-500 bg-coral-500/10" data-step="1">
-              <div class="flex items-center justify-between">
-                <span class="text-white font-bold">1. Agent requests file access</span>
-                <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </div>
-            </button>
-            
-            <button class="sandbox-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="2">
-              <div class="flex items-center justify-between">
-                <span class="text-white font-bold">2. CanopyIQ creates secure sandbox</span>
-                <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </div>
-            </button>
-            
-            <button class="sandbox-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="3">
-              <div class="flex items-center justify-between">
-                <span class="text-white font-bold">3. Restricted access enforced</span>
-                <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </div>
-            </button>
-            
-            <button class="sandbox-step w-full text-left p-3 rounded bg-navy-800 border border-navy-600 hover:border-coral-500 transition-all" data-step="4">
-              <div class="flex items-center justify-between">
-                <span class="text-white font-bold">4. Safe execution & monitoring</span>
-                <svg class="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </div>
-            </button>
+
+    <div class="bg-navy-800 border border-red-500/20 rounded-lg p-6 hover:border-red-500/50 transition">
+      <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mb-4">
+        <span class="text-2xl">💸</span>
+      </div>
+      <h3 class="text-lg font-black text-white mb-2">"Bot sent $50k to wrong account"</h3>
+      <p class="text-navy-300 text-sm font-semibold">Financial agent misinterpreted instructions</p>
+    </div>
+
+    <div class="bg-navy-800 border border-red-500/20 rounded-lg p-6 hover:border-red-500/50 transition">
+      <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mb-4">
+        <span class="text-2xl">📧</span>
+      </div>
+      <h3 class="text-lg font-black text-white mb-2">"AI spammed all customers"</h3>
+      <p class="text-navy-300 text-sm font-semibold">Email agent got stuck in loop</p>
+    </div>
+
+    <div class="bg-navy-800 border border-red-500/20 rounded-lg p-6 hover:border-red-500/50 transition">
+      <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mb-4">
+        <span class="text-2xl">🔍</span>
+      </div>
+      <h3 class="text-lg font-black text-white mb-2">"No audit trail for compliance"</h3>
+      <p class="text-navy-300 text-sm font-semibold">Failed SOC2 audit, lost major deal</p>
+    </div>
+  </div>
+
+  <div class="text-center">
+    <p class="text-2xl font-black text-coral-400 mb-4">Sound familiar?</p>
+    <p class="text-xl text-navy-300 font-bold max-w-2xl mx-auto">
+      CanopyIQ prevents these disasters with human-in-the-loop controls for risky agent actions.
+    </p>
+  </div>
+</section>
+
+<!-- Quick Start Integration -->
+<section class="max-w-7xl mx-auto px-4 py-20" id="quick-start">
+  <div class="text-center mb-16">
+    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">5-Minute <span class="text-coral-500">Setup</span></h2>
+    <p class="text-xl text-navy-300 font-bold mb-8">
+      Integrate CanopyIQ with your existing agents in minutes, not hours.
+    </p>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-12 items-center">
+    <div class="space-y-8">
+      <div class="flex items-start gap-4">
+        <div class="w-8 h-8 bg-coral-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+        <div>
+          <h3 class="text-xl font-black text-white mb-2">Install & Configure</h3>
+          <div class="bg-navy-800 rounded-lg p-4 font-mono text-sm">
+            <div class="text-navy-400 mb-2"># Install the SDK</div>
+            <div class="text-white">pip install canopy-sdk</div>
+            <div class="text-navy-400 mt-3 mb-2"># Set your API key</div>
+            <div class="text-white">export CANOPY_API_KEY="your-key"</div>
           </div>
         </div>
       </div>
-      
+
+      <div class="flex items-start gap-4">
+        <div class="w-8 h-8 bg-coral-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+        <div>
+          <h3 class="text-xl font-black text-white mb-2">Wrap Risky Functions</h3>
+          <div class="bg-navy-800 rounded-lg p-4 font-mono text-sm">
+            <div class="text-purple-400">from</div> <div class="text-white">canopy</div> <div class="text-purple-400">import</div> <div class="text-white">require_approval</div><br><br>
+            <div class="text-navy-400"># Protect database operations</div>
+            <div class="text-blue-400">@require_approval</div><div class="text-white">(</div><div class="text-green-400">"high_risk"</div><div class="text-white">)</div><br>
+            <div class="text-purple-400">async def</div> <div class="text-yellow-400">delete_user_data</div><div class="text-white">(user_id):</div><br>
+            <div class="text-white ml-4"># This now requires human approval</div><br>
+            <div class="text-white ml-4">pass</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-4">
+        <div class="w-8 h-8 bg-coral-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+        <div>
+          <h3 class="text-xl font-black text-white mb-2">Get Slack Notifications</h3>
+          <p class="text-navy-300 font-semibold mb-4">When agents need approval, you get instant Slack notifications with approve/deny buttons.</p>
+          <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+            <div class="text-green-400 font-bold">✅ That's it! Your agents are now safe.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-navy-800 rounded-lg border border-navy-600 p-6">
+      <h4 class="text-xl font-black text-white mb-4">Framework Support</h4>
+      <div class="space-y-3">
+        <div class="flex items-center gap-3 p-3 bg-navy-700 rounded">
+          <svg class="w-6 h-6 text-coral-500" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M14.25 2.1l-.25.1-.1.25c-.1.5-.2 1-.4 1.4l-.1.1-.1.1c-.2.2-.4.3-.6.5l-.1.1-.1.1c-.2.2-.3.4-.5.6l-.1.1-.1.1c-.2.2-.4.3-.6.5l-.1.1-.1.1c-.2.2-.3.4-.5.6l-.1.1-.1.1c-.2.2-.4.3-.6.5l-.1.1-.1.1c-.2.2-.3.4-.5.6l-.1.1-.1.1c-.2.2-.4.3-.6.5l-.1.1-.1.1c-.2.2-.3.4-.5.6l-.1.1-.1.1c-.2.2-.4.3-.6.5l-.1.1-.1.1c-.2.2-.3.4-.5.6l-.1.1-.1.1c-.2.2-.4.3-.6.5l-.1.1-.1.1c-.2.2-.3.4-.5.6l-.1.1-.1.1c-.2.2-.4.3-.6.5l-.1.1-.1.1c-.2.2-.3.4-.5.6l-.1.1-.1.1c-.2.2-.4.3-.6.5l-.1.1-.1.1c-.2.2-.3.4-.5.6l-.1.1-.1.1c-.2.2-.4.3-.6.5l-.1.1-.1.1c-.2.2-.3.4-.5.6l-.1.1-.1.1c-.2.2-.4.3-.6.5z"/>
+          </svg>
+          <div>
+            <div class="text-white font-bold">LangChain</div>
+            <div class="text-navy-300 text-sm">Native integration</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 p-3 bg-navy-700 rounded">
+          <svg class="w-6 h-6 text-coral-500" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
+          </svg>
+          <div>
+            <div class="text-white font-bold">AutoGPT</div>
+            <div class="text-navy-300 text-sm">Plugin available</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 p-3 bg-navy-700 rounded">
+          <svg class="w-6 h-6 text-coral-500" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0L1.608 6v12l10.392 6L22.392 18V6L12 0z"/>
+          </svg>
+          <div>
+            <div class="text-white font-bold">Custom Python/Node</div>
+            <div class="text-navy-300 text-sm">SDK available</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 p-3 bg-navy-700 rounded">
+          <svg class="w-6 h-6 text-coral-500" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 19.8184a5.9847 5.9847 0 0 0 3.9977-2.9001 6.0462 6.0462 0 0 0-.7475-7.0966zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142-.0852 4.783-2.7582a.7712.7712 0 0 0 .7806 0l5.8428 3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464z"/>
+          </svg>
+          <div>
+            <div class="text-white font-bold">OpenAI Assistants</div>
+            <div class="text-navy-300 text-sm">API integration</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Live Demo -->
+<section class="max-w-7xl mx-auto px-4 py-20" id="try-demo">
+  <div class="text-center mb-16">
+    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Try It <span class="text-coral-500">Live</span></h2>
+    <p class="text-xl text-navy-300 font-bold mb-8">
+      See how CanopyIQ prevents AI disasters in real-time
+    </p>
+  </div>
+
+  <div class="bg-navy-800 rounded-2xl p-8 border border-navy-700 mb-8">
+    <div class="grid lg:grid-cols-2 gap-8">
+      <div>
+        <h3 class="text-2xl font-black text-white mb-4">🤖 Risky Agent Actions</h3>
+        <p class="text-navy-300 font-semibold mb-6">Click any scenario to see CanopyIQ in action:</p>
+        
+        <div class="space-y-3">
+          <button onclick="runDemo('database')" class="demo-trigger w-full text-left p-4 rounded bg-navy-700 hover:bg-coral-500/10 hover:border-coral-500 border border-navy-600 transition group">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">🗃️</span>
+              <div>
+                <div class="text-white font-bold group-hover:text-coral-400">Delete User Database</div>
+                <div class="text-navy-300 text-sm">Agent wants to run: DELETE FROM users WHERE...</div>
+              </div>
+            </div>
+          </button>
+
+          <button onclick="runDemo('financial')" class="demo-trigger w-full text-left p-4 rounded bg-navy-700 hover:bg-coral-500/10 hover:border-coral-500 border border-navy-600 transition group">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">💰</span>
+              <div>
+                <div class="text-white font-bold group-hover:text-coral-400">Wire $25,000 Transfer</div>
+                <div class="text-navy-300 text-sm">Financial agent executing large transaction</div>
+              </div>
+            </div>
+          </button>
+
+          <button onclick="runDemo('email')" class="demo-trigger w-full text-left p-4 rounded bg-navy-700 hover:bg-coral-500/10 hover:border-coral-500 border border-navy-600 transition group">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">📨</span>
+              <div>
+                <div class="text-white font-bold group-hover:text-coral-400">Bulk Email Campaign</div>
+                <div class="text-navy-300 text-sm">Marketing bot sending to 10,000 customers</div>
+              </div>
+            </div>
+          </button>
+
+          <button onclick="runDemo('api')" class="demo-trigger w-full text-left p-4 rounded bg-navy-700 hover:bg-coral-500/10 hover:border-coral-500 border border-navy-600 transition group">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">🔌</span>
+              <div>
+                <div class="text-white font-bold group-hover:text-coral-400">External API Call</div>
+                <div class="text-navy-300 text-sm">Agent accessing third-party service</div>
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+
       <div class="bg-navy-900 rounded-lg p-6">
-        <div class="sandbox-result" id="sandbox-result-1">
-          <h5 class="text-lg font-black text-white mb-3">Agent File Access Request</h5>
-          <div class="bg-navy-800 rounded p-3 font-mono text-sm mb-4">
-            <div class="text-coral-400">Agent: DocumentProcessor</div>
-            <div class="text-navy-300">Request: access("/customer-docs/", "read")</div>
-            <div class="text-navy-300">Files: ["invoice.pdf", "contract.doc"]</div>
-          </div>
-          <div class="flex items-center gap-2 text-yellow-400">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"/>
-            </svg>
-            <span class="font-bold">Intercepted by CanopyIQ</span>
-          </div>
-        </div>
-        
-        <div class="sandbox-result" id="sandbox-result-2" style="display: none;">
-          <h5 class="text-lg font-black text-white mb-3">Secure Sandbox Created</h5>
-          <div class="space-y-3">
-            <div class="bg-green-500/10 border border-green-500/30 rounded p-3">
-              <div class="text-green-400 font-bold">✓ Sandbox Environment Active</div>
+        <div id="demo-result">
+          <div class="text-center py-12">
+            <div class="w-16 h-16 bg-coral-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
             </div>
-            <div class="bg-navy-800 rounded p-3 text-sm">
-              <div class="text-white font-bold mb-2">Sandbox Boundaries:</div>
-              <div class="text-navy-300">• Read-only access to /customer-docs/</div>
-              <div class="text-navy-300">• Network access: BLOCKED</div>
-              <div class="text-navy-300">• System calls: RESTRICTED</div>
-              <div class="text-navy-300">• Time limit: 5 minutes</div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="sandbox-result" id="sandbox-result-3" style="display: none;">
-          <h5 class="text-lg font-black text-white mb-3">Access Restrictions Applied</h5>
-          <div class="space-y-3">
-            <div class="flex items-center gap-3 bg-navy-800 rounded p-3">
-              <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
-                </svg>
-              </div>
-              <span class="text-white">Access to customer-docs/ ✓ ALLOWED</span>
-            </div>
-            <div class="flex items-center gap-3 bg-navy-800 rounded p-3">
-              <div class="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
-                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/>
-                </svg>
-              </div>
-              <span class="text-white">Access to /admin/ ✗ BLOCKED</span>
-            </div>
-            <div class="flex items-center gap-3 bg-navy-800 rounded p-3">
-              <div class="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
-                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/>
-                </svg>
-              </div>
-              <span class="text-white">Network requests ✗ BLOCKED</span>
-            </div>
-          </div>
-        </div>
-        
-        <div class="sandbox-result" id="sandbox-result-4" style="display: none;">
-          <h5 class="text-lg font-black text-white mb-3">Safe Execution Complete</h5>
-          <div class="space-y-3">
-            <div class="bg-green-500/10 border border-green-500/30 rounded p-3">
-              <div class="text-green-400 font-bold mb-1">✓ Task Completed Successfully</div>
-              <div class="text-green-300 text-sm">2 documents processed safely</div>
-            </div>
-            <div class="bg-navy-800 rounded p-3 text-sm">
-              <div class="text-white font-bold mb-2">Execution Summary:</div>
-              <div class="text-navy-300">• Files read: invoice.pdf, contract.doc</div>
-              <div class="text-navy-300">• Execution time: 1.2 seconds</div>
-              <div class="text-navy-300">• Memory used: 45MB (within limits)</div>
-              <div class="text-navy-300">• Security violations: 0</div>
-            </div>
+            <h4 class="text-xl font-black text-white mb-2">Ready to Demo</h4>
+            <p class="text-navy-400 font-semibold">Click any scenario on the left to see CanopyIQ prevent disasters</p>
           </div>
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="text-center">
+    <a href="/admin/console" class="bg-coral-500 text-white px-8 py-4 rounded-lg hover:bg-coral-600 transition font-bold text-lg mr-4">
+      🎮 Launch Full Console
+    </a>
+    <a href="/contact" class="border border-coral-500 text-coral-500 px-8 py-4 rounded-lg hover:bg-coral-500 hover:text-white transition font-bold">
+      Get Your API Key
+    </a>
+  </div>
+</section>
+
+<!-- Social Proof & Free Tier -->
+<section class="max-w-7xl mx-auto px-4 py-20">
+  <div class="text-center mb-16">
+    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Free for <span class="text-coral-500">Early Adopters</span></h2>
+    <p class="text-xl text-navy-300 font-bold mb-8 max-w-3xl mx-auto">
+      We're building the future of AI safety. Help us test and improve CanopyIQ while it's completely free.
+    </p>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-8 mb-12">
+    <div class="text-center p-8 rounded-xl bg-navy-800 border border-navy-700">
+      <div class="text-4xl font-black text-coral-500 mb-2">∞</div>
+      <div class="text-lg font-bold text-white mb-2">Unlimited Agents</div>
+      <div class="text-navy-400 font-semibold">No limits during beta</div>
+    </div>
     
-    <div class="text-center">
-      <button class="bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600 transition font-bold mr-4" onclick="resetSandboxDemo()">
-        Reset Demo
-      </button>
-      <a href="/product" class="border border-coral-500 text-coral-500 px-6 py-3 rounded-lg hover:bg-coral-500 hover:text-white transition font-bold">
-        Explore All Features
+    <div class="text-center p-8 rounded-xl bg-navy-800 border border-navy-700">
+      <div class="text-4xl font-black text-coral-500 mb-2">$0</div>
+      <div class="text-lg font-bold text-white mb-2">Completely Free</div>
+      <div class="text-navy-400 font-semibold">Full features included</div>
+    </div>
+    
+    <div class="text-center p-8 rounded-xl bg-navy-800 border border-navy-700">
+      <div class="text-4xl font-black text-coral-500 mb-2">24/7</div>
+      <div class="text-lg font-bold text-white mb-2">Developer Support</div>
+      <div class="text-navy-400 font-semibold">Help when you need it</div>
+    </div>
+  </div>
+
+  <div class="bg-gradient-to-r from-coral-500/10 to-navy-800/20 border border-coral-500/30 rounded-xl p-8 text-center">
+    <h3 class="text-2xl font-black text-white mb-4">Join the Beta Program</h3>
+    <p class="text-navy-300 font-semibold mb-6 max-w-2xl mx-auto">
+      Get early access, influence the roadmap, and help make AI agents safer for everyone. Plus, you'll be grandfathered into our best pricing when we launch commercially.
+    </p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <a href="/contact" class="w-full sm:w-auto bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600 transition font-bold">
+        Request Beta Access
+      </a>
+      <a href="/documentation" class="w-full sm:w-auto border border-coral-500 text-coral-500 px-6 py-3 rounded-lg hover:bg-coral-500 hover:text-white transition font-bold">
+        Read Documentation
       </a>
     </div>
   </div>
-
-  <!-- Other Demo Cards -->
-  <div class="grid lg:grid-cols-3 gap-6">
-    <a href="/product#policy-demo" class="group p-6 rounded-xl bg-navy-800 border border-navy-700 hover:border-coral-500/50 transition-all duration-300">
-      <div class="w-12 h-12 rounded-lg bg-gradient-coral flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-        </svg>
-      </div>
-      <h3 class="text-xl font-black text-white mb-2">Policy Enforcement</h3>
-      <p class="text-navy-300 font-bold mb-3">Watch real-time policy evaluation block risky database queries.</p>
-      <div class="text-coral-500 text-sm font-bold group-hover:text-coral-400 transition-colors">
-        → View Policy Demo
-      </div>
-    </a>
-    
-    <a href="/product#audit-demo" class="group p-6 rounded-xl bg-navy-800 border border-navy-700 hover:border-coral-500/50 transition-all duration-300">
-      <div class="w-12 h-12 rounded-lg bg-gradient-coral flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-        </svg>
-      </div>
-      <h3 class="text-xl font-black text-white mb-2">Audit & Approvals</h3>
-      <p class="text-navy-300 font-bold mb-3">Experience Slack-based approval workflows for high-risk actions.</p>
-      <div class="text-coral-500 text-sm font-bold group-hover:text-coral-400 transition-colors">
-        → View Audit Demo
-      </div>
-    </a>
-    
-    <a href="/product#compliance-demo" class="group p-6 rounded-xl bg-navy-800 border border-navy-700 hover:border-coral-500/50 transition-all duration-300">
-      <div class="w-12 h-12 rounded-lg bg-gradient-coral flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-        </svg>
-      </div>
-      <h3 class="text-xl font-black text-white mb-2">Compliance Ready</h3>
-      <p class="text-navy-300 font-bold mb-3">See automatic HIPAA compliance documentation in action.</p>
-      <div class="text-coral-500 text-sm font-bold group-hover:text-coral-400 transition-colors">
-        → View Compliance Demo
-      </div>
-    </a>
-  </div>
 </section>
 
-<!-- Proof at Scale -->
-<section class="max-w-7xl mx-auto px-4 py-20">
-  <div class="text-center mb-16">
-    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">From Pilot to <span class="text-coral-500">Global Rollout</span></h2>
-    <p class="text-xl text-navy-300 max-w-4xl mx-auto mb-12 font-bold">
-      CanopyIQ scales effortlessly with your AI strategy. Whether you're testing 10 agents or deploying 10,000 across the enterprise, our stateless, horizontally scalable design ensures consistent guardrails without added complexity.
-    </p>
-  </div>
-  
-  <div class="grid md:grid-cols-3 gap-8">
-    <div class="text-center p-8 rounded-xl bg-navy-800 border border-navy-700">
-      <div class="text-4xl font-black text-coral-500 mb-2">120</div>
-      <div class="text-lg font-bold text-white mb-2">Risky Actions</div>
-      <div class="text-navy-400 font-semibold">prevented per month</div>
-    </div>
-    
-    <div class="text-center p-8 rounded-xl bg-navy-800 border border-navy-700">
-      <div class="text-4xl font-black text-coral-500 mb-2">$500,000+</div>
-      <div class="text-lg font-bold text-white mb-2">In Costs</div>
-      <div class="text-navy-400 font-semibold">avoided annually</div>
-    </div>
-    
-    <div class="text-center p-8 rounded-xl bg-navy-800 border border-navy-700">
-      <div class="text-4xl font-black text-coral-500 mb-2">94%</div>
-      <div class="text-lg font-bold text-white mb-2">Policy Compliance</div>
-      <div class="text-navy-400 font-semibold">across deployments</div>
-    </div>
-  </div>
-</section>
-
-<!-- JavaScript for Demo -->
+<!-- Interactive Demo Script -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Setup sandbox demo step handlers
-  const sandboxSteps = document.querySelectorAll('.sandbox-step');
-  
-  function showSandboxStep(step) {
-    // Hide all results
-    const results = document.querySelectorAll('.sandbox-result');
-    results.forEach(result => result.style.display = 'none');
-    
-    // Show the specific result
-    const targetResult = document.getElementById(`sandbox-result-${step}`);
-    if (targetResult) {
-      targetResult.style.display = 'block';
-    }
-    
-    // Update button styles
-    sandboxSteps.forEach((btn, index) => {
-      const isActive = parseInt(btn.dataset.step) === step;
-      btn.classList.toggle('border-coral-500', isActive);
-      btn.classList.toggle('bg-coral-500/10', isActive);
-    });
+const demos = {
+  database: {
+    title: "🛑 Database Delete Blocked",
+    steps: [
+      { text: "Agent attempts: DELETE FROM users WHERE active = false", status: "warning" },
+      { text: "CanopyIQ intercepts request", status: "info" },
+      { text: "Slack notification sent to admin", status: "info" },
+      { text: "⏳ Waiting for human approval...", status: "pending" }
+    ],
+    result: "🛡️ Disaster prevented! Admin can review before allowing destructive operation."
+  },
+  financial: {
+    title: "💳 Financial Transaction Flagged", 
+    steps: [
+      { text: "Agent initiating $25,000 wire transfer", status: "warning" },
+      { text: "Amount exceeds $10,000 policy limit", status: "info" },
+      { text: "Human approval required", status: "info" },
+      { text: "📱 Finance team notified via Slack", status: "pending" }
+    ],
+    result: "💰 Large transactions require human verification - no more unauthorized transfers!"
+  },
+  email: {
+    title: "📧 Bulk Email Restricted",
+    steps: [
+      { text: "Marketing agent sending to 10,000 recipients", status: "warning" },
+      { text: "Bulk email policy triggered", status: "info" },
+      { text: "Content scanned for compliance", status: "info" },
+      { text: "✋ Marketing team approval needed", status: "pending" }
+    ],
+    result: "📮 Prevents spam complaints and maintains sender reputation!"
+  },
+  api: {
+    title: "🔌 External API Monitored",
+    steps: [
+      { text: "Agent calling external API: api.thirdparty.com", status: "warning" },
+      { text: "External access policy check", status: "info" },
+      { text: "Rate limiting applied", status: "info" },
+      { text: "✅ Approved with monitoring", status: "success" }
+    ],
+    result: "🔍 All external calls logged and monitored for security compliance!"
   }
+};
+
+function runDemo(type) {
+  const demo = demos[type];
+  const resultDiv = document.getElementById('demo-result');
   
-  sandboxSteps.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const step = parseInt(btn.dataset.step);
-      showSandboxStep(step);
-    });
+  // Clear previous demo
+  resultDiv.innerHTML = `
+    <h4 class="text-xl font-black text-white mb-4">${demo.title}</h4>
+    <div id="demo-steps" class="space-y-3 mb-6"></div>
+    <div id="demo-conclusion" class="bg-green-500/10 border border-green-500/30 rounded-lg p-4" style="display: none;">
+      <div class="text-green-400 font-bold">${demo.result}</div>
+    </div>
+  `;
+  
+  const stepsDiv = document.getElementById('demo-steps');
+  
+  // Animate steps
+  demo.steps.forEach((step, index) => {
+    setTimeout(() => {
+      const statusColors = {
+        warning: 'text-yellow-400',
+        info: 'text-blue-400', 
+        pending: 'text-coral-400',
+        success: 'text-green-400'
+      };
+      
+      const statusIcons = {
+        warning: '⚠️',
+        info: 'ℹ️',
+        pending: '⏳',
+        success: '✅'
+      };
+      
+      const stepDiv = document.createElement('div');
+      stepDiv.className = 'flex items-center gap-3 p-3 bg-navy-800 rounded';
+      stepDiv.innerHTML = `
+        <span class="text-lg">${statusIcons[step.status]}</span>
+        <span class="${statusColors[step.status]} font-semibold">${step.text}</span>
+      `;
+      stepsDiv.appendChild(stepDiv);
+      
+      // Show conclusion after last step
+      if (index === demo.steps.length - 1) {
+        setTimeout(() => {
+          document.getElementById('demo-conclusion').style.display = 'block';
+        }, 500);
+      }
+    }, index * 800);
   });
-  
-  // Auto-show first step of sandbox demo
-  showSandboxStep(1);
-  
-  // Global reset function
-  window.resetSandboxDemo = () => {
-    showSandboxStep(1);
-  };
+}
+
+// Auto-run first demo on page load
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => runDemo('database'), 1000);
 });
 </script>
 
-<!-- Final CTA Section -->
+<!-- Final CTA -->
 <section class="relative bg-gradient-to-r from-coral-600 to-coral-500 overflow-hidden">
   <div class="absolute inset-0 bg-gradient-to-br from-coral-600/95 to-transparent"></div>
   <div class="relative max-w-4xl mx-auto px-4 py-20 text-center">
-    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Turn Powerful Agents Into <span class="text-white/90">Trustworthy Agents.</span></h2>
+    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Start Building <span class="text-white/90">Safer AI</span> Today</h2>
     <p class="text-coral-100 text-xl mb-8 max-w-2xl mx-auto font-bold">
-      Your enterprise doesn't need more risk. It needs control.
+      Join hundreds of developers who are making AI agents safer and more reliable.
     </p>
     <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
       <a href="/contact" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-white text-coral-600 px-8 py-4 hover:bg-coral-50 transition font-black text-lg">
-        Request a Demo
+        🚀 Get Started Free
       </a>
-      <a href="/contact" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-white text-white px-8 py-4 hover:bg-white hover:text-coral-600 transition font-bold text-lg">
-        Talk to Sales
+      <a href="/documentation" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-white text-white px-8 py-4 hover:bg-white hover:text-coral-600 transition font-bold text-lg">
+        📚 View Docs
       </a>
     </div>
   </div>
