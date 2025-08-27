@@ -1003,11 +1003,11 @@ async def debug():
 async def debug_admin_users(db: AsyncSession = Depends(get_db)):
       """Check what admin users exist in the database - REMOVE IN PRODUCTION"""
       try:
-          from auth.models import User, UserRole
+          from auth.models import User
           from sqlalchemy import select
           
-          # Query for admin users
-          query = select(User).where(User.role == UserRole.ADMIN)
+          # Query for admin users using string comparison
+          query = select(User).where(User.role == 'ADMIN')
           result = await db.execute(query)
           admin_users = result.scalars().all()
           
@@ -1018,15 +1018,15 @@ async def debug_admin_users(db: AsyncSession = Depends(get_db)):
                       "id": user.id,
                       "email": user.email,
                       "name": user.name,
-                      "role": user.role.value,
+                      "role": str(user.role),
                       "created_at": user.created_at.isoformat() if user.created_at else None,
-                      "is_active": user.is_active
+                      "is_active": user.is_active if hasattr(user, 'is_active') else True
                   }
                   for user in admin_users
               ]
           }
       except Exception as e:
-          return {"error": str(e), "admin_count": 0}
+          return {"error": str(e), "admin_count": 0, "traceback": str(e)}
 
 @app.get("/metrics")
 async def metrics():
