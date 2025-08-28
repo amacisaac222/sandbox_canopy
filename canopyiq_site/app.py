@@ -655,6 +655,11 @@ async def user_dashboard_redirect(request: Request):
     """Redirect dashboard to admin interface"""
     return RedirectResponse(url="/admin/dashboard", status_code=status.HTTP_302_FOUND)
 
+@app.get("/admin/test-dashboard", response_class=HTMLResponse)
+async def admin_test(request: Request):
+    """Test admin dashboard"""
+    return HTMLResponse("<html><body><h1>Admin Dashboard Test</h1><p>This route works!</p></body></html>")
+
 @app.get("/admin/dashboard", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
 async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db)):
     """Admin dashboard"""
