@@ -1,122 +1,122 @@
 {% extends "base.html" %}
 {% block content %}
-<!-- Developer-First Hero Section -->
+<!-- Claude Desktop Hero Section -->
 <section class="relative bg-gradient-to-b from-navy-800 to-navy-900 overflow-hidden">
-  <div class="absolute inset-0 bg-gradient-to-r from-coral-500/10 via-transparent to-coral-500/5"></div>
+  <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-purple-500/10"></div>
   <div class="relative max-w-7xl mx-auto px-4 py-16 lg:py-24">
-    <div class="max-w-5xl mx-auto">
+    <div class="max-w-6xl mx-auto">
       <div class="text-center mb-12">
+        <div class="inline-flex items-center gap-3 bg-blue-500/10 border border-blue-500/30 rounded-full px-6 py-2 mb-6">
+          <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          <span class="text-blue-400 font-bold text-sm uppercase tracking-wide">Model Control Protocol Server</span>
+        </div>
+        
         <h1 class="text-4xl lg:text-6xl font-black tracking-tight text-white mb-6">
-          Stop AI Agents from <span class="text-transparent bg-clip-text bg-gradient-to-r from-coral-500 to-coral-400">Breaking Things</span>
+          Secure Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-400">Claude Desktop</span>
         </h1>
         <p class="text-xl lg:text-2xl text-navy-200 mb-8 max-w-4xl mx-auto leading-relaxed font-bold">
-          Get human approval before your agents access databases, send emails, or make financial transactions. <span class="text-coral-400">One line of code.</span>
+          Add approval workflows and security monitoring to Claude Desktop in <span class="text-blue-400">30 seconds</span>. Works with all MCP-compatible tools.
         </p>
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a href="#try-demo" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-gradient-coral text-white px-8 py-4 hover:opacity-90 transition font-black text-lg">
-            🚀 Try Live Demo
+          <a href="#claude-setup" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-4 hover:opacity-90 transition font-black text-lg">
+            ⚡ Setup Claude Desktop
           </a>
-          <a href="#quick-start" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-coral-500 text-coral-500 px-8 py-4 hover:bg-coral-500 hover:text-white transition font-bold">
-            ⚡ 5-Min Setup
+          <a href="#mcp-demo" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-blue-500 text-blue-400 px-8 py-4 hover:bg-blue-500 hover:text-white transition font-bold">
+            🎯 See Live Demo
           </a>
         </div>
       </div>
 
-      <!-- Code Example Hero -->
-      <div class="bg-navy-800 rounded-lg border border-navy-600 p-6 mb-8">
+      <!-- Claude Desktop Config Example -->
+      <div class="bg-navy-800 rounded-lg border border-blue-500/30 p-6 mb-8">
         <div class="flex items-center gap-3 mb-4">
           <div class="w-3 h-3 bg-red-500 rounded-full"></div>
           <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
           <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-          <span class="text-navy-400 text-sm font-bold ml-3">your_agent.py</span>
+          <span class="text-navy-400 text-sm font-bold ml-3">~/.claude_desktop_config.json</span>
         </div>
         <div class="font-mono text-sm">
-          <div class="text-navy-400 mb-2"># Add one line to your existing agent:</div>
-          <div class="text-white">
-            <span class="text-purple-400">await</span> 
-            <span class="text-blue-400">canopy</span><span class="text-white">.</span><span class="text-yellow-400">require_approval</span><span class="text-white">(</span>
-          </div>
-          <div class="text-white ml-4">
-            <span class="text-green-400">"database_write"</span><span class="text-white">,</span> <span class="text-white">{</span>
-          </div>
-          <div class="text-white ml-8">
-            <span class="text-blue-400">table</span><span class="text-white">:</span> <span class="text-green-400">"users"</span><span class="text-white">,</span>
-          </div>
-          <div class="text-white ml-8">
-            <span class="text-blue-400">action</span><span class="text-white">:</span> <span class="text-green-400">"DELETE FROM users WHERE..."</span>
-          </div>
-          <div class="text-white ml-4"><span class="text-white">}</span></div>
-          <div class="text-white"><span class="text-white">)</span></div>
-          <div class="text-coral-400 mt-2"># Now requires human approval via Slack ✨</div>
+          <div class="text-navy-400 mb-2"># Add CanopyIQ MCP server to your Claude Desktop:</div>
+          <div class="text-white">{</div>
+          <div class="text-white ml-2">"mcpServers": {</div>
+          <div class="text-white ml-4">"canopyiq": {</div>
+          <div class="text-white ml-6">"command": <span class="text-green-400">"npx"</span>,</div>
+          <div class="text-white ml-6">"args": [<span class="text-green-400">"canopyiq-mcp-server"</span>, <span class="text-green-400">"--api-key"</span>, <span class="text-green-400">"your-api-key"</span>]</div>
+          <div class="text-white ml-4">}</div>
+          <div class="text-white ml-2">}</div>
+          <div class="text-white">}</div>
+          <div class="text-blue-400 mt-3"># ✨ Restart Claude Desktop - all tool usage now secured!</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Developer Pain Points -->
+<!-- Claude Desktop Risks -->
 <section class="max-w-7xl mx-auto px-4 py-20">
   <div class="text-center mb-16">
-    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Common AI Agent <span class="text-coral-500">Disasters</span></h2>
+    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Claude Desktop <span class="text-red-500">Without Oversight</span></h2>
     <p class="text-xl text-navy-300 mb-8 font-bold max-w-3xl mx-auto">
-      These real scenarios happen every day. Don't learn the hard way.
+      Claude Code and MCP tools are powerful - but with power comes risk. Real scenarios from production systems:
     </p>
   </div>
 
   <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
     <div class="bg-navy-800 border border-red-500/20 rounded-lg p-6 hover:border-red-500/50 transition">
       <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mb-4">
-        <span class="text-2xl">😱</span>
+        <span class="text-2xl">🗂️</span>
       </div>
-      <h3 class="text-lg font-black text-white mb-2">"Agent deleted production data"</h3>
-      <p class="text-navy-300 text-sm font-semibold">AI hallucinated a DROP TABLE command</p>
+      <h3 class="text-lg font-black text-white mb-2">"Claude deleted my entire database"</h3>
+      <p class="text-navy-300 text-sm font-semibold">MCP file system tool ran DROP TABLE</p>
     </div>
 
     <div class="bg-navy-800 border border-red-500/20 rounded-lg p-6 hover:border-red-500/50 transition">
       <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mb-4">
-        <span class="text-2xl">💸</span>
+        <span class="text-2xl">💰</span>
       </div>
-      <h3 class="text-lg font-black text-white mb-2">"Bot sent $50k to wrong account"</h3>
-      <p class="text-navy-300 text-sm font-semibold">Financial agent misinterpreted instructions</p>
+      <h3 class="text-lg font-black text-white mb-2">"Payment API called 47 times"</h3>
+      <p class="text-navy-300 text-sm font-semibold">Claude got confused and repeated transaction</p>
     </div>
 
     <div class="bg-navy-800 border border-red-500/20 rounded-lg p-6 hover:border-red-500/50 transition">
       <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mb-4">
-        <span class="text-2xl">📧</span>
+        <span class="text-2xl">📨</span>
       </div>
-      <h3 class="text-lg font-black text-white mb-2">"AI spammed all customers"</h3>
-      <p class="text-navy-300 text-sm font-semibold">Email agent got stuck in loop</p>
+      <h3 class="text-lg font-black text-white mb-2">"Sent angry email to CEO"</h3>
+      <p class="text-navy-300 text-sm font-semibold">Email tool misunderstood context</p>
     </div>
 
     <div class="bg-navy-800 border border-red-500/20 rounded-lg p-6 hover:border-red-500/50 transition">
       <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mb-4">
         <span class="text-2xl">🔍</span>
       </div>
-      <h3 class="text-lg font-black text-white mb-2">"No audit trail for compliance"</h3>
-      <p class="text-navy-300 text-sm font-semibold">Failed SOC2 audit, lost major deal</p>
+      <h3 class="text-lg font-black text-white mb-2">"No record of what Claude did"</h3>
+      <p class="text-navy-300 text-sm font-semibold">Zero audit trail for compliance</p>
     </div>
   </div>
 
   <div class="text-center">
-    <p class="text-2xl font-black text-coral-400 mb-4">Sound familiar?</p>
-    <p class="text-xl text-navy-300 font-bold max-w-2xl mx-auto">
-      CanopyIQ prevents these disasters with human-in-the-loop controls for risky agent actions.
+    <p class="text-2xl font-black text-blue-400 mb-4">Sounds familiar?</p>
+    <p class="text-xl text-navy-300 font-bold max-w-3xl mx-auto">
+      CanopyIQ sits between Claude Desktop and your tools - adding approval workflows, logging, and safety rails to prevent these disasters.
     </p>
   </div>
 </section>
 
 <!-- MCP Integration Spotlight -->
-<section class="max-w-7xl mx-auto px-4 py-20 bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-2xl border border-blue-500/30">
+<section class="max-w-7xl mx-auto px-4 py-20 bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-2xl border border-blue-500/30" id="claude-setup">
   <div class="text-center mb-12">
-    <div class="inline-flex items-center gap-3 bg-blue-500/10 border border-blue-500/30 rounded-full px-6 py-2 mb-6">
-      <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="inline-flex items-center gap-3 bg-blue-500/20 border border-blue-400/50 rounded-full px-8 py-3 mb-6">
+      <svg class="w-6 h-6 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
       </svg>
-      <span class="text-blue-400 font-bold text-sm uppercase tracking-wide">Model Control Protocol Ready</span>
+      <span class="text-blue-300 font-black text-base uppercase tracking-wide">Official MCP Server</span>
     </div>
-    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Claude Desktop <span class="text-blue-400">Security Layer</span></h2>
-    <p class="text-xl text-navy-300 font-bold mb-8 max-w-3xl mx-auto">
-      Already using Claude Desktop? Add CanopyIQ as an MCP server to instantly secure all tool usage with human approvals.
+    <h2 class="text-4xl lg:text-6xl font-black text-white mb-6">Add Security to <span class="text-blue-400">Claude Desktop</span></h2>
+    <p class="text-xl lg:text-2xl text-blue-100 font-bold mb-8 max-w-4xl mx-auto">
+      Turn Claude Desktop into a secure, auditable AI assistant. Monitor every tool call, require approvals for risky actions, get Slack alerts.
     </p>
   </div>
 
@@ -208,52 +208,55 @@
   </div>
 </section>
 
-<!-- Quick Start Integration -->
+<!-- Claude Desktop Setup -->
 <section class="max-w-7xl mx-auto px-4 py-20" id="quick-start">
   <div class="text-center mb-16">
-    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">5-Minute <span class="text-coral-500">Setup</span></h2>
+    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Claude Desktop <span class="text-blue-400">Integration</span></h2>
     <p class="text-xl text-navy-300 font-bold mb-8">
-      Integrate CanopyIQ with your existing agents in minutes, not hours.
+      Secure your Claude Desktop with CanopyIQ MCP server - no code changes required.
     </p>
   </div>
 
   <div class="grid lg:grid-cols-2 gap-12 items-center">
     <div class="space-y-8">
       <div class="flex items-start gap-4">
-        <div class="w-8 h-8 bg-coral-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+        <div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
         <div>
-          <h3 class="text-xl font-black text-white mb-2">Install & Configure</h3>
+          <h3 class="text-xl font-black text-white mb-2">Install MCP Server</h3>
           <div class="bg-navy-800 rounded-lg p-4 font-mono text-sm">
-            <div class="text-navy-400 mb-2"># Install the SDK</div>
-            <div class="text-white">pip install canopy-sdk</div>
-            <div class="text-navy-400 mt-3 mb-2"># Set your API key</div>
-            <div class="text-white">export CANOPY_API_KEY="your-key"</div>
+            <div class="text-navy-400 mb-2"># Install globally via npm</div>
+            <div class="text-green-400">npm install -g canopyiq-mcp-server</div>
+            <div class="text-navy-400 mt-3 mb-2"># Or use npx (no install required)</div>
+            <div class="text-green-400">npx canopyiq-mcp-server --version</div>
           </div>
         </div>
       </div>
 
       <div class="flex items-start gap-4">
-        <div class="w-8 h-8 bg-coral-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+        <div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
         <div>
-          <h3 class="text-xl font-black text-white mb-2">Wrap Risky Functions</h3>
+          <h3 class="text-xl font-black text-white mb-2">Update Claude Config</h3>
           <div class="bg-navy-800 rounded-lg p-4 font-mono text-sm">
-            <div class="text-purple-400">from</div> <div class="text-white">canopy</div> <div class="text-purple-400">import</div> <div class="text-white">require_approval</div><br><br>
-            <div class="text-navy-400"># Protect database operations</div>
-            <div class="text-blue-400">@require_approval</div><div class="text-white">(</div><div class="text-green-400">"high_risk"</div><div class="text-white">)</div><br>
-            <div class="text-purple-400">async def</div> <div class="text-yellow-400">delete_user_data</div><div class="text-white">(user_id):</div><br>
-            <div class="text-white ml-4"># This now requires human approval</div><br>
-            <div class="text-white ml-4">pass</div>
+            <div class="text-navy-400 mb-2"># Edit ~/.claude_desktop_config.json</div>
+            <div class="text-white">{</div>
+            <div class="text-white ml-2">"mcpServers": {</div>
+            <div class="text-white ml-4">"canopyiq": {</div>
+            <div class="text-white ml-6">"command": <span class="text-green-400">"npx"</span>,</div>
+            <div class="text-white ml-6">"args": [<span class="text-green-400">"canopyiq-mcp-server"</span>]</div>
+            <div class="text-white ml-4">}</div>
+            <div class="text-white ml-2">}</div>
+            <div class="text-white">}</div>
           </div>
         </div>
       </div>
 
       <div class="flex items-start gap-4">
-        <div class="w-8 h-8 bg-coral-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+        <div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
         <div>
-          <h3 class="text-xl font-black text-white mb-2">Get Slack Notifications</h3>
-          <p class="text-navy-300 font-semibold mb-4">When agents need approval, you get instant Slack notifications with approve/deny buttons.</p>
-          <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
-            <div class="text-green-400 font-bold">✅ That's it! Your agents are now safe.</div>
+          <h3 class="text-xl font-black text-white mb-2">Restart Claude Desktop</h3>
+          <p class="text-navy-300 font-semibold mb-4">CanopyIQ will appear in your available tools. All tool usage now logs to your dashboard with optional approval workflows.</p>
+          <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+            <div class="text-blue-400 font-bold">🛡️ Claude Desktop is now secured and monitored!</div>
           </div>
         </div>
       </div>
@@ -306,58 +309,58 @@
   </div>
 </section>
 
-<!-- Live Demo -->
-<section class="max-w-7xl mx-auto px-4 py-20" id="try-demo">
+<!-- MCP Demo -->
+<section class="max-w-7xl mx-auto px-4 py-20" id="mcp-demo">
   <div class="text-center mb-16">
-    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Try It <span class="text-coral-500">Live</span></h2>
+    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">See Claude Desktop <span class="text-blue-400">Security</span> in Action</h2>
     <p class="text-xl text-navy-300 font-bold mb-8">
-      See how CanopyIQ prevents AI disasters in real-time
+      Watch how CanopyIQ intercepts Claude's tool calls and adds approval workflows
     </p>
   </div>
 
   <div class="bg-navy-800 rounded-2xl p-8 border border-navy-700 mb-8">
     <div class="grid lg:grid-cols-2 gap-8">
       <div>
-        <h3 class="text-2xl font-black text-white mb-4">🤖 Risky Agent Actions</h3>
-        <p class="text-navy-300 font-semibold mb-6">Click any scenario to see CanopyIQ in action:</p>
+        <h3 class="text-2xl font-black text-white mb-4">🖥️ Claude Desktop Tool Calls</h3>
+        <p class="text-navy-300 font-semibold mb-6">Click any scenario to see MCP security in action:</p>
         
         <div class="space-y-3">
-          <button onclick="runDemo('database')" class="demo-trigger w-full text-left p-4 rounded bg-navy-700 hover:bg-coral-500/10 hover:border-coral-500 border border-navy-600 transition group">
+          <button onclick="runDemo('filesystem')" class="demo-trigger w-full text-left p-4 rounded bg-navy-700 hover:bg-blue-500/10 hover:border-blue-500 border border-navy-600 transition group">
             <div class="flex items-center gap-3">
-              <span class="text-2xl">🗃️</span>
+              <span class="text-2xl">📁</span>
               <div>
-                <div class="text-white font-bold group-hover:text-coral-400">Delete User Database</div>
-                <div class="text-navy-300 text-sm">Agent wants to run: DELETE FROM users WHERE...</div>
+                <div class="text-white font-bold group-hover:text-blue-400">File System Access</div>
+                <div class="text-navy-300 text-sm">Claude wants to delete important files</div>
               </div>
             </div>
           </button>
 
-          <button onclick="runDemo('financial')" class="demo-trigger w-full text-left p-4 rounded bg-navy-700 hover:bg-coral-500/10 hover:border-coral-500 border border-navy-600 transition group">
+          <button onclick="runDemo('shell')" class="demo-trigger w-full text-left p-4 rounded bg-navy-700 hover:bg-blue-500/10 hover:border-blue-500 border border-navy-600 transition group">
             <div class="flex items-center gap-3">
-              <span class="text-2xl">💰</span>
+              <span class="text-2xl">⚡</span>
               <div>
-                <div class="text-white font-bold group-hover:text-coral-400">Wire $25,000 Transfer</div>
-                <div class="text-navy-300 text-sm">Financial agent executing large transaction</div>
+                <div class="text-white font-bold group-hover:text-blue-400">Shell Command Execution</div>
+                <div class="text-navy-300 text-sm">Claude running: rm -rf /production/*</div>
               </div>
             </div>
           </button>
 
-          <button onclick="runDemo('email')" class="demo-trigger w-full text-left p-4 rounded bg-navy-700 hover:bg-coral-500/10 hover:border-coral-500 border border-navy-600 transition group">
+          <button onclick="runDemo('database')" class="demo-trigger w-full text-left p-4 rounded bg-navy-700 hover:bg-blue-500/10 hover:border-blue-500 border border-navy-600 transition group">
             <div class="flex items-center gap-3">
-              <span class="text-2xl">📨</span>
+              <span class="text-2xl">🗄️</span>
               <div>
-                <div class="text-white font-bold group-hover:text-coral-400">Bulk Email Campaign</div>
-                <div class="text-navy-300 text-sm">Marketing bot sending to 10,000 customers</div>
+                <div class="text-white font-bold group-hover:text-blue-400">Database Operations</div>
+                <div class="text-navy-300 text-sm">Claude executing: DROP TABLE users</div>
               </div>
             </div>
           </button>
 
-          <button onclick="runDemo('api')" class="demo-trigger w-full text-left p-4 rounded bg-navy-700 hover:bg-coral-500/10 hover:border-coral-500 border border-navy-600 transition group">
+          <button onclick="runDemo('api')" class="demo-trigger w-full text-left p-4 rounded bg-navy-700 hover:bg-blue-500/10 hover:border-blue-500 border border-navy-600 transition group">
             <div class="flex items-center gap-3">
-              <span class="text-2xl">🔌</span>
+              <span class="text-2xl">🌐</span>
               <div>
-                <div class="text-white font-bold group-hover:text-coral-400">External API Call</div>
-                <div class="text-navy-300 text-sm">Agent accessing third-party service</div>
+                <div class="text-white font-bold group-hover:text-blue-400">API Calls</div>
+                <div class="text-navy-300 text-sm">Claude calling payment API multiple times</div>
               </div>
             </div>
           </button>
@@ -438,45 +441,49 @@
 <!-- Interactive Demo Script -->
 <script>
 const demos = {
-  database: {
-    title: "🛑 Database Delete Blocked",
+  filesystem: {
+    title: "🛑 Claude File System Access Blocked",
     steps: [
-      { text: "Agent attempts: DELETE FROM users WHERE active = false", status: "warning" },
-      { text: "CanopyIQ intercepts request", status: "info" },
-      { text: "Slack notification sent to admin", status: "info" },
+      { text: "Claude Desktop: Using MCP file system tool", status: "warning" },
+      { text: "Attempting: Delete /home/user/important_docs/", status: "warning" },
+      { text: "CanopyIQ MCP server intercepts request", status: "info" },
+      { text: "📱 Slack notification sent to admin", status: "info" },
       { text: "⏳ Waiting for human approval...", status: "pending" }
     ],
-    result: "🛡️ Disaster prevented! Admin can review before allowing destructive operation."
+    result: "🛡️ Disaster prevented! No more accidental file deletions by Claude."
   },
-  financial: {
-    title: "💳 Financial Transaction Flagged", 
+  shell: {
+    title: "⚡ Claude Shell Command Blocked", 
     steps: [
-      { text: "Agent initiating $25,000 wire transfer", status: "warning" },
-      { text: "Amount exceeds $10,000 policy limit", status: "info" },
-      { text: "Human approval required", status: "info" },
-      { text: "📱 Finance team notified via Slack", status: "pending" }
+      { text: "Claude Desktop: Using MCP shell tool", status: "warning" },
+      { text: "Command: rm -rf /production/*", status: "warning" },
+      { text: "CanopyIQ flags high-risk operation", status: "info" },
+      { text: "Command execution blocked", status: "info" },
+      { text: "🚨 DevOps team alerted immediately", status: "pending" }
     ],
-    result: "💰 Large transactions require human verification - no more unauthorized transfers!"
+    result: "💥 Production servers protected from Claude's destructive commands!"
   },
-  email: {
-    title: "📧 Bulk Email Restricted",
+  database: {
+    title: "🗄️ Claude Database Query Flagged",
     steps: [
-      { text: "Marketing agent sending to 10,000 recipients", status: "warning" },
-      { text: "Bulk email policy triggered", status: "info" },
-      { text: "Content scanned for compliance", status: "info" },
-      { text: "✋ Marketing team approval needed", status: "pending" }
+      { text: "Claude Desktop: Using MCP database tool", status: "warning" },
+      { text: "Query: DROP TABLE users;", status: "warning" },
+      { text: "CanopyIQ recognizes destructive SQL", status: "info" },
+      { text: "Query blocked, approval required", status: "info" },
+      { text: "✋ DBA team approval needed", status: "pending" }
     ],
-    result: "📮 Prevents spam complaints and maintains sender reputation!"
+    result: "🛡️ Database protected - no more accidental data loss from Claude!"
   },
   api: {
-    title: "🔌 External API Monitored",
+    title: "🌐 Claude API Call Monitored",
     steps: [
-      { text: "Agent calling external API: api.thirdparty.com", status: "warning" },
-      { text: "External access policy check", status: "info" },
-      { text: "Rate limiting applied", status: "info" },
-      { text: "✅ Approved with monitoring", status: "success" }
+      { text: "Claude Desktop: Making API call via MCP", status: "warning" },
+      { text: "Target: POST /api/payments/transfer", status: "warning" },
+      { text: "CanopyIQ logs call details and context", status: "info" },
+      { text: "Rate limiting applied (3/10 calls used)", status: "info" },
+      { text: "✅ Approved with full audit trail", status: "success" }
     ],
-    result: "🔍 All external calls logged and monitored for security compliance!"
+    result: "🔍 All Claude API calls logged with context for compliance!"
   }
 };
 
@@ -532,24 +539,24 @@ function runDemo(type) {
 
 // Auto-run first demo on page load
 document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => runDemo('database'), 1000);
+  setTimeout(() => runDemo('filesystem'), 1000);
 });
 </script>
 
 <!-- Final CTA -->
-<section class="relative bg-gradient-to-r from-coral-600 to-coral-500 overflow-hidden">
-  <div class="absolute inset-0 bg-gradient-to-br from-coral-600/95 to-transparent"></div>
+<section class="relative bg-gradient-to-r from-blue-600 to-blue-500 overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-br from-blue-600/95 to-transparent"></div>
   <div class="relative max-w-4xl mx-auto px-4 py-20 text-center">
-    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Start Building <span class="text-white/90">Safer AI</span> Today</h2>
-    <p class="text-coral-100 text-xl mb-8 max-w-2xl mx-auto font-bold">
-      Join hundreds of developers who are making AI agents safer and more reliable.
+    <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Secure Your <span class="text-white/90">Claude Desktop</span> Today</h2>
+    <p class="text-blue-100 text-xl mb-8 max-w-2xl mx-auto font-bold">
+      Join Claude Desktop power users who add safety rails to their AI workflows with CanopyIQ MCP server.
     </p>
     <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-      <a href="/signup" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-white text-coral-600 px-8 py-4 hover:bg-coral-50 transition font-black text-lg">
-        🚀 Get Started Free
+      <a href="/signup" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-white text-blue-600 px-8 py-4 hover:bg-blue-50 transition font-black text-lg">
+        ⚡ Get MCP Server
       </a>
-      <a href="/documentation" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-white text-white px-8 py-4 hover:bg-white hover:text-coral-600 transition font-bold text-lg">
-        📚 View Docs
+      <a href="/documentation/mcp-setup" class="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-white text-white px-8 py-4 hover:bg-white hover:text-blue-600 transition font-bold text-lg">
+        📖 Setup Guide
       </a>
     </div>
   </div>

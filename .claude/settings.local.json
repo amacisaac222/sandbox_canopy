@@ -42,7 +42,10 @@
       "Bash(gcloud logging read:*)",
       "Bash(gcloud:*)",
       "WebFetch(domain:canopyiq.ai)",
-      "Bash(git merge:*)"
+      "WebFetch(domain:canopyiq-site-637973821579.us-east4.run.app)",
+      "Bash(git merge:*)",
+      "Bash(git log:*)",
+      "Bash(git tag:*)"
     ],
     "deny": [],
     "ask": [],
