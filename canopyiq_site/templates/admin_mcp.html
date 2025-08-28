@@ -4,26 +4,26 @@
 <div class="max-w-4xl">
   <div class="mb-8">
     <h1 class="text-2xl font-black text-navy-900 mb-2">MCP Server Configuration</h1>
-    <p class="text-navy-600 font-semibold">Set up CanopyIQ MCP server for Claude Desktop integration</p>
+    <p class="text-navy-600 font-semibold">Set up CanopyIQ MCP server for Claude Code integration</p>
   </div>
 
   <!-- Setup Instructions -->
-  <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200 p-8 mb-8">
+  <div class="bg-gradient-to-r from-coral-50 to-coral-100 rounded-lg border-2 border-coral-200 p-8 mb-8">
     <div class="mb-6">
       <h2 class="text-xl font-black text-navy-900 mb-3 flex items-center gap-2">
-        <span class="text-blue-500">🚀</span>
-        Quick Setup for Claude Desktop
+        <span class="text-coral-500">🚀</span>
+        Quick Setup for Claude Code
       </h2>
       <p class="text-navy-700 leading-relaxed">
-        Add security, logging, and approval workflows to your Claude Desktop tools in 3 simple steps.
+        Add security, logging, and approval workflows to your Claude Code tools in 3 simple steps.
       </p>
     </div>
     
     <div class="grid lg:grid-cols-3 gap-6">
       <!-- Step 1 -->
-      <div class="bg-white rounded-lg p-6 border border-blue-200">
+      <div class="bg-white rounded-lg p-6 border border-coral-200">
         <div class="flex items-center gap-3 mb-4">
-          <div class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">1</div>
+          <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">1</div>
           <h3 class="font-bold text-navy-900">Install MCP Server</h3>
         </div>
         <div class="bg-navy-900 rounded-md p-3 font-mono text-sm text-green-400 overflow-x-auto mb-3">
@@ -33,12 +33,12 @@
       </div>
 
       <!-- Step 2 -->
-      <div class="bg-white rounded-lg p-6 border border-blue-200">
+      <div class="bg-white rounded-lg p-6 border border-coral-200">
         <div class="flex items-center gap-3 mb-4">
-          <div class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">2</div>
+          <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">2</div>
           <h3 class="font-bold text-navy-900">Configure Claude</h3>
         </div>
-        <p class="text-navy-700 text-sm mb-3">Edit your Claude Desktop config file:</p>
+        <p class="text-navy-700 text-sm mb-3">Edit your Claude Code config file:</p>
         <div class="text-xs text-navy-600 space-y-1">
           <div><strong>macOS:</strong></div>
           <div class="font-mono bg-navy-50 p-1 rounded text-xs break-all">{{ mcp_config.claude_config_path_mac }}</div>
@@ -48,12 +48,12 @@
       </div>
 
       <!-- Step 3 -->
-      <div class="bg-white rounded-lg p-6 border border-blue-200">
+      <div class="bg-white rounded-lg p-6 border border-coral-200">
         <div class="flex items-center gap-3 mb-4">
           <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">✓</div>
           <h3 class="font-bold text-navy-900">All Set!</h3>
         </div>
-        <p class="text-navy-700 text-sm mb-3">Restart Claude Desktop and you'll see:</p>
+        <p class="text-navy-700 text-sm mb-3">Restart Claude Code and you'll see:</p>
         <div class="text-xs text-navy-600 space-y-1">
           <div>✅ Tool usage logging</div>
           <div>✅ Policy enforcement</div>
@@ -98,7 +98,7 @@
       </div>
 
       <div class="bg-navy-900 rounded-lg p-4">
-        <h4 class="text-white font-semibold mb-2">Claude Desktop Configuration:</h4>
+        <h4 class="text-white font-semibold mb-2">Claude Code Configuration:</h4>
         <div class="bg-navy-800 rounded p-3 font-mono text-xs text-green-400 overflow-x-auto">
 {
   "mcpServers": {
@@ -110,7 +110,7 @@
 }
         </div>
         <button onclick="copyConfig()" 
-                class="mt-3 px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition">
+                class="mt-3 px-3 py-1 bg-coral-500 text-white rounded text-xs hover:bg-coral-600 transition">
           Copy Config
         </button>
       </div>
@@ -149,8 +149,8 @@
       </div>
       <div class="p-6 space-y-3">
         <a href="/documentation" 
-           class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
-          <div class="text-blue-500 text-lg">📚</div>
+           class="flex items-center gap-3 p-3 bg-navy-50 rounded-lg hover:bg-navy-100 transition">
+          <div class="text-navy-500 text-lg">📚</div>
           <div>
             <div class="font-semibold text-navy-900">View Documentation</div>
             <div class="text-sm text-navy-600">Complete setup guides and examples</div>

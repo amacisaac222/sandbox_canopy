@@ -644,6 +644,65 @@ async def admin_submissions(request: Request, db: AsyncSession = Depends(get_db)
         submissions=submissions_list
     )
 
+@app.get("/dashboard", response_class=HTMLResponse)
+async def user_dashboard(request: Request, db: AsyncSession = Depends(get_db)):
+    """User dashboard - personal MCP config and activity"""
+    user = get_current_user(request)
+    
+    # Redirect to login if not authenticated
+    if not user:
+        return RedirectResponse(url="/auth/login", status_code=status.HTTP_302_FOUND)
+    
+    import secrets
+    
+    # Generate user's personal API key
+    user_api_key = f"ciq_user_{user.id if hasattr(user, 'id') else 'demo'}_{secrets.token_hex(12)}"
+    
+    # Get user's MCP activity (mock data for now)
+    mcp_activity = [
+        {
+            "timestamp": "2025-01-28 10:30:45",
+            "action": "Tool call logged",
+            "tool": "file_operations",
+            "status": "approved",
+            "risk_level": "medium"
+        },
+        {
+            "timestamp": "2025-01-28 09:15:22", 
+            "action": "API call blocked",
+            "tool": "payment_api",
+            "status": "blocked",
+            "risk_level": "high"
+        },
+        {
+            "timestamp": "2025-01-28 08:45:10",
+            "action": "Database query executed",
+            "tool": "sql_tool", 
+            "status": "approved",
+            "risk_level": "low"
+        }
+    ]
+    
+    dashboard_data = {
+        "user": user,
+        "api_key": user_api_key,
+        "activity": mcp_activity,
+        "stats": {
+            "tools_monitored": 12,
+            "calls_today": 24,
+            "blocked_calls": 3,
+            "approval_rate": "87%"
+        }
+    }
+    
+    return page(
+        request,
+        title="Your Dashboard | CanopyIQ",
+        desc="Monitor your Claude Code MCP activity and manage your personal settings.",
+        path="user_dashboard.html",
+        **dashboard_data
+    )
+
 @app.get("/admin", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
 async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
     """Admin dashboard"""
@@ -767,6 +826,31 @@ async def admin_settings(request: Request, db: AsyncSession = Depends(get_db)):
         desc="Configure your CanopyIQ system.",
         path="admin_settings.html",
         settings=settings
+    )
+
+@app.get("/admin/mcp", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+async def admin_mcp(request: Request, db: AsyncSession = Depends(get_db)):
+    """MCP Server configuration page"""
+    import secrets
+    
+    # Generate or get API key for this user/admin
+    api_key = "ciq_demo_" + secrets.token_hex(16)
+    
+    mcp_config = {
+        "api_key": api_key,
+        "server_status": "Available",
+        "npm_package": "canopyiq-mcp-server",
+        "version": "1.0.0",
+        "claude_config_path_mac": "~/Library/Application Support/Claude/claude_desktop_config.json",
+        "claude_config_path_windows": "%APPDATA%\\Claude\\claude_desktop_config.json"
+    }
+
+    return page(
+        request,
+        title="MCP Server Setup | Admin | CanopyIQ",
+        desc="Configure CanopyIQ MCP server for Claude Code integration.",
+        path="admin_mcp.html",
+        mcp_config=mcp_config
     )
 
 @app.post("/admin/settings/slack", dependencies=[Depends(require_admin)])
