@@ -93,6 +93,7 @@
           <div class="text-sm text-navy-300 font-semibold">
             {{ user.name if user else "Admin" }}
           </div>
+          <a href="/dashboard" class="text-coral-400 hover:text-coral-300 transition text-sm font-bold">Your Dashboard</a>
           <a href="/" class="text-navy-300 hover:text-coral-500 transition text-sm font-semibold">← Back to Site</a>
         </div>
       </div>
@@ -114,6 +115,9 @@
         </a>
         <a href="/admin/console" class="border-b-2 border-transparent hover:border-coral-500 transition-colors px-1 py-4 text-sm font-semibold text-navy-600 hover:text-coral-500 {% if '/admin/console' in request.url.path %}border-coral-500 text-coral-500{% endif %}">
           Console
+        </a>
+        <a href="/admin/mcp" class="border-b-2 border-transparent hover:border-coral-500 transition-colors px-1 py-4 text-sm font-semibold text-navy-600 hover:text-coral-500 {% if '/admin/mcp' in request.url.path %}border-coral-500 text-coral-500{% endif %}">
+          MCP Server
         </a>
         <a href="/admin/settings" class="border-b-2 border-transparent hover:border-coral-500 transition-colors px-1 py-4 text-sm font-semibold text-navy-600 hover:text-coral-500 {% if '/admin/settings' in request.url.path %}border-coral-500 text-coral-500{% endif %}">
           Settings
