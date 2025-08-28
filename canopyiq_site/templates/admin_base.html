@@ -81,7 +81,7 @@
     <div class="max-w-7xl mx-auto px-4 py-4">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
-          <a href="/admin/dashboard" class="flex items-center gap-2">
+          <a href="/admin/mcp" class="flex items-center gap-2">
             <img src="/static/canopy-logo-transparent.svg" alt="CanopyIQ logo" class="h-8 w-8">
             <div>
               <div class="font-black text-lg">CanopyIQ Admin</div>
@@ -104,11 +104,8 @@
   <nav class="bg-white border-b border-navy-200">
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex space-x-8">
-        <a href="/admin/dashboard" class="border-b-2 border-transparent hover:border-coral-500 transition-colors px-1 py-4 text-sm font-bold text-navy-900 hover:text-coral-500 {% if request.url.path == '/admin/dashboard' %}border-coral-500 text-coral-500{% endif %}">
+        <a href="/admin/mcp" class="border-b-2 border-transparent hover:border-coral-500 transition-colors px-1 py-4 text-sm font-bold text-navy-900 hover:text-coral-500 {% if '/admin/mcp' in request.url.path %}border-coral-500 text-coral-500{% endif %}">
           Dashboard
-        </a>
-        <a href="/admin/mcp" class="border-b-2 border-transparent hover:border-coral-500 transition-colors px-1 py-4 text-sm font-semibold text-navy-600 hover:text-coral-500 {% if '/admin/mcp' in request.url.path %}border-coral-500 text-coral-500{% endif %}">
-          MCP Setup
         </a>
         <a href="/admin/audit" class="border-b-2 border-transparent hover:border-coral-500 transition-colors px-1 py-4 text-sm font-semibold text-navy-600 hover:text-coral-500 {% if '/admin/audit' in request.url.path %}border-coral-500 text-coral-500{% endif %}">
           Activity Log
