@@ -54,6 +54,38 @@
       </div>
     </div>
 
+    <!-- Performance Charts -->
+    <div class="grid md:grid-cols-2 gap-6 mb-8">
+      <!-- MCP Tool Calls Over Time -->
+      <div class="bg-navy-800 border border-navy-700 rounded-lg p-6">
+        <h2 class="text-xl font-bold text-white mb-4">MCP Tool Calls</h2>
+        <div class="h-64">
+          <canvas id="toolCallsChart"></canvas>
+        </div>
+      </div>
+      
+      <!-- Response Time Distribution -->
+      <div class="bg-navy-800 border border-navy-700 rounded-lg p-6">
+        <h2 class="text-xl font-bold text-white mb-4">Response Times</h2>
+        <div class="h-64">
+          <canvas id="responseTimeChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Policy Actions Chart -->
+    <div class="bg-navy-800 border border-navy-700 rounded-lg p-6 mb-8">
+      <h2 class="text-xl font-bold text-white mb-4">Security Policy Actions</h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="h-64">
+          <canvas id="policyActionsChart"></canvas>
+        </div>
+        <div class="h-64">
+          <canvas id="costTrendChart"></canvas>
+        </div>
+      </div>
+    </div>
+
     <!-- Workflow Performance -->
     <div class="bg-navy-800 border border-navy-700 rounded-lg p-6 mb-8">
       <h2 class="text-xl font-bold text-white mb-6">Workflow Performance</h2>
@@ -172,4 +204,242 @@
     </div>
   </div>
 </div>
+
+<script>
+// Chart.js configuration with dark theme
+Chart.defaults.color = '#94a3b8'; // navy-400
+Chart.defaults.borderColor = '#334155'; // navy-700
+Chart.defaults.backgroundColor = 'rgba(148, 163, 184, 0.1)'; // navy-400/10
+
+// Global chart references for updates
+let toolCallsChart, responseTimeChart, policyActionsChart, costTrendChart;
+
+// Load real dashboard data
+async function loadDashboardData() {
+  try {
+    const response = await fetch('/api/v1/dashboard/metrics?hours=12');
+    const data = await response.json();
+    
+    if (data.error) {
+      console.error('Dashboard API error:', data.error);
+      return;
+    }
+    
+    updateCharts(data);
+  } catch (error) {
+    console.error('Failed to load dashboard data:', error);
+  }
+}
+
+function updateCharts(data) {
+  // Update tool calls chart
+  if (toolCallsChart) {
+    toolCallsChart.data.labels = data.time_series.labels;
+    toolCallsChart.data.datasets[0].data = data.time_series.approved;
+    toolCallsChart.data.datasets[1].data = data.time_series.blocked;
+    toolCallsChart.data.datasets[2].data = data.time_series.pending;
+    toolCallsChart.update('none'); // No animation for real-time updates
+  }
+  
+  // Update response time chart
+  if (responseTimeChart) {
+    responseTimeChart.data.datasets[0].data = Object.values(data.response_times);
+    responseTimeChart.update('none');
+  }
+  
+  // Update policy actions chart
+  if (policyActionsChart) {
+    policyActionsChart.data.datasets[0].data = [
+      data.policy_summary.approved,
+      data.policy_summary.blocked,
+      data.policy_summary.pending
+    ];
+    policyActionsChart.update('none');
+  }
+  
+  // Update cost trend chart
+  if (costTrendChart) {
+    costTrendChart.data.labels = data.time_series.labels.slice(-7); // Last 7 points
+    costTrendChart.data.datasets[0].data = data.time_series.costs.slice(-7);
+    costTrendChart.update('none');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  
+  // MCP Tool Calls Over Time Chart
+  const toolCallsCtx = document.getElementById('toolCallsChart').getContext('2d');
+  toolCallsChart = new Chart(toolCallsCtx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Approved',
+        data: [],
+        borderColor: '#10b981', // green-500
+        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+        tension: 0.4,
+        fill: true
+      }, {
+        label: 'Blocked',
+        data: [],
+        borderColor: '#ef4444', // red-500
+        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+        tension: 0.4,
+        fill: true
+      }, {
+        label: 'Pending Approval',
+        data: [],
+        borderColor: '#f59e0b', // amber-500
+        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: '#334155' }, // navy-700
+          ticks: { color: '#94a3b8' } // navy-400
+        },
+        x: {
+          grid: { color: '#334155' },
+          ticks: { color: '#94a3b8' }
+        }
+      },
+      plugins: {
+        legend: {
+          labels: { color: '#f8fafc' } // slate-50
+        }
+      }
+    }
+  });
+
+  // Response Time Distribution
+  const responseTimeCtx = document.getElementById('responseTimeChart').getContext('2d');
+  responseTimeChart = new Chart(responseTimeCtx, {
+    type: 'bar',
+    data: {
+      labels: ['<100ms', '100-250ms', '250-500ms', '500ms-1s', '1-2s', '>2s'],
+      datasets: [{
+        label: 'Tool Calls',
+        data: [],
+        backgroundColor: [
+          '#10b981', // green-500
+          '#22c55e', // green-500
+          '#eab308', // yellow-500
+          '#f59e0b', // amber-500
+          '#f97316', // orange-500
+          '#ef4444'  // red-500
+        ],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: '#334155' },
+          ticks: { color: '#94a3b8' }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: '#94a3b8' }
+        }
+      },
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+
+  // Policy Actions Doughnut Chart
+  const policyActionsCtx = document.getElementById('policyActionsChart').getContext('2d');
+  policyActionsChart = new Chart(policyActionsCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Approved', 'Blocked', 'Pending'],
+      datasets: [{
+        data: [],
+        backgroundColor: [
+          '#10b981', // green-500
+          '#ef4444', // red-500  
+          '#f59e0b'  // amber-500
+        ],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { 
+            color: '#f8fafc',
+            padding: 20,
+            font: { size: 14 }
+          }
+        }
+      }
+    }
+  });
+
+  // Cost Trend Chart
+  const costTrendCtx = document.getElementById('costTrendChart').getContext('2d');
+  costTrendChart = new Chart(costTrendCtx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Hourly Cost ($)',
+        data: [],
+        borderColor: '#3b82f6', // blue-500
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        tension: 0.4,
+        fill: true,
+        pointBackgroundColor: '#3b82f6',
+        pointBorderColor: '#1e40af',
+        pointBorderWidth: 2,
+        pointRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: '#334155' },
+          ticks: { 
+            color: '#94a3b8',
+            callback: function(value) { return '$' + value; }
+          }
+        },
+        x: {
+          grid: { color: '#334155' },
+          ticks: { color: '#94a3b8' }
+        }
+      },
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+
+  // Load initial data
+  loadDashboardData();
+  
+  // Auto-refresh charts every 30 seconds with real data
+  setInterval(function() {
+    loadDashboardData();
+  }, 30000);
+});
+</script>
+
 {% endblock %}

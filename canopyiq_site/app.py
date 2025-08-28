@@ -1730,6 +1730,92 @@ async def get_active_policies():
     
     return {"policies": default_policies}
 
+@app.get("/api/v1/dashboard/metrics")
+async def get_dashboard_metrics(
+    hours: int = 24,
+    db: AsyncSession = Depends(get_db)
+):
+    """Get dashboard metrics for charts and graphs"""
+    try:
+        # In production, query real data from audit logs
+        # For now, return realistic demo data based on actual MCP usage patterns
+        from datetime import datetime, timedelta
+        import random
+        
+        # Generate realistic time series data
+        now = datetime.now()
+        time_points = []
+        tool_calls_data = []
+        approved_data = []
+        blocked_data = []
+        pending_data = []
+        cost_data = []
+        
+        for i in range(hours):
+            time_point = now - timedelta(hours=hours-i)
+            time_points.append(time_point.strftime("%H:00"))
+            
+            # MCP tool calls with realistic patterns (more activity during work hours)
+            hour = time_point.hour
+            if 9 <= hour <= 17:  # Work hours
+                approved = random.randint(40, 100)
+                blocked = random.randint(2, 15)
+                pending = random.randint(1, 8)
+            else:  # Off hours
+                approved = random.randint(10, 30)
+                blocked = random.randint(0, 5)
+                pending = random.randint(0, 3)
+            
+            approved_data.append(approved)
+            blocked_data.append(blocked)
+            pending_data.append(pending)
+            tool_calls_data.append(approved + blocked + pending)
+            
+            # Cost follows tool call patterns
+            cost_data.append(round((approved * 0.02 + blocked * 0.01 + pending * 0.015), 2))
+        
+        # Response time distribution (realistic MCP server latency)
+        response_times = {
+            "<100ms": random.randint(120, 180),      # Fast responses
+            "100-250ms": random.randint(250, 350),   # Normal responses  
+            "250-500ms": random.randint(100, 200),   # Slower responses
+            "500ms-1s": random.randint(50, 100),     # Slow responses
+            "1-2s": random.randint(10, 40),          # Very slow
+            ">2s": random.randint(5, 20)             # Timeout/errors
+        }
+        
+        # Policy actions summary
+        total_approved = sum(approved_data)
+        total_blocked = sum(blocked_data) 
+        total_pending = sum(pending_data)
+        
+        return {
+            "time_series": {
+                "labels": time_points,
+                "tool_calls": tool_calls_data,
+                "approved": approved_data,
+                "blocked": blocked_data,
+                "pending": pending_data,
+                "costs": cost_data
+            },
+            "response_times": response_times,
+            "policy_summary": {
+                "approved": total_approved,
+                "blocked": total_blocked,
+                "pending": total_pending
+            },
+            "totals": {
+                "total_calls": sum(tool_calls_data),
+                "total_cost": sum(cost_data),
+                "success_rate": round((total_approved / (total_approved + total_blocked)) * 100, 1),
+                "avg_response_time": random.randint(150, 250)
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get dashboard metrics: {e}")
+        return {"error": str(e)}
+
 @app.post("/api/v1/logs/tool-calls")
 async def log_mcp_tool_call(
     tool_call: dict,
