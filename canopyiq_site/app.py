@@ -144,7 +144,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         resp.headers["Content-Security-Policy"] = "default-src 'self'; img-src 'self' data: https://fastapi.tiangolo.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com https://cdn.jsdelivr.net; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com;"
         return resp
 
-app = FastAPI(title="CanopyIQ")
+app = FastAPI(title="CanopyIQ - MCP Server for Claude Desktop")
 
 app.add_middleware(ObservabilityMiddleware)
 app.add_middleware(SecurityHeadersMiddleware)
@@ -195,8 +195,8 @@ def page(request: Request, *, title: str, desc: str, path: str, **ctx):
 async def home(request: Request):
     return page(
         request,
-        title="Run AI agents safely. At scale. | CanopyIQ",
-        desc="CanopyIQ is the runtime sandbox & policy control plane for 10,000+ enterprise agents.",
+        title="Secure Claude Desktop with MCP Server | CanopyIQ",
+        desc="Add security, approval workflows, and monitoring to Claude Desktop in 30 seconds. Official MCP server for Claude Code users.",
         path="home.html",
     )
 
@@ -1602,6 +1602,97 @@ async def api_company_users(
     
     users = company_manager.get_company_users(user, company_domain)
     return {"users": users}
+
+# ---------- MCP Server API Routes ----------
+@app.get("/api/v1/mcp/status")
+async def mcp_server_status():
+    """Get MCP server status and configuration info"""
+    return {
+        "status": "available",
+        "server": {
+            "name": "canopyiq-mcp-server",
+            "version": "1.0.0",
+            "protocol_version": "2024-11-05"
+        },
+        "capabilities": {
+            "tools": True,
+            "logging": True,
+            "notifications": True,
+            "approval_workflows": True
+        },
+        "installation": {
+            "npm_package": "canopyiq-mcp-server",
+            "install_command": "npm install -g canopyiq-mcp-server",
+            "npx_command": "npx canopyiq-mcp-server"
+        },
+        "config_example": {
+            "mcpServers": {
+                "canopyiq": {
+                    "command": "npx",
+                    "args": ["canopyiq-mcp-server", "--api-key", "your-api-key"]
+                }
+            }
+        }
+    }
+
+@app.get("/api/v1/mcp/config")
+async def mcp_config_generator(api_key: str = None):
+    """Generate Claude Desktop configuration for CanopyIQ MCP server"""
+    config = {
+        "mcpServers": {
+            "canopyiq": {
+                "command": "npx",
+                "args": ["canopyiq-mcp-server"]
+            }
+        }
+    }
+    
+    if api_key:
+        config["mcpServers"]["canopyiq"]["args"].extend(["--api-key", api_key])
+    
+    return {
+        "config": config,
+        "instructions": [
+            "1. Copy this configuration to your ~/.claude_desktop_config.json file",
+            "2. If the file doesn't exist, create it",
+            "3. Restart Claude Desktop",
+            "4. CanopyIQ will appear in your available tools"
+        ],
+        "config_path": "~/.claude_desktop_config.json"
+    }
+
+@app.post("/api/v1/logs/tool-calls")
+async def log_mcp_tool_call(
+    tool_call: dict,
+    db: AsyncSession = Depends(get_db)
+):
+    """Log MCP tool calls from Claude Desktop"""
+    try:
+        # Create audit log entry
+        audit_entry = AuditLog(
+            ts=int(time.time()),
+            actor=tool_call.get("source", "mcp-server"),
+            action=f"MCP_TOOL_CALL:{tool_call.get('tool', 'unknown')}",
+            resource=tool_call.get("tool", "unknown"),
+            attributes={
+                "arguments": tool_call.get("arguments", {}),
+                "result": tool_call.get("result", ""),
+                "status": tool_call.get("status", "executed"),
+                "timestamp": tool_call.get("timestamp"),
+                "source": "mcp-server"
+            }
+        )
+        
+        if db:
+            db.add(audit_entry)
+            await db.commit()
+            logger.info(f"MCP tool call logged: {tool_call.get('tool')} - {tool_call.get('status')}")
+        
+        return {"status": "logged", "message": "Tool call logged successfully"}
+        
+    except Exception as e:
+        logger.error(f"Failed to log MCP tool call: {e}")
+        return {"status": "error", "message": str(e)}
 
 @app.get("/sitemap.txt", response_class=Response)
 async def sitemap():
