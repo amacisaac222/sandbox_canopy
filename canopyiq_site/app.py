@@ -655,10 +655,62 @@ async def user_dashboard_redirect(request: Request):
     """Redirect dashboard to admin interface"""
     return RedirectResponse(url="/admin", status_code=status.HTTP_302_FOUND)
 
-@app.get("/admin", response_class=HTMLResponse)
-async def admin_dashboard(request: Request):
+@app.get("/admin", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db)):
     """Admin dashboard"""
-    return HTMLResponse("<html><body><h1>Admin Test</h1><p>This is a test page</p></body></html>")
+    import secrets
+    from datetime import datetime
+    
+    # Generate API key for current user
+    user_api_key = f"ciq_demo_{secrets.token_hex(12)}"
+    
+    # Get basic stats with error handling
+    stats = {
+        "submissions": 0,
+        "mcp_calls": 0,
+        "blocked_calls": 0,
+        "last_submission": "Never"
+    }
+    
+    recent_activity = []
+    
+    # Try to get real data
+    try:
+        if db:
+            now = int(time.time())
+            twenty_four_hours_ago = now - 86400
+            
+            # Get submissions count
+            submissions_result = await db.execute(
+                select(Submission).where(Submission.ts >= twenty_four_hours_ago)
+            )
+            submissions = submissions_result.scalars().all()
+            stats["submissions"] = len(submissions)
+            
+            # Get recent audit logs
+            audit_result = await db.execute(
+                select(AuditLog).order_by(desc(AuditLog.ts)).limit(5)
+            )
+            audit_logs = audit_result.scalars().all()
+            
+            for log in audit_logs:
+                recent_activity.append({
+                    "type": "audit",
+                    "description": f"{log.action} by {log.actor}",
+                    "timestamp": datetime.fromtimestamp(log.ts).strftime("%Y-%m-%d %H:%M:%S")
+                })
+    except Exception as e:
+        logger.error(f"Failed to load dashboard data: {e}")
+    
+    return page(
+        request,
+        title="Admin Dashboard | CanopyIQ",
+        desc="Administration panel for CanopyIQ.",
+        path="admin_dashboard.html",
+        stats=stats,
+        recent_activity=recent_activity,
+        api_key=user_api_key
+    )
 
 @app.get("/admin/audit", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
 async def admin_audit(request: Request, db: AsyncSession = Depends(get_db)):
