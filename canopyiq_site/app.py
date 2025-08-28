@@ -25,7 +25,10 @@ from sqlalchemy import select, desc
 # Import authentication modules  
 from auth.oidc import oidc_client, init_oidc
 # Import database
-from database import get_db, Submission, AuditLog, Approval, ApprovalStatus, init_db, DATABASE_URL
+from database import (
+    get_db, Submission, AuditLog, Approval, ApprovalStatus, init_db, DATABASE_URL,
+    MCPToolCall, MCPPolicy, MCPUserSession, MCPMetrics, ToolCallStatus, RiskLevel
+)
 # Import Slack utilities
 from slack_utils import (
     send_slack_webhook, create_contact_notification, create_approval_notification,
@@ -654,45 +657,103 @@ async def user_dashboard(request: Request, db: AsyncSession = Depends(get_db)):
         return RedirectResponse(url="/auth/login", status_code=status.HTTP_302_FOUND)
     
     import secrets
+    from datetime import datetime, timedelta
     
-    # Generate user's personal API key
-    user_api_key = f"ciq_user_{user.id if hasattr(user, 'id') else 'demo'}_{secrets.token_hex(12)}"
+    # Get or create user's API key
+    if db and hasattr(user, 'id'):
+        # Check if user has existing API key
+        existing_key_result = await db.execute(
+            select(MCPUserSession).where(
+                MCPUserSession.user_id == user.id,
+                MCPUserSession.is_active == True
+            ).limit(1)
+        )
+        existing_key = existing_key_result.scalar_one_or_none()
+        
+        if existing_key:
+            user_api_key = existing_key.api_key
+        else:
+            # Create new API key
+            user_api_key = f"ciq_user_{user.id}_{secrets.token_hex(12)}"
+            new_session = MCPUserSession(
+                user_id=user.id,
+                api_key=user_api_key,
+                key_name="Default API Key"
+            )
+            db.add(new_session)
+            await db.commit()
+    else:
+        # Fallback for demo
+        user_api_key = f"ciq_demo_{secrets.token_hex(12)}"
     
-    # Get user's MCP activity (mock data for now)
-    mcp_activity = [
-        {
-            "timestamp": "2025-01-28 10:30:45",
-            "action": "Tool call logged",
-            "tool": "file_operations",
-            "status": "approved",
-            "risk_level": "medium"
-        },
-        {
-            "timestamp": "2025-01-28 09:15:22", 
-            "action": "API call blocked",
-            "tool": "payment_api",
-            "status": "blocked",
-            "risk_level": "high"
-        },
-        {
-            "timestamp": "2025-01-28 08:45:10",
-            "action": "Database query executed",
-            "tool": "sql_tool", 
-            "status": "approved",
-            "risk_level": "low"
+    # Get real MCP metrics for this user
+    try:
+        if db:
+            # Get last 24 hours of data
+            end_time = datetime.now()
+            start_time = end_time - timedelta(hours=24)
+            start_timestamp = int(start_time.timestamp() * 1000)
+            
+            # Query user's tool calls
+            tool_calls_result = await db.execute(
+                select(MCPToolCall).where(
+                    MCPToolCall.user_api_key == user_api_key,
+                    MCPToolCall.timestamp >= start_timestamp
+                ).order_by(desc(MCPToolCall.timestamp)).limit(10)
+            )
+            tool_calls = tool_calls_result.scalars().all()
+            
+            # Calculate stats
+            total_calls = len(tool_calls)
+            blocked_calls = sum(1 for call in tool_calls if call.status == ToolCallStatus.BLOCKED)
+            approved_calls = sum(1 for call in tool_calls if call.status == ToolCallStatus.EXECUTED)
+            
+            # Get unique tools monitored
+            unique_tools = set(call.tool_name for call in tool_calls)
+            
+            # Format recent activity
+            activity = []
+            for call in tool_calls:
+                activity.append({
+                    "timestamp": datetime.fromtimestamp(call.timestamp / 1000).strftime("%Y-%m-%d %H:%M:%S"),
+                    "action": f"Tool call {call.status.value}",
+                    "tool": call.tool_name,
+                    "status": call.status.value,
+                    "risk_level": call.risk_level.value if call.risk_level else "unknown"
+                })
+            
+            dashboard_stats = {
+                "tools_monitored": len(unique_tools) if unique_tools else 0,
+                "calls_today": total_calls,
+                "blocked_calls": blocked_calls,
+                "approval_rate": f"{round((approved_calls / total_calls * 100) if total_calls > 0 else 0)}%"
+            }
+        else:
+            # Fallback mock data if no database
+            activity = []
+            dashboard_stats = {
+                "tools_monitored": 0,
+                "calls_today": 0,
+                "blocked_calls": 0,
+                "approval_rate": "0%"
+            }
+            
+    except Exception as e:
+        logger.error(f"Failed to load user MCP data: {e}")
+        # Fallback to mock data on error
+        activity = []
+        dashboard_stats = {
+            "tools_monitored": 0,
+            "calls_today": 0,
+            "blocked_calls": 0,
+            "approval_rate": "0%"
         }
-    ]
     
     dashboard_data = {
         "user": user,
         "api_key": user_api_key,
-        "activity": mcp_activity,
-        "stats": {
-            "tools_monitored": 12,
-            "calls_today": 24,
-            "blocked_calls": 3,
-            "approval_rate": "87%"
-        }
+        "activity": activity,
+        "stats": dashboard_stats
     }
     
     return page(
@@ -1905,33 +1966,173 @@ async def log_mcp_tool_call(
     tool_call: dict,
     db: AsyncSession = Depends(get_db)
 ):
-    """Log MCP tool calls from Claude Desktop"""
+    """Log MCP tool calls from Claude Code via MCP server"""
     try:
-        # Create audit log entry
+        # Parse status from MCP server
+        status_str = tool_call.get("status", "executed")
+        try:
+            status = ToolCallStatus(status_str)
+        except ValueError:
+            status = ToolCallStatus.EXECUTED
+        
+        # Parse risk level
+        risk_str = tool_call.get("riskLevel", "low")
+        try:
+            risk_level = RiskLevel(risk_str)
+        except ValueError:
+            risk_level = RiskLevel.LOW
+        
+        # Create MCP tool call entry
+        mcp_entry = MCPToolCall(
+            timestamp=tool_call.get("timestamp", int(time.time() * 1000)),
+            user_api_key=tool_call.get("user", "unknown"),
+            tool_name=tool_call.get("tool", "unknown"),
+            arguments=tool_call.get("arguments", {}),
+            status=status,
+            allowed=tool_call.get("allowed", False),
+            policy_name=tool_call.get("policy"),
+            reason=tool_call.get("reason"),
+            risk_level=risk_level,
+            execution_time_ms=tool_call.get("executionTime"),
+            response_data=tool_call.get("result")
+        )
+        
+        # Also create audit log entry for backwards compatibility
         audit_entry = AuditLog(
             ts=int(time.time()),
-            actor=tool_call.get("source", "mcp-server"),
+            actor=tool_call.get("user", "mcp-server"),
             action=f"MCP_TOOL_CALL:{tool_call.get('tool', 'unknown')}",
             resource=tool_call.get("tool", "unknown"),
             attributes={
                 "arguments": tool_call.get("arguments", {}),
-                "result": tool_call.get("result", ""),
-                "status": tool_call.get("status", "executed"),
+                "status": status_str,
+                "risk_level": risk_str,
+                "policy": tool_call.get("policy"),
+                "reason": tool_call.get("reason"),
+                "allowed": tool_call.get("allowed", False),
                 "timestamp": tool_call.get("timestamp"),
                 "source": "mcp-server"
             }
         )
         
         if db:
+            db.add(mcp_entry)
             db.add(audit_entry)
             await db.commit()
-            logger.info(f"MCP tool call logged: {tool_call.get('tool')} - {tool_call.get('status')}")
+            logger.info(f"MCP tool call logged: {tool_call.get('tool')} - {status_str} (risk: {risk_str})")
         
-        return {"status": "logged", "message": "Tool call logged successfully"}
+        return {"status": "logged", "message": "Tool call logged successfully", "id": mcp_entry.id}
         
     except Exception as e:
         logger.error(f"Failed to log MCP tool call: {e}")
         return {"status": "error", "message": str(e)}
+
+@app.get("/api/v1/mcp/metrics")
+async def get_mcp_metrics(
+    user_api_key: str = None,
+    hours: int = 24,
+    db: AsyncSession = Depends(get_db)
+):
+    """Get MCP tool call metrics for dashboard"""
+    try:
+        from datetime import datetime, timedelta
+        import json
+        
+        if not db:
+            return {"error": "Database not available"}
+        
+        # Calculate time window
+        end_time = datetime.now()
+        start_time = end_time - timedelta(hours=hours)
+        start_timestamp = int(start_time.timestamp() * 1000)
+        end_timestamp = int(end_time.timestamp() * 1000)
+        
+        # Query tool calls within time window
+        query = select(MCPToolCall).where(
+            MCPToolCall.timestamp >= start_timestamp,
+            MCPToolCall.timestamp <= end_timestamp
+        )
+        
+        if user_api_key:
+            query = query.where(MCPToolCall.user_api_key == user_api_key)
+        
+        result = await db.execute(query)
+        tool_calls = result.scalars().all()
+        
+        # Calculate metrics
+        total_calls = len(tool_calls)
+        blocked_calls = sum(1 for call in tool_calls if call.status == ToolCallStatus.BLOCKED)
+        approved_calls = sum(1 for call in tool_calls if call.status == ToolCallStatus.EXECUTED)
+        pending_calls = sum(1 for call in tool_calls if call.status == ToolCallStatus.PENDING_APPROVAL)
+        
+        # Risk distribution
+        risk_counts = {
+            "low": sum(1 for call in tool_calls if call.risk_level == RiskLevel.LOW),
+            "medium": sum(1 for call in tool_calls if call.risk_level == RiskLevel.MEDIUM),
+            "high": sum(1 for call in tool_calls if call.risk_level == RiskLevel.HIGH),
+            "critical": sum(1 for call in tool_calls if call.risk_level == RiskLevel.CRITICAL)
+        }
+        
+        # Tool usage
+        tool_usage = {}
+        for call in tool_calls:
+            tool_usage[call.tool_name] = tool_usage.get(call.tool_name, 0) + 1
+        
+        # Time series data (hourly buckets)
+        time_series = []
+        for i in range(hours):
+            bucket_start = start_time + timedelta(hours=i)
+            bucket_end = bucket_start + timedelta(hours=1)
+            bucket_start_ts = int(bucket_start.timestamp() * 1000)
+            bucket_end_ts = int(bucket_end.timestamp() * 1000)
+            
+            bucket_calls = [
+                call for call in tool_calls 
+                if bucket_start_ts <= call.timestamp < bucket_end_ts
+            ]
+            
+            time_series.append({
+                "time": bucket_start.isoformat(),
+                "total": len(bucket_calls),
+                "blocked": sum(1 for call in bucket_calls if call.status == ToolCallStatus.BLOCKED),
+                "approved": sum(1 for call in bucket_calls if call.status == ToolCallStatus.EXECUTED),
+                "pending": sum(1 for call in bucket_calls if call.status == ToolCallStatus.PENDING_APPROVAL)
+            })
+        
+        # Recent events
+        recent_events = []
+        for call in sorted(tool_calls, key=lambda x: x.timestamp, reverse=True)[:10]:
+            recent_events.append({
+                "timestamp": datetime.fromtimestamp(call.timestamp / 1000).isoformat(),
+                "tool": call.tool_name,
+                "status": call.status.value,
+                "risk_level": call.risk_level.value if call.risk_level else "unknown",
+                "reason": call.reason,
+                "policy": call.policy_name
+            })
+        
+        return {
+            "summary": {
+                "total_calls": total_calls,
+                "blocked_calls": blocked_calls,
+                "approved_calls": approved_calls,
+                "pending_calls": pending_calls,
+                "approval_rate": round((approved_calls / total_calls * 100) if total_calls > 0 else 0, 1)
+            },
+            "risk_distribution": risk_counts,
+            "tool_usage": dict(sorted(tool_usage.items(), key=lambda x: x[1], reverse=True)[:10]),
+            "time_series": time_series,
+            "recent_events": recent_events,
+            "time_window": {
+                "start": start_time.isoformat(),
+                "end": end_time.isoformat(),
+                "hours": hours
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get MCP metrics: {e}")
+        return {"error": str(e)}
 
 @app.get("/sitemap.txt", response_class=Response)
 async def sitemap():

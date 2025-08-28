@@ -44,6 +44,18 @@ class ApprovalStatus(enum.Enum):
     APPROVED = "approved"
     DENIED = "denied"
 
+class ToolCallStatus(enum.Enum):
+    EXECUTED = "executed"
+    BLOCKED = "blocked"
+    PENDING_APPROVAL = "pending_approval"
+    FAILED = "failed"
+
+class RiskLevel(enum.Enum):
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    CRITICAL = "critical"
+
 class Submission(Base):
     """Contact form submissions table"""
     __tablename__ = "submissions"
@@ -162,6 +174,93 @@ class Approval(Base):
     approved_by = Column(String(255), nullable=True)  # User ID who approved/denied
     approved_at = Column(DateTime, nullable=True)
     slack_ts = Column(String(255), nullable=True)  # Slack message timestamp for updates
+
+class MCPToolCall(Base):
+    """MCP Tool Call events from Claude Code via MCP server"""
+    __tablename__ = "mcp_tool_calls"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    timestamp = Column(BigInteger, nullable=False)  # Unix timestamp from MCP server
+    user_api_key = Column(String(255), nullable=False)  # API key identifies the user
+    tool_name = Column(String(255), nullable=False)  # Tool being called
+    arguments = Column(JSON, nullable=True)  # Tool arguments
+    status = Column(Enum(ToolCallStatus), nullable=False)
+    allowed = Column(Boolean, nullable=False, default=False)
+    policy_name = Column(String(255), nullable=True)  # Which policy was triggered
+    reason = Column(Text, nullable=True)  # Why blocked/flagged
+    risk_level = Column(Enum(RiskLevel), nullable=True)
+    execution_time_ms = Column(Integer, nullable=True)  # How long it took
+    response_data = Column(JSON, nullable=True)  # Tool response if executed
+    
+    # Indexes for fast queries
+    __table_args__ = (
+        Index("idx_mcp_timestamp", "timestamp"),
+        Index("idx_mcp_user", "user_api_key"),
+        Index("idx_mcp_tool", "tool_name"),
+        Index("idx_mcp_status", "status"),
+        Index("idx_mcp_risk", "risk_level"),
+    )
+
+class MCPPolicy(Base):
+    """MCP Policies for tool call evaluation"""
+    __tablename__ = "mcp_policies"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(255), nullable=False, unique=True)
+    description = Column(Text, nullable=True)
+    is_active = Column(Boolean, nullable=False, default=True)
+    rules = Column(JSON, nullable=False)  # Policy rules configuration
+    created_by = Column(String(255), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    
+class MCPUserSession(Base):
+    """MCP User sessions and API key management"""
+    __tablename__ = "mcp_user_sessions"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # Links to User table
+    api_key = Column(String(255), unique=True, nullable=False)
+    key_name = Column(String(255), nullable=True)  # User-friendly name
+    is_active = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    last_used = Column(DateTime, nullable=True)
+    usage_count = Column(Integer, nullable=False, default=0)
+    
+    # Relationship
+    user = relationship("User")
+    
+class MCPMetrics(Base):
+    """Daily/hourly aggregated metrics for fast dashboard queries"""
+    __tablename__ = "mcp_metrics"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    date = Column(DateTime, nullable=False)  # Date for this metric
+    user_api_key = Column(String(255), nullable=False)
+    metric_type = Column(String(100), nullable=False)  # 'hourly', 'daily'
+    
+    # Aggregated counts
+    total_calls = Column(Integer, nullable=False, default=0)
+    blocked_calls = Column(Integer, nullable=False, default=0)
+    approved_calls = Column(Integer, nullable=False, default=0)
+    pending_calls = Column(Integer, nullable=False, default=0)
+    
+    # Risk distribution
+    low_risk_calls = Column(Integer, nullable=False, default=0)
+    medium_risk_calls = Column(Integer, nullable=False, default=0)
+    high_risk_calls = Column(Integer, nullable=False, default=0)
+    critical_risk_calls = Column(Integer, nullable=False, default=0)
+    
+    # Tool usage
+    top_tools = Column(JSON, nullable=True)  # {"tool_name": count, ...}
+    
+    # Performance
+    avg_response_time_ms = Column(Integer, nullable=True)
+    
+    # Unique constraint for date + user + metric_type
+    __table_args__ = (
+        Index("idx_metrics_date_user", "date", "user_api_key", "metric_type", unique=True),
+    )
 
 # Database engine and session configuration
 try:

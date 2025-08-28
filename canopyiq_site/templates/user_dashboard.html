@@ -258,9 +258,52 @@
         </div>
       </div>
     </div>
+
+    <!-- Real-time Charts Section -->
+    <div class="mt-8">
+      <div class="bg-navy-800 border border-navy-700 rounded-lg">
+        <div class="px-6 py-4 border-b border-navy-700">
+          <h2 class="text-xl font-black text-white">Real-time MCP Analytics</h2>
+          <p class="text-navy-400 font-semibold text-sm">Live data from your Claude Code MCP server</p>
+        </div>
+        <div class="p-6">
+          <div class="grid lg:grid-cols-2 gap-8">
+            <!-- Tool Usage Chart -->
+            <div>
+              <h3 class="text-lg font-bold text-white mb-4">Tool Usage (Last 24h)</h3>
+              <canvas id="toolUsageChart" height="200"></canvas>
+            </div>
+            
+            <!-- Risk Level Distribution -->
+            <div>
+              <h3 class="text-lg font-bold text-white mb-4">Risk Level Distribution</h3>
+              <canvas id="riskChart" height="200"></canvas>
+            </div>
+            
+            <!-- Activity Timeline -->
+            <div class="lg:col-span-2">
+              <h3 class="text-lg font-bold text-white mb-4">Activity Timeline (Last 24h)</h3>
+              <canvas id="timelineChart" height="150"></canvas>
+            </div>
+          </div>
+          
+          <!-- Auto-refresh indicator -->
+          <div class="mt-6 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div id="refresh-indicator" class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span class="text-navy-400 text-sm font-semibold">Auto-refreshing every 30 seconds</span>
+            </div>
+            <button onclick="refreshCharts()" class="text-coral-400 hover:text-coral-300 text-sm font-bold">
+              Refresh Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 function copyUserApiKey() {
   const input = document.getElementById('user-api-key');
@@ -280,6 +323,218 @@ function copyUserApiKey() {
       button.classList.add('bg-coral-500', 'hover:bg-coral-600');
     }, 2000);
   });
+}
+
+// Chart instances
+let toolUsageChart, riskChart, timelineChart;
+
+// Initialize charts when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  initializeCharts();
+  loadMCPData();
+  
+  // Auto-refresh every 30 seconds
+  setInterval(loadMCPData, 30000);
+});
+
+function initializeCharts() {
+  // Tool Usage Chart (Doughnut)
+  const toolCtx = document.getElementById('toolUsageChart').getContext('2d');
+  toolUsageChart = new Chart(toolCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Loading...'],
+      datasets: [{
+        data: [1],
+        backgroundColor: ['#1e293b'],
+        borderColor: '#334155',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          labels: { color: '#cbd5e1', font: { weight: 'bold' } }
+        }
+      }
+    }
+  });
+
+  // Risk Level Chart (Bar)
+  const riskCtx = document.getElementById('riskChart').getContext('2d');
+  riskChart = new Chart(riskCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Low', 'Medium', 'High', 'Critical'],
+      datasets: [{
+        label: 'Tool Calls',
+        data: [0, 0, 0, 0],
+        backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#dc2626'],
+        borderColor: ['#059669', '#d97706', '#dc2626', '#b91c1c'],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#cbd5e1' },
+          grid: { color: '#374151' }
+        },
+        x: {
+          ticks: { color: '#cbd5e1' },
+          grid: { color: '#374151' }
+        }
+      },
+      plugins: {
+        legend: {
+          labels: { color: '#cbd5e1', font: { weight: 'bold' } }
+        }
+      }
+    }
+  });
+
+  // Timeline Chart (Line)
+  const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+  timelineChart = new Chart(timelineCtx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+        {
+          label: 'Total Calls',
+          data: [],
+          borderColor: '#ff6f61',
+          backgroundColor: 'rgba(255, 111, 97, 0.1)',
+          tension: 0.4,
+          fill: true
+        },
+        {
+          label: 'Blocked',
+          data: [],
+          borderColor: '#ef4444',
+          backgroundColor: 'rgba(239, 68, 68, 0.1)',
+          tension: 0.4
+        },
+        {
+          label: 'Approved',
+          data: [],
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          tension: 0.4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#cbd5e1' },
+          grid: { color: '#374151' }
+        },
+        x: {
+          ticks: { 
+            color: '#cbd5e1',
+            callback: function(value, index) {
+              const label = this.getLabelForValue(value);
+              return new Date(label).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            }
+          },
+          grid: { color: '#374151' }
+        }
+      },
+      plugins: {
+        legend: {
+          labels: { color: '#cbd5e1', font: { weight: 'bold' } }
+        }
+      }
+    }
+  });
+}
+
+function loadMCPData() {
+  // Get user's API key for filtering
+  const apiKey = document.getElementById('user-api-key')?.value;
+  
+  fetch(`/api/v1/mcp/metrics?user_api_key=${encodeURIComponent(apiKey || '')}&hours=24`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        console.error('Failed to load MCP data:', data.error);
+        return;
+      }
+      
+      updateCharts(data);
+      updateRefreshIndicator();
+    })
+    .catch(error => {
+      console.error('Error loading MCP data:', error);
+    });
+}
+
+function updateCharts(data) {
+  // Update Tool Usage Chart
+  const toolNames = Object.keys(data.tool_usage || {});
+  const toolCounts = Object.values(data.tool_usage || {});
+  
+  if (toolNames.length > 0) {
+    toolUsageChart.data.labels = toolNames;
+    toolUsageChart.data.datasets[0].data = toolCounts;
+    toolUsageChart.data.datasets[0].backgroundColor = [
+      '#ff6f61', '#3d6199', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'
+    ];
+  } else {
+    toolUsageChart.data.labels = ['No data'];
+    toolUsageChart.data.datasets[0].data = [1];
+    toolUsageChart.data.datasets[0].backgroundColor = ['#374151'];
+  }
+  toolUsageChart.update();
+
+  // Update Risk Level Chart
+  const riskData = data.risk_distribution || {};
+  riskChart.data.datasets[0].data = [
+    riskData.low || 0,
+    riskData.medium || 0, 
+    riskData.high || 0,
+    riskData.critical || 0
+  ];
+  riskChart.update();
+
+  // Update Timeline Chart
+  const timeSeries = data.time_series || [];
+  if (timeSeries.length > 0) {
+    timelineChart.data.labels = timeSeries.map(point => point.time);
+    timelineChart.data.datasets[0].data = timeSeries.map(point => point.total);
+    timelineChart.data.datasets[1].data = timeSeries.map(point => point.blocked);
+    timelineChart.data.datasets[2].data = timeSeries.map(point => point.approved);
+  }
+  timelineChart.update();
+}
+
+function refreshCharts() {
+  const indicator = document.getElementById('refresh-indicator');
+  indicator.classList.remove('animate-pulse');
+  indicator.classList.add('animate-spin');
+  
+  loadMCPData();
+  
+  setTimeout(() => {
+    indicator.classList.remove('animate-spin');
+    indicator.classList.add('animate-pulse');
+  }, 1000);
+}
+
+function updateRefreshIndicator() {
+  const indicator = document.getElementById('refresh-indicator');
+  indicator.classList.remove('bg-red-400');
+  indicator.classList.add('bg-green-400');
 }
 </script>
 {% endblock %}

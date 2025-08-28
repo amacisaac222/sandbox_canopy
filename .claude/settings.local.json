@@ -45,13 +45,16 @@
       "WebFetch(domain:canopyiq-site-637973821579.us-east4.run.app)",
       "Bash(git merge:*)",
       "Bash(git log:*)",
-      "Bash(git tag:*)"
+      "Bash(git tag:*)",
+      "Bash(npm view:*)",
+      "Read(C:\\/**)"
     ],
     "deny": [],
     "ask": [],
     "additionalDirectories": [
       "C:\\Users\\amaci\\Desktop",
-      "C:\\c\\Users\\amaci\\Desktop"
+      "C:\\c\\Users\\amaci\\Desktop",
+      "C:\\"
     ]
   }
 }
