@@ -653,9 +653,14 @@ async def admin_submissions(request: Request, db: AsyncSession = Depends(get_db)
 @app.get("/dashboard", response_class=HTMLResponse)
 async def user_dashboard_redirect(request: Request):
     """Redirect dashboard to admin interface"""
-    return RedirectResponse(url="/admin", status_code=status.HTTP_302_FOUND)
+    return RedirectResponse(url="/admin/dashboard", status_code=status.HTTP_302_FOUND)
 
-@app.get("/admin", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+@app.get("/admin", response_class=HTMLResponse)
+async def admin_redirect(request: Request):
+    """Redirect to admin dashboard"""
+    return RedirectResponse(url="/admin/dashboard", status_code=status.HTTP_302_FOUND)
+
+@app.get("/admin/dashboard", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
 async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db)):
     """Admin dashboard"""
     import secrets
