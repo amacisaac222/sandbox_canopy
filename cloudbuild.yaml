@@ -14,7 +14,7 @@ steps:
       '--image', 'gcr.io/$PROJECT_ID/canopyiq-site:$COMMIT_SHA',
       '--platform', 'managed',
       '--region', 'us-east4',
-      '--set-env-vars', 'CP_DB_URL=postgresql+asyncpg://canopyiq:Canopy123#@/canopyiq_db?host=/cloudsql/fair-abbey-470123-c7:us-east4:canopyiq-postgres,CP_TENANT_SECRET=devsecret_change_me,CP_PORT=8080',
+      '--set-env-vars', 'CP_DB_URL=postgresql+asyncpg://canopyiq:Canopy123%23@/canopyiq_db?host=/cloudsql/fair-abbey-470123-c7:us-east4:canopyiq-postgres,CP_TENANT_SECRET=devsecret_change_me,CP_PORT=8080',
       '--add-cloudsql-instances', 'fair-abbey-470123-c7:us-east4:canopyiq-postgres',
       '--allow-unauthenticated'
     ]
