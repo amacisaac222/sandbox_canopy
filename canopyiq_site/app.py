@@ -1661,6 +1661,75 @@ async def mcp_config_generator(api_key: str = None):
         "config_path": "~/.claude_desktop_config.json"
     }
 
+@app.get("/api/v1/policies/active")
+async def get_active_policies():
+    """Get active security policies for MCP server"""
+    # In production, these would come from database
+    default_policies = [
+        {
+            "id": "destructive-commands",
+            "name": "Block Destructive Commands",
+            "description": "Prevents dangerous filesystem and database operations",
+            "enabled": True,
+            "rules": [
+                {
+                    "pattern": "rm -rf|DROP TABLE|DELETE FROM|TRUNCATE|sudo rm",
+                    "action": "block",
+                    "description": "Dangerous system commands"
+                },
+                {
+                    "pattern": "sudo|chmod 777|>",
+                    "action": "approve", 
+                    "description": "Elevated privilege commands"
+                }
+            ]
+        },
+        {
+            "id": "spending-limits",
+            "name": "Daily Spending Limits", 
+            "description": "Controls API costs and usage",
+            "enabled": True,
+            "rules": [
+                {
+                    "type": "spending",
+                    "limit": 100,
+                    "action": "approve",
+                    "description": "Daily spending over $100"
+                }
+            ]
+        },
+        {
+            "id": "rate-limiting",
+            "name": "Tool Call Rate Limits",
+            "description": "Prevents abuse and runaway processes", 
+            "enabled": True,
+            "rules": [
+                {
+                    "type": "tool_calls",
+                    "limit": 50,
+                    "window": "hour",
+                    "action": "block",
+                    "description": "More than 50 tool calls per hour"
+                }
+            ]
+        },
+        {
+            "id": "sensitive-data",
+            "name": "Sensitive Data Protection",
+            "description": "Blocks exposure of credentials and PII",
+            "enabled": True,
+            "rules": [
+                {
+                    "pattern": "password|secret|key|token|credential",
+                    "action": "approve",
+                    "description": "Commands containing sensitive keywords"
+                }
+            ]
+        }
+    ]
+    
+    return {"policies": default_policies}
+
 @app.post("/api/v1/logs/tool-calls")
 async def log_mcp_tool_call(
     tool_call: dict,

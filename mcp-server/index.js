@@ -12,12 +12,154 @@ class CanopyIQMCPServer {
         'Content-Type': 'application/json'
       }
     });
+    
+    // Policy cache and tracking
+    this.policies = [];
+    this.usageTracker = {
+      dailySpending: 0,
+      toolCallCount: 0,
+      riskScore: 0,
+      lastReset: new Date().toDateString()
+    };
+    
+    // Load policies on startup
+    this.loadPolicies();
   }
 
   log(message, level = 'info') {
     const timestamp = new Date().toISOString();
     const emoji = level === 'error' ? '❌' : level === 'warn' ? '⚠️' : '✅';
     console.log(`${emoji} [${timestamp}] ${message}`);
+  }
+
+  async loadPolicies() {
+    try {
+      const response = await this.client.get('/api/v1/policies/active');
+      this.policies = response.data.policies || [];
+      this.log(`Loaded ${this.policies.length} active policies`);
+    } catch (error) {
+      this.log('Failed to load policies, using default safety rules', 'warn');
+      this.policies = this.getDefaultPolicies();
+    }
+  }
+
+  getDefaultPolicies() {
+    return [
+      {
+        id: 'default-destructive-commands',
+        name: 'Block Destructive Commands',
+        rules: [
+          { pattern: /rm -rf|DROP TABLE|DELETE FROM|TRUNCATE/i, action: 'block' },
+          { pattern: /sudo|chmod 777|>/i, action: 'approve' }
+        ]
+      },
+      {
+        id: 'default-spending-limit',
+        name: 'Daily Spending Limit',
+        rules: [
+          { type: 'spending', limit: 100, action: 'approve' }
+        ]
+      },
+      {
+        id: 'default-tool-limit',
+        name: 'Hourly Tool Call Limit',
+        rules: [
+          { type: 'tool_calls', limit: 50, action: 'block' }
+        ]
+      }
+    ];
+  }
+
+  async evaluatePolicy(toolName, args) {
+    // Reset daily counters if needed
+    const today = new Date().toDateString();
+    if (this.usageTracker.lastReset !== today) {
+      this.usageTracker.dailySpending = 0;
+      this.usageTracker.toolCallCount = 0;
+      this.usageTracker.riskScore = 0;
+      this.usageTracker.lastReset = today;
+    }
+
+    this.usageTracker.toolCallCount++;
+
+    // Evaluate each policy
+    for (const policy of this.policies) {
+      for (const rule of policy.rules) {
+        const violation = await this.checkRule(rule, toolName, args);
+        if (violation) {
+          return {
+            allowed: rule.action !== 'block',
+            requiresApproval: rule.action === 'approve',
+            policy: policy.name,
+            reason: violation.reason,
+            riskLevel: violation.riskLevel
+          };
+        }
+      }
+    }
+
+    return { allowed: true, requiresApproval: false };
+  }
+
+  async checkRule(rule, toolName, args) {
+    // Pattern matching for commands/content
+    if (rule.pattern) {
+      const content = JSON.stringify(args);
+      if (rule.pattern.test(content)) {
+        return {
+          reason: `Dangerous pattern detected: ${rule.pattern}`,
+          riskLevel: 'high'
+        };
+      }
+    }
+
+    // Spending limits
+    if (rule.type === 'spending' && this.usageTracker.dailySpending > rule.limit) {
+      return {
+        reason: `Daily spending limit exceeded: $${this.usageTracker.dailySpending} > $${rule.limit}`,
+        riskLevel: 'medium'
+      };
+    }
+
+    // Tool call limits
+    if (rule.type === 'tool_calls' && this.usageTracker.toolCallCount > rule.limit) {
+      return {
+        reason: `Tool call limit exceeded: ${this.usageTracker.toolCallCount} > ${rule.limit}`,
+        riskLevel: 'medium'
+      };
+    }
+
+    return null;
+  }
+
+  async requestApproval(toolName, args, policyResult) {
+    try {
+      const approvalRequest = {
+        tool: toolName,
+        arguments: args,
+        policy: policyResult.policy,
+        reason: policyResult.reason,
+        riskLevel: policyResult.riskLevel,
+        timestamp: new Date().toISOString(),
+        source: 'mcp-server'
+      };
+
+      // Send approval request to CanopyIQ
+      const response = await this.client.post('/api/v1/approvals', approvalRequest);
+      
+      this.log(`🔔 Approval requested for ${toolName}: ${policyResult.reason}`, 'warn');
+      
+      // For now, return the approval ID - in production this would wait for response
+      return {
+        approved: false,
+        approvalId: response.data.id,
+        message: 'Approval pending - check your Slack/dashboard'
+      };
+      
+    } catch (error) {
+      this.log(`Failed to request approval: ${error.message}`, 'error');
+      return { approved: false, message: 'Approval system unavailable - blocking for safety' };
+    }
   }
 
   async validateApiKey() {
@@ -108,7 +250,42 @@ class CanopyIQMCPServer {
         case 'tools/call':
           const { name, arguments: args } = params;
           
-          // Log the tool call
+          // SECURITY CHECKPOINT: Evaluate policies BEFORE execution
+          const policyResult = await this.evaluatePolicy(name, args);
+          
+          if (!policyResult.allowed) {
+            // BLOCKED by policy
+            this.log(`🛑 BLOCKED: ${name} - ${policyResult.reason}`, 'error');
+            await this.logToolCall(name, args, 'blocked', false);
+            
+            return {
+              id,
+              error: {
+                code: -32000,
+                message: `Tool call blocked by policy: ${policyResult.reason}`
+              }
+            };
+          }
+          
+          if (policyResult.requiresApproval) {
+            // APPROVAL REQUIRED
+            const approvalResult = await this.requestApproval(name, args, policyResult);
+            
+            if (!approvalResult.approved) {
+              await this.logToolCall(name, args, 'pending_approval', false);
+              
+              return {
+                id,
+                error: {
+                  code: -32001,
+                  message: `Tool call requires approval: ${approvalResult.message}`
+                }
+              };
+            }
+          }
+          
+          // APPROVED - Execute tool
+          this.log(`✅ APPROVED: ${name}`, 'info');
           await this.logToolCall(name, args, 'executed', true);
           
           if (name === 'canopyiq_log') {
@@ -161,8 +338,19 @@ class CanopyIQMCPServer {
     // Validate API key
     await this.validateApiKey();
     
+    // Load initial policies
+    await this.loadPolicies();
+    
+    // Set up periodic policy refresh (every 5 minutes)
+    setInterval(async () => {
+      this.log('🔄 Refreshing policies...');
+      await this.loadPolicies();
+    }, 5 * 60 * 1000);
+    
     this.log('📡 Server ready for MCP connections');
-    this.log('🔒 All tool usage will be logged to your CanopyIQ dashboard');
+    this.log('🛡️  ACTIVE SECURITY: Policies loaded, monitoring enabled');
+    this.log('🔒 All tool usage will be evaluated against security policies');
+    this.log('⚡ Real-time blocking and approval workflows active');
     this.log('🌐 Visit https://canopyiq.ai/dashboard to monitor activity');
     
     // Set up stdio communication for MCP
