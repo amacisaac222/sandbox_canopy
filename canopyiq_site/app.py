@@ -658,65 +658,77 @@ async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db), 
     import secrets
     from datetime import datetime, timedelta
     
-    # Get or create user's API key
+    # Get or create user's API key - with error handling
     user_api_key = f"ciq_demo_{secrets.token_hex(12)}"
-    if db and hasattr(user, 'id'):
-        # Check if user has existing API key
-        existing_key_result = await db.execute(
-            select(MCPUserSession).where(
-                MCPUserSession.user_id == user.id,
-                MCPUserSession.is_active == True
-            ).limit(1)
-        )
-        existing_key = existing_key_result.scalar_one_or_none()
-        
-        if existing_key:
-            user_api_key = existing_key.api_key
-        else:
-            # Create new API key
-            user_api_key = f"ciq_user_{user.id}_{secrets.token_hex(12)}"
-            new_session = MCPUserSession(
-                user_id=user.id,
-                api_key=user_api_key,
-                key_name="Default API Key"
+    try:
+        if db and hasattr(user, 'id'):
+            # Check if user has existing API key
+            existing_key_result = await db.execute(
+                select(MCPUserSession).where(
+                    MCPUserSession.user_id == user.id,
+                    MCPUserSession.is_active == True
+                ).limit(1)
             )
-            db.add(new_session)
-            await db.commit()
+            existing_key = existing_key_result.scalar_one_or_none()
+            
+            if existing_key:
+                user_api_key = existing_key.api_key
+            else:
+                # Create new API key
+                user_api_key = f"ciq_user_{user.id}_{secrets.token_hex(12)}"
+                new_session = MCPUserSession(
+                    user_id=user.id,
+                    api_key=user_api_key,
+                    key_name="Default API Key"
+                )
+                db.add(new_session)
+                await db.commit()
+    except Exception as e:
+        logger.error(f"Failed to manage user API key: {e}")
+        # Use fallback key
     
-    # Get dashboard statistics
+    # Get dashboard statistics - with error handling
     now = int(time.time())
     twenty_four_hours_ago = now - 86400
     
-    # Submissions in last 24h
-    submissions_24h_result = await db.execute(
-        select(Submission).where(Submission.ts >= twenty_four_hours_ago)
-    )
-    submissions_24h = submissions_24h_result.scalars().all()
-    
-    # Get last submission
-    last_submission_result = await db.execute(
-        select(Submission).order_by(desc(Submission.ts)).limit(1)
-    )
-    last_submission = last_submission_result.scalar_one_or_none()
-    
-    # Recent audit activity
-    recent_audit_result = await db.execute(
-        select(AuditLog).order_by(desc(AuditLog.ts)).limit(10)
-    )
-    recent_logs = recent_audit_result.scalars().all()
-    
-    # Format recent activity
+    submissions_24h = []
+    last_submission = None
     recent_activity = []
-    for log in recent_logs:
-        activity = {
-            "type": "audit",
-            "description": f"{log.action} by {log.actor}",
-            "timestamp": datetime.fromtimestamp(log.ts).strftime("%Y-%m-%d %H:%M:%S"),
-            "actor": log.actor
-        }
-        recent_activity.append(activity)
     
-    # Get MCP tool call stats
+    try:
+        if db:
+            # Submissions in last 24h
+            submissions_24h_result = await db.execute(
+                select(Submission).where(Submission.ts >= twenty_four_hours_ago)
+            )
+            submissions_24h = submissions_24h_result.scalars().all()
+            
+            # Get last submission
+            last_submission_result = await db.execute(
+                select(Submission).order_by(desc(Submission.ts)).limit(1)
+            )
+            last_submission = last_submission_result.scalar_one_or_none()
+            
+            # Recent audit activity
+            recent_audit_result = await db.execute(
+                select(AuditLog).order_by(desc(AuditLog.ts)).limit(10)
+            )
+            recent_logs = recent_audit_result.scalars().all()
+            
+            # Format recent activity
+            for log in recent_logs:
+                activity = {
+                    "type": "audit",
+                    "description": f"{log.action} by {log.actor}",
+                    "timestamp": datetime.fromtimestamp(log.ts).strftime("%Y-%m-%d %H:%M:%S"),
+                    "actor": log.actor
+                }
+                recent_activity.append(activity)
+    except Exception as e:
+        logger.error(f"Failed to load dashboard data: {e}")
+        # Use fallback values
+    
+    # Get MCP tool call stats - with error handling
     mcp_calls = 0
     blocked_calls = 0
     try:
@@ -729,6 +741,7 @@ async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db), 
             blocked_calls = len([call for call in mcp_calls_data if call.status == ToolCallStatus.BLOCKED])
     except Exception as e:
         logger.error(f"Failed to get MCP stats: {e}")
+        # Use fallback values
     
     stats = {
         "submissions": len(submissions_24h),
