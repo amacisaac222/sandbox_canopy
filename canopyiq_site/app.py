@@ -659,110 +659,35 @@ async def user_dashboard_redirect(request: Request):
 async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
     """Admin dashboard"""
     import secrets
-    from datetime import datetime, timedelta
     
-    # Get or create user's API key - with error handling
+    # Simple API key generation for testing
     user_api_key = f"ciq_demo_{secrets.token_hex(12)}"
-    try:
-        if db and hasattr(user, 'id'):
-            # Check if user has existing API key
-            existing_key_result = await db.execute(
-                select(MCPUserSession).where(
-                    MCPUserSession.user_id == user.id,
-                    MCPUserSession.is_active == True
-                ).limit(1)
-            )
-            existing_key = existing_key_result.scalar_one_or_none()
-            
-            if existing_key:
-                user_api_key = existing_key.api_key
-            else:
-                # Create new API key
-                user_api_key = f"ciq_user_{user.id}_{secrets.token_hex(12)}"
-                new_session = MCPUserSession(
-                    user_id=user.id,
-                    api_key=user_api_key,
-                    key_name="Default API Key"
-                )
-                db.add(new_session)
-                await db.commit()
-    except Exception as e:
-        logger.error(f"Failed to manage user API key: {e}")
-        # Use fallback key
     
-    # Get dashboard statistics - with error handling
-    now = int(time.time())
-    twenty_four_hours_ago = now - 86400
+    # Simple stats for testing
+    stats = {
+        "submissions": 0,
+        "mcp_calls": 0,
+        "blocked_calls": 0,
+        "last_submission": "Never"
+    }
     
-    submissions_24h = []
-    last_submission = None
     recent_activity = []
     
     try:
-        if db:
-            # Submissions in last 24h
-            submissions_24h_result = await db.execute(
-                select(Submission).where(Submission.ts >= twenty_four_hours_ago)
-            )
-            submissions_24h = submissions_24h_result.scalars().all()
-            
-            # Get last submission
-            last_submission_result = await db.execute(
-                select(Submission).order_by(desc(Submission.ts)).limit(1)
-            )
-            last_submission = last_submission_result.scalar_one_or_none()
-            
-            # Recent audit activity
-            recent_audit_result = await db.execute(
-                select(AuditLog).order_by(desc(AuditLog.ts)).limit(10)
-            )
-            recent_logs = recent_audit_result.scalars().all()
-            
-            # Format recent activity
-            for log in recent_logs:
-                activity = {
-                    "type": "audit",
-                    "description": f"{log.action} by {log.actor}",
-                    "timestamp": datetime.fromtimestamp(log.ts).strftime("%Y-%m-%d %H:%M:%S"),
-                    "actor": log.actor
-                }
-                recent_activity.append(activity)
+        return page(
+            request,
+            title="Admin Dashboard | CanopyIQ",
+            desc="Administration panel for CanopyIQ.",
+            path="admin_dashboard.html",
+            user=user,
+            stats=stats,
+            recent_activity=recent_activity,
+            api_key=user_api_key
+        )
     except Exception as e:
-        logger.error(f"Failed to load dashboard data: {e}")
-        # Use fallback values
-    
-    # Get MCP tool call stats - with error handling
-    mcp_calls = 0
-    blocked_calls = 0
-    try:
-        if db:
-            mcp_calls_result = await db.execute(
-                select(MCPToolCall).where(MCPToolCall.timestamp >= twenty_four_hours_ago * 1000)
-            )
-            mcp_calls_data = mcp_calls_result.scalars().all()
-            mcp_calls = len(mcp_calls_data)
-            blocked_calls = len([call for call in mcp_calls_data if call.status == ToolCallStatus.BLOCKED])
-    except Exception as e:
-        logger.error(f"Failed to get MCP stats: {e}")
-        # Use fallback values
-    
-    stats = {
-        "submissions": len(submissions_24h),
-        "mcp_calls": mcp_calls,
-        "blocked_calls": blocked_calls,
-        "last_submission": datetime.fromtimestamp(last_submission.ts).strftime("%Y-%m-%d %H:%M:%S") if last_submission else "Never"
-    }
-    
-    return page(
-        request,
-        title="Admin Dashboard | CanopyIQ",
-        desc="Administration panel for CanopyIQ.",
-        path="admin_dashboard.html",
-        user=user,
-        stats=stats,
-        recent_activity=recent_activity,
-        api_key=user_api_key
-    )
+        logger.error(f"Failed to render admin dashboard: {e}")
+        # Return simple error response
+        return HTMLResponse(f"<html><body><h1>Admin Dashboard Error</h1><p>{str(e)}</p></body></html>", status_code=500)
 
 @app.get("/admin/audit", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
 async def admin_audit(request: Request, db: AsyncSession = Depends(get_db)):
