@@ -12,6 +12,9 @@ import uuid
 import json
 import logging
 from datetime import datetime
+
+# Configure logger
+logger = logging.getLogger(__name__)
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware import Middleware
 from starlette.responses import Response, PlainTextResponse
