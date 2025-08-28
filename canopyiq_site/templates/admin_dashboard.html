@@ -1,482 +1,226 @@
 {% extends "admin_base.html" %}
 
 {% block content %}
-<!-- First-time User Onboarding Modal -->
-<div id="onboarding-modal" class="fixed inset-0 bg-navy-900/75 backdrop-blur flex items-center justify-center z-50" style="display: none;">
-  <div class="bg-white rounded-lg max-w-2xl w-full mx-4 p-8">
-    <div id="onboarding-step-1">
-      <div class="text-center mb-6">
-        <div class="w-16 h-16 bg-coral-500 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-          </svg>
-        </div>
-        <h2 class="text-2xl font-black text-navy-900 mb-2">Welcome to CanopyIQ! 🎉</h2>
-        <p class="text-navy-600 font-semibold">Let's get your AI agent security set up in 2 minutes</p>
-      </div>
-      
-      <div class="space-y-4 mb-8">
-        <h3 class="text-lg font-black text-navy-900">What type of agents do you work with?</h3>
-        <div class="grid grid-cols-2 gap-3">
-          <label class="agent-type-option flex items-center gap-3 p-3 border border-navy-200 rounded-lg cursor-pointer hover:border-coral-300 transition">
-            <input type="checkbox" name="agent_type" value="customer_service" class="text-coral-500">
-            <div>
-              <div class="font-bold text-navy-900">Customer Service</div>
-              <div class="text-sm text-navy-600">Support bots, chat agents</div>
-            </div>
-          </label>
-          
-          <label class="agent-type-option flex items-center gap-3 p-3 border border-navy-200 rounded-lg cursor-pointer hover:border-coral-300 transition">
-            <input type="checkbox" name="agent_type" value="data_analysis" class="text-coral-500">
-            <div>
-              <div class="font-bold text-navy-900">Data Analysis</div>
-              <div class="text-sm text-navy-600">BI agents, data processors</div>
-            </div>
-          </label>
-          
-          <label class="agent-type-option flex items-center gap-3 p-3 border border-navy-200 rounded-lg cursor-pointer hover:border-coral-300 transition">
-            <input type="checkbox" name="agent_type" value="financial" class="text-coral-500">
-            <div>
-              <div class="font-bold text-navy-900">Financial</div>
-              <div class="text-sm text-navy-600">Trading bots, payment agents</div>
-            </div>
-          </label>
-          
-          <label class="agent-type-option flex items-center gap-3 p-3 border border-navy-200 rounded-lg cursor-pointer hover:border-coral-300 transition">
-            <input type="checkbox" name="agent_type" value="marketing" class="text-coral-500">
-            <div>
-              <div class="font-bold text-navy-900">Marketing</div>
-              <div class="text-sm text-navy-600">Email agents, social media bots</div>
-            </div>
-          </label>
-        </div>
-      </div>
-      
-      <div class="flex justify-between">
-        <button onclick="skipOnboarding()" class="text-navy-500 hover:text-navy-700 font-semibold">Skip for now</button>
-        <button onclick="nextOnboardingStep()" class="bg-coral-500 text-white px-6 py-2 rounded-lg hover:bg-coral-600 transition font-bold">
-          Next Step →
-        </button>
-      </div>
-    </div>
-
-    <div id="onboarding-step-2" style="display: none;">
-      <div class="text-center mb-6">
-        <div class="w-16 h-16 bg-coral-500 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-        </div>
-        <h2 class="text-2xl font-black text-navy-900 mb-2">Choose Your Starter Policy</h2>
-        <p class="text-navy-600 font-semibold">Pick a pre-built policy to get started quickly</p>
-      </div>
-      
-      <div class="space-y-3 mb-8">
-        <label class="policy-option flex items-start gap-3 p-4 border border-navy-200 rounded-lg cursor-pointer hover:border-coral-300 transition">
-          <input type="radio" name="starter_policy" value="approval_required" class="mt-1 text-coral-500">
-          <div>
-            <div class="font-bold text-navy-900">🛡️ Require Approval for High-Risk Actions</div>
-            <div class="text-sm text-navy-600">Database writes, financial transactions, external API calls need human approval</div>
-          </div>
-        </label>
-        
-        <label class="policy-option flex items-start gap-3 p-4 border border-navy-200 rounded-lg cursor-pointer hover:border-coral-300 transition">
-          <input type="radio" name="starter_policy" value="monitor_only" class="mt-1 text-coral-500">
-          <div>
-            <div class="font-bold text-navy-900">👀 Monitor All Actions (No Blocking)</div>
-            <div class="text-sm text-navy-600">Log everything, block nothing - perfect for getting started safely</div>
-          </div>
-        </label>
-        
-        <label class="policy-option flex items-start gap-3 p-4 border border-navy-200 rounded-lg cursor-pointer hover:border-coral-300 transition">
-          <input type="radio" name="starter_policy" value="financial_protection" class="mt-1 text-coral-500">
-          <div>
-            <div class="font-bold text-navy-900">💰 Financial Protection</div>
-            <div class="text-sm text-navy-600">Block transactions over $100, require approval for any money movement</div>
-          </div>
-        </label>
-      </div>
-      
-      <div class="flex justify-between">
-        <button onclick="prevOnboardingStep()" class="text-navy-500 hover:text-navy-700 font-semibold">← Back</button>
-        <button onclick="finishOnboarding()" class="bg-coral-500 text-white px-6 py-2 rounded-lg hover:bg-coral-600 transition font-bold">
-          Complete Setup 🎉
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="space-y-6">
+<!-- Main Dashboard -->
+<div class="space-y-8">
   <!-- Welcome Header -->
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-black text-navy-900">Welcome to CanopyIQ</h1>
-      <p class="text-navy-600 font-semibold">AI Agent Runtime Security & Governance Platform</p>
-    </div>
-    <div class="flex items-center gap-3">
-      <div class="bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-        <div class="flex items-center gap-2">
-          <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          <span class="text-green-700 text-sm font-bold">System Healthy</span>
-        </div>
+  <div class="bg-gradient-to-r from-coral-500/10 to-coral-600/10 border border-coral-500/30 rounded-lg p-6">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 bg-coral-500 rounded-lg flex items-center justify-center">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl font-black text-navy-900">Welcome back, {{ user.name }}!</h1>
+        <p class="text-navy-600 font-semibold">Monitor your Claude Code MCP activity and system status</p>
       </div>
     </div>
   </div>
 
-  <!-- Quick Stats -->
+  <!-- Stats Grid -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-    <div class="bg-white rounded-lg border border-navy-200 p-6">
+    <div class="bg-white border border-navy-200 rounded-lg p-6">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-sm font-bold text-navy-600 uppercase tracking-wide">Contact Forms</p>
-          <p class="text-2xl font-black text-navy-900">{{ stats.submissions_24h or 0 }}</p>
-        </div>
-        <div class="p-3 bg-blue-50 rounded-lg">
-          <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-          </svg>
-        </div>
-      </div>
-      <div class="mt-4">
-        {% if stats.last_submission %}
-        <span class="text-xs font-semibold text-blue-600">Last: {{ stats.last_submission }}</span>
-        {% else %}
-        <span class="text-xs font-semibold text-navy-500">No submissions yet</span>
-        {% endif %}
-      </div>
-    </div>
-
-    <div class="bg-white rounded-lg border border-navy-200 p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-bold text-navy-600 uppercase tracking-wide">Authentication</p>
-          <p class="text-2xl font-black text-navy-900">{{ stats.db_type or "Local" }}</p>
-        </div>
-        <div class="p-3 bg-purple-50 rounded-lg">
-          <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-          </svg>
-        </div>
-      </div>
-      <div class="mt-4">
-        <span class="text-xs font-semibold text-purple-600">{{ "OIDC Ready" if stats.oidc_enabled else "Local Auth" }}</span>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-lg border border-navy-200 p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-bold text-navy-600 uppercase tracking-wide">Database</p>
-          <p class="text-2xl font-black text-navy-900">{{ stats.total_submissions or 0 }}</p>
-        </div>
-        <div class="p-3 bg-green-50 rounded-lg">
-          <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-          </svg>
-        </div>
-      </div>
-      <div class="mt-4">
-        <span class="text-xs font-semibold text-green-600">Records stored</span>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-lg border border-navy-200 p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-bold text-navy-600 uppercase tracking-wide">Free Tier</p>
-          <p class="text-2xl font-black text-coral-500">∞</p>
+          <p class="text-navy-500 text-sm font-bold">MCP Tool Calls</p>
+          <p class="text-2xl font-black text-navy-900">{{ stats.mcp_calls or 0 }}</p>
         </div>
         <div class="p-3 bg-coral-50 rounded-lg">
           <svg class="w-6 h-6 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-          </svg>
-        </div>
-      </div>
-      <div class="mt-4">
-        <span class="text-xs font-semibold text-coral-600">Unlimited usage</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Feature: Console -->
-  <div class="bg-gradient-to-r from-navy-900 to-navy-800 rounded-lg border-2 border-coral-500/20 overflow-hidden">
-    <div class="p-8">
-      <div class="flex items-center justify-between">
-        <div>
-          <div class="flex items-center gap-3 mb-3">
-            <div class="p-2 bg-coral-500 rounded-lg">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.018-4.364A9 9 0 1119.67 14.998"></path>
-              </svg>
-            </div>
-            <h2 class="text-2xl font-black text-white">CanopyIQ Console</h2>
-            <span class="px-3 py-1 bg-coral-500 text-white text-xs font-bold rounded-full">MAIN PRODUCT</span>
-          </div>
-          <p class="text-navy-200 font-semibold text-lg mb-4">Complete AI agent security and governance platform</p>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div class="flex items-center gap-2 text-navy-200">
-              <svg class="w-4 h-4 text-coral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"></path>
-              </svg>
-              <span class="font-semibold">Real-time access control</span>
-            </div>
-            <div class="flex items-center gap-2 text-navy-200">
-              <svg class="w-4 h-4 text-coral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"></path>
-              </svg>
-              <span class="font-semibold">Human-in-the-loop approvals</span>
-            </div>
-            <div class="flex items-center gap-2 text-navy-200">
-              <svg class="w-4 h-4 text-coral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"></path>
-              </svg>
-              <span class="font-semibold">Policy management & testing</span>
-            </div>
-            <div class="flex items-center gap-2 text-navy-200">
-              <svg class="w-4 h-4 text-coral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"></path>
-              </svg>
-              <span class="font-semibold">Agent monitoring & traces</span>
-            </div>
-          </div>
-        </div>
-        <div class="hidden md:block">
-          <div class="w-32 h-32 bg-coral-500/10 rounded-full flex items-center justify-center">
-            <svg class="w-16 h-16 text-coral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.018-4.364A9 9 0 1119.67 14.998"></path>
-            </svg>
-          </div>
-        </div>
-      </div>
-      <div class="mt-6">
-        <a href="/admin/console" class="inline-flex items-center gap-2 bg-coral-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-coral-600 transition">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
           </svg>
-          Launch Console
-        </a>
-        <span class="ml-4 text-navy-300 text-sm font-semibold">Start managing your AI agents securely</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white border border-navy-200 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-navy-500 text-sm font-bold">Blocked Calls</p>
+          <p class="text-2xl font-black text-red-600">{{ stats.blocked_calls or 0 }}</p>
+        </div>
+        <div class="p-3 bg-red-50 rounded-lg">
+          <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white border border-navy-200 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-navy-500 text-sm font-bold">System Status</p>
+          <p class="text-lg font-black text-green-600">Healthy</p>
+        </div>
+        <div class="p-3 bg-green-50 rounded-lg">
+          <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white border border-navy-200 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-navy-500 text-sm font-bold">Contact Forms</p>
+          <p class="text-2xl font-black text-navy-900">{{ stats.submissions or 0 }}</p>
+        </div>
+        <div class="p-3 bg-blue-50 rounded-lg">
+          <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2M4 13h2m-2 0v5a2 2 0 002 2h2m-2-2v-2m2 2h2"></path>
+          </svg>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Getting Started Guide -->
-  <div class="bg-white rounded-lg border border-navy-200">
+  <!-- MCP Configuration Section -->
+  <div class="bg-white border border-navy-200 rounded-lg">
     <div class="px-6 py-4 border-b border-navy-200">
-      <h2 class="text-lg font-black text-navy-900">Getting Started</h2>
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-coral-500 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </div>
+        <h2 class="text-xl font-black text-navy-900">Claude Code MCP Setup</h2>
+      </div>
     </div>
     <div class="p-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="text-center p-4 bg-blue-50 rounded-lg">
-          <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
-            <span class="text-white font-bold text-lg">1</span>
+      <div class="grid lg:grid-cols-2 gap-8">
+        <!-- API Key Section -->
+        <div>
+          <h3 class="text-lg font-bold text-navy-900 mb-4">Your API Key</h3>
+          <div class="bg-navy-50 border border-navy-200 rounded-lg p-4">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                </svg>
+              </div>
+              <span class="text-navy-900 font-bold">Secure API Key Generated</span>
+            </div>
+            <input type="text" id="user-api-key" value="{{ api_key }}" readonly 
+                   class="w-full bg-white border border-navy-200 rounded px-3 py-2 text-navy-900 font-mono text-sm">
+            <button onclick="copyUserApiKey()" 
+                    class="mt-3 bg-coral-500 hover:bg-coral-600 text-white px-4 py-2 rounded font-bold text-sm transition">
+              Copy API Key
+            </button>
           </div>
-          <h3 class="font-bold text-navy-900 mb-2">Explore the Console</h3>
-          <p class="text-navy-600 text-sm font-semibold mb-4">Check out agent management features with realistic demo data</p>
-          <a href="/admin/console" class="text-blue-600 font-bold text-sm hover:text-blue-700">Open Console →</a>
         </div>
 
-        <div class="text-center p-4 bg-amber-50 rounded-lg">
-          <div class="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center mx-auto mb-3">
-            <span class="text-white font-bold text-lg">2</span>
+        <!-- Quick Setup -->
+        <div>
+          <h3 class="text-lg font-bold text-navy-900 mb-4">Quick Setup</h3>
+          <div class="space-y-4">
+            <div class="flex items-center gap-3 p-3 bg-navy-50 rounded-lg">
+              <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">1</div>
+              <div>
+                <div class="font-bold text-navy-900">Install MCP Server</div>
+                <code class="text-sm text-navy-600">npm install -g canopyiq-mcp-server</code>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-navy-50 rounded-lg">
+              <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">2</div>
+              <div>
+                <div class="font-bold text-navy-900">Configure Claude Code</div>
+                <div class="text-sm text-navy-600">Add config to claude_desktop_config.json</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+              <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm">✓</div>
+              <div>
+                <div class="font-bold text-green-700">Start Monitoring</div>
+                <div class="text-sm text-green-600">Restart Claude Code to activate</div>
+              </div>
+            </div>
           </div>
-          <h3 class="font-bold text-navy-900 mb-2">Read Documentation</h3>
-          <p class="text-navy-600 text-sm font-semibold mb-4">Learn how to integrate CanopyIQ with your AI agents</p>
-          <a href="/documentation" class="text-amber-600 font-bold text-sm hover:text-amber-700">View Docs →</a>
         </div>
-
-        <div class="text-center p-4 bg-coral-50 rounded-lg">
-          <div class="w-12 h-12 bg-coral-500 rounded-full flex items-center justify-center mx-auto mb-3">
-            <span class="text-white font-bold text-lg">3</span>
-          </div>
-          <h3 class="font-bold text-navy-900 mb-2">Get Support</h3>
-          <p class="text-navy-600 text-sm font-semibold mb-4">Questions? Feedback? We're here to help you succeed</p>
-          <a href="/contact" class="text-coral-600 font-bold text-sm hover:text-coral-700">Contact Us →</a>
+      </div>
+      
+      <!-- Claude Code Config -->
+      <div class="mt-8">
+        <h3 class="text-lg font-bold text-navy-900 mb-4">Claude Code Configuration</h3>
+        <div class="bg-navy-900 rounded-lg p-4">
+          <pre class="text-green-400 font-mono text-sm overflow-x-auto">{ "mcpServers": { "canopyiq": { "command": "canopyiq-mcp-server", "args": ["--api-key", "{{ api_key }}"] } } }</pre>
+          <button onclick="copyConfig()" class="mt-3 bg-coral-500 hover:bg-coral-600 text-white px-4 py-2 rounded font-bold text-sm transition">
+            Copy Configuration
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Quick Actions -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- System Tools -->
-    <div class="bg-white rounded-lg border border-navy-200">
-      <div class="px-6 py-4 border-b border-navy-200">
-        <h3 class="text-lg font-black text-navy-900">System Tools</h3>
-      </div>
-      <div class="p-6 space-y-3">
-        <a href="/admin/submissions" class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition group">
-          <div class="p-2 bg-blue-500 rounded text-white group-hover:bg-blue-600 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-            </svg>
-          </div>
-          <div>
-            <div class="font-bold text-navy-900">Contact Submissions</div>
-            <div class="text-sm text-navy-600">{{ stats.submissions_24h or 0 }} in last 24h</div>
-          </div>
-        </a>
-
-        <a href="/admin/audit" class="flex items-center gap-3 p-3 bg-green-50 rounded-lg hover:bg-green-100 transition group">
-          <div class="p-2 bg-green-500 rounded text-white group-hover:bg-green-600 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
-          </div>
-          <div>
-            <div class="font-bold text-navy-900">Audit Log</div>
-            <div class="text-sm text-navy-600">Security and activity trail</div>
-          </div>
-        </a>
-
-        <a href="/admin/mcp" class="flex items-center gap-3 p-3 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition group">
-          <div class="p-2 bg-indigo-500 rounded text-white group-hover:bg-indigo-600 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-            </svg>
-          </div>
-          <div>
-            <div class="font-bold text-navy-900">MCP Server</div>
-            <div class="text-sm text-navy-600">Claude Code integration</div>
-          </div>
-        </a>
-
-        <a href="/admin/settings" class="flex items-center gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition group">
-          <div class="p-2 bg-purple-500 rounded text-white group-hover:bg-purple-600 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-            </svg>
-          </div>
-          <div>
-            <div class="font-bold text-navy-900">Settings</div>
-            <div class="text-sm text-navy-600">System configuration</div>
-          </div>
-        </a>
-      </div>
+  <!-- Recent Activity -->
+  <div class="bg-white border border-navy-200 rounded-lg">
+    <div class="px-6 py-4 border-b border-navy-200">
+      <h2 class="text-xl font-black text-navy-900">Recent Activity</h2>
     </div>
-
-    <!-- Recent Activity -->
-    <div class="bg-white rounded-lg border border-navy-200">
-      <div class="px-6 py-4 border-b border-navy-200">
-        <h3 class="text-lg font-black text-navy-900">Recent Activity</h3>
-      </div>
-      <div class="p-6">
-        {% if recent_activity and recent_activity|length > 0 %}
+    <div class="p-6">
+      {% if recent_activity and recent_activity|length > 0 %}
         <div class="space-y-3">
           {% for activity in recent_activity[:5] %}
-          <div class="flex items-start gap-3 p-3 bg-navy-50 rounded-lg">
-            <div class="w-8 h-8 bg-navy-500 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="font-semibold text-navy-900 text-sm">{{ activity.description }}</p>
-              <p class="text-xs text-navy-600 font-semibold">{{ activity.timestamp }} • {{ activity.actor }}</p>
+          <div class="flex items-center gap-4 p-3 bg-navy-50 rounded-lg">
+            <div class="w-2 h-2 bg-coral-500 rounded-full"></div>
+            <div class="flex-1">
+              <div class="font-bold text-navy-900">{{ activity.action }}</div>
+              <div class="text-sm text-navy-600">{{ activity.resource }} • {{ activity.ts|timestamp_to_date }}</div>
             </div>
           </div>
           {% endfor %}
         </div>
-        <div class="mt-4 text-center">
-          <a href="/admin/audit" class="text-sm font-bold text-coral-500 hover:text-coral-600">View all activity →</a>
-        </div>
-        {% else %}
+      {% else %}
         <div class="text-center py-8">
-          <div class="w-12 h-12 bg-navy-50 rounded-full flex items-center justify-center mx-auto mb-3">
-            <svg class="w-6 h-6 text-navy-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          <div class="w-16 h-16 bg-navy-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-navy-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
             </svg>
           </div>
-          <p class="text-navy-600 font-semibold">No recent activity</p>
-          <p class="text-navy-500 text-sm">System events will appear here</p>
+          <h3 class="text-lg font-bold text-navy-900 mb-2">No Recent Activity</h3>
+          <p class="text-navy-600">System events and MCP tool calls will appear here</p>
         </div>
-        {% endif %}
-      </div>
+      {% endif %}
     </div>
   </div>
 </div>
-{% endblock %}
 
-{% block scripts %}
 <script>
-// Onboarding functionality
-let onboardingData = {
-  agentTypes: [],
-  policy: null
-};
-
-function showOnboarding() {
-  document.getElementById('onboarding-modal').style.display = 'flex';
-}
-
-function hideOnboarding() {
-  document.getElementById('onboarding-modal').style.display = 'none';
-  localStorage.setItem('canopy_onboarding_completed', 'true');
-}
-
-function nextOnboardingStep() {
-  // Collect selected agent types
-  const checkedTypes = document.querySelectorAll('input[name="agent_type"]:checked');
-  onboardingData.agentTypes = Array.from(checkedTypes).map(input => input.value);
+function copyUserApiKey() {
+  const input = document.getElementById('user-api-key');
+  input.select();
+  document.execCommand('copy');
   
-  if (onboardingData.agentTypes.length === 0) {
-    showToast('Please select at least one agent type', 'warning');
-    return;
-  }
+  // Show feedback
+  const button = event.target;
+  const originalText = button.textContent;
+  button.textContent = 'Copied!';
+  button.classList.add('bg-green-500');
+  button.classList.remove('bg-coral-500');
   
-  // Show step 2
-  document.getElementById('onboarding-step-1').style.display = 'none';
-  document.getElementById('onboarding-step-2').style.display = 'block';
-}
-
-function prevOnboardingStep() {
-  document.getElementById('onboarding-step-2').style.display = 'none';
-  document.getElementById('onboarding-step-1').style.display = 'block';
-}
-
-function finishOnboarding() {
-  // Collect selected policy
-  const checkedPolicy = document.querySelector('input[name="starter_policy"]:checked');
-  if (!checkedPolicy) {
-    showToast('Please select a starter policy', 'warning');
-    return;
-  }
-  
-  onboardingData.policy = checkedPolicy.value;
-  
-  // Simulate saving onboarding data
-  console.log('Onboarding completed:', onboardingData);
-  
-  // Show success message
-  showToast('🎉 Welcome to CanopyIQ! Your agent security is now set up.', 'success');
-  
-  // Close modal
-  hideOnboarding();
-  
-  // Redirect to Console after a moment
   setTimeout(() => {
-    showToast('💡 Pro tip: Check out the Console to see your agent management features!', 'info');
+    button.textContent = originalText;
+    button.classList.remove('bg-green-500');
+    button.classList.add('bg-coral-500');
   }, 2000);
 }
 
-function skipOnboarding() {
-  if (confirm('Skip setup? You can always configure your agent policies later in the Console.')) {
-    hideOnboarding();
-    showToast('You can complete setup anytime in the Console tab', 'info');
-  }
-}
-
-// Check if this is a first-time user
-document.addEventListener('DOMContentLoaded', function() {
-  const hasCompletedOnboarding = localStorage.getItem('canopy_onboarding_completed');
-  
-  // Show onboarding modal for first-time users after a short delay
-  if (!hasCompletedOnboarding) {
+function copyConfig() {
+  const config = `{ "mcpServers": { "canopyiq": { "command": "canopyiq-mcp-server", "args": ["--api-key", "{{ api_key }}"] } } }`;
+  navigator.clipboard.writeText(config).then(() => {
+    const button = event.target;
+    const originalText = button.textContent;
+    button.textContent = 'Copied!';
+    button.classList.add('bg-green-500');
+    button.classList.remove('bg-coral-500');
+    
     setTimeout(() => {
-      showOnboarding();
-    }, 1000);
-  }
-});
+      button.textContent = originalText;
+      button.classList.remove('bg-green-500');
+      button.classList.add('bg-coral-500');
+    }, 2000);
+  });
+}
 </script>
 {% endblock %}

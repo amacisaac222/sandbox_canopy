@@ -648,18 +648,18 @@ async def admin_submissions(request: Request, db: AsyncSession = Depends(get_db)
     )
 
 @app.get("/dashboard", response_class=HTMLResponse)
-async def user_dashboard(request: Request, db: AsyncSession = Depends(get_db)):
-    """User dashboard - personal MCP config and activity"""
-    user = get_current_user(request)
-    
-    # Redirect to login if not authenticated
-    if not user:
-        return RedirectResponse(url="/auth/login", status_code=status.HTTP_302_FOUND)
-    
+async def user_dashboard_redirect(request: Request):
+    """Redirect dashboard to admin interface"""
+    return RedirectResponse(url="/admin", status_code=status.HTTP_302_FOUND)
+
+@app.get("/admin", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+    """Admin dashboard"""
     import secrets
     from datetime import datetime, timedelta
     
     # Get or create user's API key
+    user_api_key = f"ciq_demo_{secrets.token_hex(12)}"
     if db and hasattr(user, 'id'):
         # Check if user has existing API key
         existing_key_result = await db.execute(
@@ -682,92 +682,6 @@ async def user_dashboard(request: Request, db: AsyncSession = Depends(get_db)):
             )
             db.add(new_session)
             await db.commit()
-    else:
-        # Fallback for demo
-        user_api_key = f"ciq_demo_{secrets.token_hex(12)}"
-    
-    # Get real MCP metrics for this user
-    try:
-        if db:
-            # Get last 24 hours of data
-            end_time = datetime.now()
-            start_time = end_time - timedelta(hours=24)
-            start_timestamp = int(start_time.timestamp() * 1000)
-            
-            # Query user's tool calls
-            tool_calls_result = await db.execute(
-                select(MCPToolCall).where(
-                    MCPToolCall.user_api_key == user_api_key,
-                    MCPToolCall.timestamp >= start_timestamp
-                ).order_by(desc(MCPToolCall.timestamp)).limit(10)
-            )
-            tool_calls = tool_calls_result.scalars().all()
-            
-            # Calculate stats
-            total_calls = len(tool_calls)
-            blocked_calls = sum(1 for call in tool_calls if call.status == ToolCallStatus.BLOCKED)
-            approved_calls = sum(1 for call in tool_calls if call.status == ToolCallStatus.EXECUTED)
-            
-            # Get unique tools monitored
-            unique_tools = set(call.tool_name for call in tool_calls)
-            
-            # Format recent activity
-            activity = []
-            for call in tool_calls:
-                activity.append({
-                    "timestamp": datetime.fromtimestamp(call.timestamp / 1000).strftime("%Y-%m-%d %H:%M:%S"),
-                    "action": f"Tool call {call.status.value}",
-                    "tool": call.tool_name,
-                    "status": call.status.value,
-                    "risk_level": call.risk_level.value if call.risk_level else "unknown"
-                })
-            
-            dashboard_stats = {
-                "tools_monitored": len(unique_tools) if unique_tools else 0,
-                "calls_today": total_calls,
-                "blocked_calls": blocked_calls,
-                "approval_rate": f"{round((approved_calls / total_calls * 100) if total_calls > 0 else 0)}%"
-            }
-        else:
-            # Fallback mock data if no database
-            activity = []
-            dashboard_stats = {
-                "tools_monitored": 0,
-                "calls_today": 0,
-                "blocked_calls": 0,
-                "approval_rate": "0%"
-            }
-            
-    except Exception as e:
-        logger.error(f"Failed to load user MCP data: {e}")
-        # Fallback to mock data on error
-        activity = []
-        dashboard_stats = {
-            "tools_monitored": 0,
-            "calls_today": 0,
-            "blocked_calls": 0,
-            "approval_rate": "0%"
-        }
-    
-    dashboard_data = {
-        "user": user,
-        "api_key": user_api_key,
-        "activity": activity,
-        "stats": dashboard_stats
-    }
-    
-    return page(
-        request,
-        title="Your Dashboard | CanopyIQ",
-        desc="Monitor your Claude Code MCP activity and manage your personal settings.",
-        path="user_dashboard.html",
-        **dashboard_data
-    )
-
-@app.get("/admin", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
-async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    """Admin dashboard"""
-    # user is already injected from dependency
     
     # Get dashboard statistics
     now = int(time.time())
@@ -802,14 +716,25 @@ async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db), 
         }
         recent_activity.append(activity)
     
+    # Get MCP tool call stats
+    mcp_calls = 0
+    blocked_calls = 0
+    try:
+        if db:
+            mcp_calls_result = await db.execute(
+                select(MCPToolCall).where(MCPToolCall.timestamp >= twenty_four_hours_ago * 1000)
+            )
+            mcp_calls_data = mcp_calls_result.scalars().all()
+            mcp_calls = len(mcp_calls_data)
+            blocked_calls = len([call for call in mcp_calls_data if call.status == ToolCallStatus.BLOCKED])
+    except Exception as e:
+        logger.error(f"Failed to get MCP stats: {e}")
+    
     stats = {
-        "submissions_24h": len(submissions_24h),
-        "last_submission": datetime.fromtimestamp(last_submission.ts).strftime("%Y-%m-%d %H:%M:%S") if last_submission else None,
-        "logins_24h": 0,  # TODO: Implement login tracking
-        "db_type": "SQLite" if "sqlite" in DATABASE_URL else "PostgreSQL",
-        "total_submissions": len(submissions_24h),  # TODO: Get actual total
-        "oidc_enabled": False,  # TODO: Check OIDC status
-        "active_sessions": 0,  # TODO: Count active sessions
+        "submissions": len(submissions_24h),
+        "mcp_calls": mcp_calls,
+        "blocked_calls": blocked_calls,
+        "last_submission": datetime.fromtimestamp(last_submission.ts).strftime("%Y-%m-%d %H:%M:%S") if last_submission else "Never"
     }
     
     return page(
@@ -819,7 +744,8 @@ async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db), 
         path="admin_dashboard.html",
         user=user,
         stats=stats,
-        recent_activity=recent_activity
+        recent_activity=recent_activity,
+        api_key=user_api_key
     )
 
 @app.get("/admin/audit", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
