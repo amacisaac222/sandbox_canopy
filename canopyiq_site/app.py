@@ -658,39 +658,7 @@ async def user_dashboard_redirect(request: Request):
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_dashboard(request: Request):
     """Admin dashboard"""
-    import secrets
-    
-    # Simple API key generation for testing
-    user_api_key = f"ciq_demo_{secrets.token_hex(12)}"
-    
-    # Simple stats for testing
-    stats = {
-        "submissions": 0,
-        "mcp_calls": 0,
-        "blocked_calls": 0,
-        "last_submission": "Never"
-    }
-    
-    recent_activity = []
-    
-    # Create mock user for testing
-    mock_user = type('MockUser', (), {'name': 'Test User'})()
-    
-    try:
-        return page(
-            request,
-            title="Admin Dashboard | CanopyIQ",
-            desc="Administration panel for CanopyIQ.",
-            path="admin_dashboard.html",
-            user=mock_user,
-            stats=stats,
-            recent_activity=recent_activity,
-            api_key=user_api_key
-        )
-    except Exception as e:
-        logger.error(f"Failed to render admin dashboard: {e}")
-        # Return simple error response
-        return HTMLResponse(f"<html><body><h1>Admin Dashboard Error</h1><p>{str(e)}</p></body></html>", status_code=500)
+    return HTMLResponse("<html><body><h1>Admin Test</h1><p>This is a test page</p></body></html>")
 
 @app.get("/admin/audit", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
 async def admin_audit(request: Request, db: AsyncSession = Depends(get_db)):
