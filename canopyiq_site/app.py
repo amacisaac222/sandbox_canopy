@@ -657,8 +657,8 @@ async def user_dashboard_redirect(request: Request):
 
 @app.get("/admin")
 async def admin_redirect():
-    """Redirect to working admin interface"""
-    return RedirectResponse(url="/admin/mcp", status_code=status.HTTP_302_FOUND)
+    """Redirect to admin login flow"""
+    return RedirectResponse(url="/auth/login", status_code=status.HTTP_302_FOUND)
 
 @app.get("/admin/test-dashboard", response_class=HTMLResponse)
 async def admin_test(request: Request):

@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>MCP Server Setup - CanopyIQ Documentation</title>
-  <meta name="description" content="Complete guide to setting up CanopyIQ MCP server for Claude Code integration">
-  <link rel="canonical" href="https://canopyiq.ai/documentation/mcp-setup/">
+  <title>Claude Code MCP Setup - CanopyIQ Documentation</title>
+  <meta name="description" content="Complete guide to setting up CanopyIQ MCP server for Claude Code integration with security monitoring and approval workflows">
+  <link rel="canonical" href="https://canopyiq.ai/documentation/claude-code-setup/">
   <link rel="icon" href="/static/favicon.svg">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -57,7 +57,7 @@
           <span class="text-navy-300">/</span>
           <span class="text-navy-300">Documentation</span>
           <span class="text-navy-300">/</span>
-          <span class="text-coral-400 font-bold">MCP Server Setup</span>
+          <span class="text-coral-400 font-bold">Claude Code Setup</span>
         </div>
         <a href="/documentation" class="text-coral-400 hover:text-coral-300 font-bold">← Back to Docs</a>
       </div>
@@ -68,55 +68,29 @@
     
     <!-- Title -->
     <div class="mb-8">
-      <h1 class="text-4xl font-black text-navy-900 mb-4">MCP Server Setup</h1>
+      <h1 class="text-4xl font-black text-navy-900 mb-4">MCP Server Setup for Claude Code</h1>
       <p class="text-xl text-navy-600 leading-relaxed">
-        Complete guide to integrating CanopyIQ MCP server with Claude for security monitoring and approval workflows.
+        Complete guide to integrating CanopyIQ MCP server with Claude Code for security monitoring, policy enforcement, and approval workflows.
       </p>
     </div>
 
-    <!-- Platform Selection -->
-    <div class="bg-navy-50 border border-navy-200 rounded-lg p-6 mb-8">
-      <h2 class="text-xl font-black text-navy-900 mb-4">Choose Your Platform</h2>
-      <div class="grid md:grid-cols-2 gap-4">
-        <a href="/documentation/claude-code-setup/" class="bg-coral-500 text-white rounded-lg p-6 hover:bg-coral-600 transition group">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-              </svg>
-            </div>
-            <h3 class="font-bold text-lg">Claude Code</h3>
-          </div>
-          <p class="text-coral-100 text-sm mb-3">
-            Project-level configuration using <code>.claude/settings.json</code>
+    <!-- Key Differences Alert -->
+    <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-8">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="font-bold text-amber-900 mb-2">Claude Code vs Claude Desktop</h3>
+          <p class="text-amber-800 mb-3">
+            Claude Code uses <strong>project-level configuration</strong> in <code>.claude/settings.json</code>, 
+            while Claude Desktop uses a global <code>claude_desktop_config.json</code> file.
           </p>
-          <div class="text-coral-200 text-xs">
-            ✓ Per-project security policies<br>
-            ✓ Development workflow integration<br>
-            ✓ Team collaboration features
-          </div>
-        </a>
-
-        <div class="bg-blue-500 text-white rounded-lg p-6 border-2 border-blue-700 relative">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-              </svg>
-            </div>
-            <h3 class="font-bold text-lg">Claude Desktop</h3>
-          </div>
-          <p class="text-blue-100 text-sm mb-3">
-            Global configuration using <code>claude_desktop_config.json</code>
+          <p class="text-amber-800 text-sm">
+            Looking for Claude Desktop setup? Check out our <a href="/documentation/mcp-setup/" class="text-amber-700 underline font-semibold">Claude Desktop guide</a>.
           </p>
-          <div class="text-blue-200 text-xs">
-            ✓ System-wide security monitoring<br>
-            ✓ Simple setup and configuration<br>
-            ✓ Personal use optimization
-          </div>
-          <div class="absolute top-2 right-2 bg-white/20 px-2 py-1 rounded text-xs font-bold">
-            Current Guide
-          </div>
         </div>
       </div>
     </div>
@@ -145,16 +119,16 @@
             <div class="w-6 h-6 bg-coral-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
             <h3 class="font-bold text-navy-900">Configure</h3>
           </div>
-          <p class="text-navy-600 text-sm mb-2">Add to Claude Code config:</p>
-          <p class="text-navy-500 text-xs font-mono">claude_desktop_config.json</p>
+          <p class="text-navy-600 text-sm mb-2">Add to project's settings:</p>
+          <p class="text-navy-500 text-xs font-mono">.claude/settings.json</p>
         </div>
 
         <div class="bg-white rounded-lg p-4 border border-coral-200">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">✓</div>
-            <h3 class="font-bold text-navy-900">Done!</h3>
+            <h3 class="font-bold text-navy-900">Secured!</h3>
           </div>
-          <p class="text-navy-600 text-sm">Restart Claude Code and you're secured</p>
+          <p class="text-navy-600 text-sm">Your tools are now monitored and secured</p>
         </div>
       </div>
     </div>
@@ -185,32 +159,30 @@
 
       <!-- Step 2 -->
       <section>
-        <h2 class="text-2xl font-black text-navy-900 mb-4">Step 2: Configure Claude Code</h2>
+        <h2 class="text-2xl font-black text-navy-900 mb-4">Step 2: Configure Your Project</h2>
         
         <div class="mb-6">
-          <h3 class="text-lg font-bold text-navy-900 mb-3">Find your Claude Code configuration file:</h3>
-          <div class="space-y-3">
-            <div class="bg-navy-50 border border-navy-200 rounded-lg p-4">
-              <h4 class="font-bold text-navy-900 mb-2">📁 macOS Location:</h4>
-              <code class="text-navy-700 font-mono text-sm bg-white px-2 py-1 rounded">~/Library/Application Support/Claude/claude_desktop_config.json</code>
-            </div>
-            <div class="bg-navy-50 border border-navy-200 rounded-lg p-4">
-              <h4 class="font-bold text-navy-900 mb-2">📁 Windows Location:</h4>
-              <code class="text-navy-700 font-mono text-sm bg-white px-2 py-1 rounded">%APPDATA%\Claude\claude_desktop_config.json</code>
-            </div>
+          <h3 class="text-lg font-bold text-navy-900 mb-3">Create or update your project's Claude Code settings:</h3>
+          <div class="bg-navy-50 border border-navy-200 rounded-lg p-4 mb-4">
+            <h4 class="font-bold text-navy-900 mb-2">📁 Project Configuration File:</h4>
+            <code class="text-navy-700 font-mono text-sm bg-white px-2 py-1 rounded">your-project/.claude/settings.json</code>
+            <p class="text-navy-600 text-sm mt-2">
+              This file is created automatically in your project directory when you first use Claude Code.
+            </p>
           </div>
         </div>
 
         <div class="bg-navy-900 rounded-lg p-6">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-white font-bold">Add this configuration:</h3>
+            <h3 class="text-white font-bold">Add this MCP server configuration:</h3>
             <button onclick="copyCode('config-json')" class="text-coral-400 hover:text-coral-300 text-sm font-bold">Copy</button>
           </div>
           <pre id="config-json" class="text-green-400 font-mono text-sm overflow-x-auto"><code>{
   "mcpServers": {
     "canopyiq": {
-      "command": "npx",
-      "args": ["canopyiq-mcp-server", "--api-key", "YOUR_API_KEY_HERE"]
+      "command": "canopyiq-mcp-server",
+      "args": ["--api-key", "YOUR_API_KEY_HERE"],
+      "env": {}
     }
   }
 }</code></pre>
@@ -220,11 +192,29 @@
             </p>
           </div>
         </div>
+
+        <div class="mt-6 bg-green-50 border border-green-200 rounded-lg p-4">
+          <h4 class="font-bold text-green-900 mb-2">💡 Pro Tip: Environment Variables</h4>
+          <p class="text-green-800 text-sm mb-2">For better security, you can use environment variables instead of hardcoding your API key:</p>
+          <div class="bg-navy-900 rounded p-3 mt-2">
+            <code class="text-green-400 font-mono text-xs">{
+  "mcpServers": {
+    "canopyiq": {
+      "command": "canopyiq-mcp-server",
+      "args": ["--api-key"],
+      "env": {
+        "CANOPYIQ_API_KEY": "YOUR_API_KEY_HERE"
+      }
+    }
+  }
+}</code>
+          </div>
+        </div>
       </section>
 
       <!-- Step 3 -->
       <section>
-        <h2 class="text-2xl font-black text-navy-900 mb-4">Step 3: Restart Claude Code</h2>
+        <h2 class="text-2xl font-black text-navy-900 mb-4">Step 3: Start Using Claude Code</h2>
         
         <div class="bg-green-50 border border-green-200 rounded-lg p-6">
           <div class="flex items-start gap-4">
@@ -235,7 +225,7 @@
             </div>
             <div>
               <h3 class="font-bold text-green-900 mb-2">✅ Setup Complete!</h3>
-              <p class="text-green-800 mb-3">Close and reopen Claude Code. CanopyIQ will now monitor and secure all your tool usage.</p>
+              <p class="text-green-800 mb-3">Open Claude Code in your project directory. CanopyIQ will now monitor and secure all your tool usage.</p>
               
               <h4 class="font-bold text-green-900 mb-2">What you'll get:</h4>
               <ul class="space-y-1 text-green-800 text-sm">
@@ -246,6 +236,39 @@
                 <li>• Complete audit trail for compliance</li>
               </ul>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Project-Specific Features -->
+      <section>
+        <h2 class="text-2xl font-black text-navy-900 mb-4">Claude Code Specific Features</h2>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="bg-navy-50 border border-navy-200 rounded-lg p-6">
+            <h3 class="font-bold text-navy-900 mb-3 flex items-center gap-2">
+              <span class="text-coral-500">📁</span>
+              Project-Level Security
+            </h3>
+            <ul class="space-y-2 text-sm text-navy-700">
+              <li>• Each project has its own security policies</li>
+              <li>• Isolated logging and monitoring per project</li>
+              <li>• Team-specific approval workflows</li>
+              <li>• Granular permission control</li>
+            </ul>
+          </div>
+
+          <div class="bg-navy-50 border border-navy-200 rounded-lg p-6">
+            <h3 class="font-bold text-navy-900 mb-3 flex items-center gap-2">
+              <span class="text-coral-500">🔄</span>
+              Development Workflow
+            </h3>
+            <ul class="space-y-2 text-sm text-navy-700">
+              <li>• Automatic tool discovery and registration</li>
+              <li>• Real-time policy validation</li>
+              <li>• Integration with version control</li>
+              <li>• CI/CD pipeline security checks</li>
+            </ul>
           </div>
         </div>
       </section>
@@ -267,6 +290,9 @@
               <div class="bg-white rounded p-2">
                 <code class="text-navy-700">CANOPYIQ_TIMEOUT</code> - Request timeout (default: 30s)
               </div>
+              <div class="bg-white rounded p-2">
+                <code class="text-navy-700">CANOPYIQ_PROJECT_ID</code> - Project identifier
+              </div>
             </div>
           </div>
 
@@ -282,6 +308,9 @@
               <div class="bg-white rounded p-2">
                 <code class="text-navy-700">--debug</code> - Enable debug logging
               </div>
+              <div class="bg-white rounded p-2">
+                <code class="text-navy-700">--project-id</code> - Set project identifier
+              </div>
             </div>
           </div>
         </div>
@@ -289,33 +318,45 @@
 
       <!-- Troubleshooting -->
       <section>
-        <h2 class="text-2xl font-black text-navy-900 mb-4">Troubleshooting</h2>
+        <h2 class="text-2xl font-black text-navy-900 mb-4">Troubleshooting Claude Code Setup</h2>
         
         <div class="space-y-4">
           <div class="border border-red-200 rounded-lg p-4">
             <h3 class="font-bold text-red-900 mb-2">❌ MCP server not appearing in Claude Code?</h3>
             <ul class="space-y-1 text-red-800 text-sm ml-4">
-              <li>• Verify the config file path is correct for your OS</li>
+              <li>• Verify the <code>.claude/settings.json</code> file exists in your project directory</li>
               <li>• Check JSON syntax with a validator</li>
-              <li>• Ensure Claude Code was completely restarted</li>
-              <li>• Check terminal for npm/npx installation errors</li>
+              <li>• Ensure Claude Code was restarted in the correct project directory</li>
+              <li>• Check terminal for npm installation errors</li>
+              <li>• Try using the full path to the MCP server executable</li>
             </ul>
           </div>
 
           <div class="border border-yellow-200 rounded-lg p-4">
             <h3 class="font-bold text-yellow-900 mb-2">⚠️ Authentication errors?</h3>
             <ul class="space-y-1 text-yellow-800 text-sm ml-4">
-              <li>• Verify your API key is correct</li>
-              <li>• Check that your CanopyIQ account is active</li>
-              <li>• Ensure no extra spaces in the configuration</li>
+              <li>• Verify your API key is correct and active</li>
+              <li>• Check that your CanopyIQ account has access to this project</li>
+              <li>• Ensure no extra spaces or quotes in the configuration</li>
+              <li>• Try using environment variables instead of hardcoded values</li>
             </ul>
           </div>
 
           <div class="border border-blue-200 rounded-lg p-4">
-            <h3 class="font-bold text-blue-900 mb-2">💡 Need help?</h3>
-            <p class="text-blue-800 text-sm">
-              Contact our support team at <a href="/contact" class="text-blue-600 underline">support@canopyiq.ai</a> 
-              or join our community for help with setup and configuration.
+            <h3 class="font-bold text-blue-900 mb-2">🔍 Debugging Tips</h3>
+            <ul class="space-y-1 text-blue-800 text-sm ml-4">
+              <li>• Enable debug mode with <code>--debug</code> flag</li>
+              <li>• Check Claude Code logs for MCP server startup messages</li>
+              <li>• Test the MCP server directly: <code>canopyiq-mcp-server --version</code></li>
+              <li>• Verify network connectivity to CanopyIQ servers</li>
+            </ul>
+          </div>
+
+          <div class="border border-green-200 rounded-lg p-4">
+            <h3 class="font-bold text-green-900 mb-2">💡 Need help?</h3>
+            <p class="text-green-800 text-sm">
+              Contact our support team at <a href="/contact" class="text-green-600 underline">support@canopyiq.ai</a> 
+              or join our community Discord for help with setup and configuration.
             </p>
           </div>
         </div>
