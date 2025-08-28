@@ -468,7 +468,7 @@ async def local_login_post(
     session_token = create_session_token(auth_user)
     
     # Create response and set session cookie
-    response = RedirectResponse(url="/admin", status_code=status.HTTP_302_FOUND)
+    response = RedirectResponse(url="/admin/mcp", status_code=status.HTTP_302_FOUND)
     response.set_cookie(
         key=SESSION_COOKIE_NAME,
         value=session_token,
@@ -655,10 +655,6 @@ async def user_dashboard_redirect(request: Request):
     """Redirect dashboard to admin interface"""
     return RedirectResponse(url="/admin/mcp", status_code=status.HTTP_302_FOUND)
 
-@app.get("/admin")
-async def admin_redirect():
-    """Redirect to working admin interface"""
-    return RedirectResponse(url="/admin/mcp", status_code=status.HTTP_302_FOUND)
 
 @app.get("/admin/test-dashboard", response_class=HTMLResponse)
 async def admin_test(request: Request):
