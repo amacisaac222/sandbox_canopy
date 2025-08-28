@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MCP Server Setup - CanopyIQ Documentation</title>
+  <meta name="description" content="Complete guide to setting up CanopyIQ MCP server for Claude Code integration">
+  <link rel="canonical" href="https://canopyiq.ai/documentation/mcp-setup/">
+  <link rel="icon" href="/static/favicon.svg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            coral: {
+              50: '#fff7f6',
+              100: '#ffeeec', 
+              200: '#ffd9d4',
+              300: '#ffb8ad',
+              400: '#ff8f7d',
+              500: '#ff6f61',
+              600: '#f5553d',
+              700: '#e0401f',
+              800: '#c73314',
+              900: '#a42e15',
+            },
+            navy: {
+              50: '#f1f4f8',
+              100: '#dde4ed',
+              200: '#c0cedf', 
+              300: '#94abca',
+              400: '#6182b0',
+              500: '#3d6199',
+              600: '#304e80',
+              700: '#284069',
+              800: '#253658',
+              900: '#1c2a4a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-white text-navy-900">
+
+  <!-- Header -->
+  <header class="bg-navy-900 text-white border-b border-navy-800">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <a href="/" class="flex items-center gap-3">
+            <img src="/static/canopy-logo.svg" alt="CanopyIQ" class="h-8">
+            <span class="font-bold text-lg">CanopyIQ</span>
+          </a>
+          <span class="text-navy-300">/</span>
+          <span class="text-navy-300">Documentation</span>
+          <span class="text-navy-300">/</span>
+          <span class="text-coral-400 font-bold">MCP Server Setup</span>
+        </div>
+        <a href="/documentation" class="text-coral-400 hover:text-coral-300 font-bold">← Back to Docs</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    
+    <!-- Title -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-black text-navy-900 mb-4">MCP Server Setup for Claude Code</h1>
+      <p class="text-xl text-navy-600 leading-relaxed">
+        Complete guide to integrating CanopyIQ MCP server with Claude Code for security monitoring and approval workflows.
+      </p>
+    </div>
+
+    <!-- Quick Start -->
+    <div class="bg-gradient-to-r from-coral-50 to-coral-100 border border-coral-200 rounded-lg p-8 mb-8">
+      <h2 class="text-2xl font-black text-navy-900 mb-4 flex items-center gap-2">
+        <span class="text-coral-500">⚡</span>
+        Quick Start (30 seconds)
+      </h2>
+      
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg p-4 border border-coral-200">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-6 h-6 bg-coral-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+            <h3 class="font-bold text-navy-900">Install</h3>
+          </div>
+          <div class="bg-navy-900 rounded p-3 text-green-400 font-mono text-sm mb-2">
+            npm install -g canopyiq-mcp-server
+          </div>
+          <p class="text-navy-600 text-sm">Install the MCP server globally</p>
+        </div>
+
+        <div class="bg-white rounded-lg p-4 border border-coral-200">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-6 h-6 bg-coral-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+            <h3 class="font-bold text-navy-900">Configure</h3>
+          </div>
+          <p class="text-navy-600 text-sm mb-2">Add to Claude Code config:</p>
+          <p class="text-navy-500 text-xs font-mono">claude_desktop_config.json</p>
+        </div>
+
+        <div class="bg-white rounded-lg p-4 border border-coral-200">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">✓</div>
+            <h3 class="font-bold text-navy-900">Done!</h3>
+          </div>
+          <p class="text-navy-600 text-sm">Restart Claude Code and you're secured</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Steps -->
+    <div class="space-y-8">
+      
+      <!-- Step 1 -->
+      <section>
+        <h2 class="text-2xl font-black text-navy-900 mb-4">Step 1: Install CanopyIQ MCP Server</h2>
+        
+        <div class="bg-navy-900 rounded-lg p-6 mb-4">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white font-bold">Install via npm (recommended)</h3>
+            <button onclick="copyCode('install-npm')" class="text-coral-400 hover:text-coral-300 text-sm font-bold">Copy</button>
+          </div>
+          <code id="install-npm" class="text-green-400 font-mono">npm install -g canopyiq-mcp-server</code>
+        </div>
+
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+          <h4 class="font-bold text-blue-900 mb-2">Alternative: Use npx (no global install)</h4>
+          <div class="bg-navy-900 rounded p-3">
+            <code class="text-green-400 font-mono text-sm">npx canopyiq-mcp-server --version</code>
+          </div>
+          <p class="text-blue-800 text-sm mt-2">This method doesn't require global installation and always uses the latest version.</p>
+        </div>
+      </section>
+
+      <!-- Step 2 -->
+      <section>
+        <h2 class="text-2xl font-black text-navy-900 mb-4">Step 2: Configure Claude Code</h2>
+        
+        <div class="mb-6">
+          <h3 class="text-lg font-bold text-navy-900 mb-3">Find your Claude Code configuration file:</h3>
+          <div class="space-y-3">
+            <div class="bg-navy-50 border border-navy-200 rounded-lg p-4">
+              <h4 class="font-bold text-navy-900 mb-2">📁 macOS Location:</h4>
+              <code class="text-navy-700 font-mono text-sm bg-white px-2 py-1 rounded">~/Library/Application Support/Claude/claude_desktop_config.json</code>
+            </div>
+            <div class="bg-navy-50 border border-navy-200 rounded-lg p-4">
+              <h4 class="font-bold text-navy-900 mb-2">📁 Windows Location:</h4>
+              <code class="text-navy-700 font-mono text-sm bg-white px-2 py-1 rounded">%APPDATA%\Claude\claude_desktop_config.json</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-navy-900 rounded-lg p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white font-bold">Add this configuration:</h3>
+            <button onclick="copyCode('config-json')" class="text-coral-400 hover:text-coral-300 text-sm font-bold">Copy</button>
+          </div>
+          <pre id="config-json" class="text-green-400 font-mono text-sm overflow-x-auto"><code>{
+  "mcpServers": {
+    "canopyiq": {
+      "command": "npx",
+      "args": ["canopyiq-mcp-server", "--api-key", "YOUR_API_KEY_HERE"]
+    }
+  }
+}</code></pre>
+          <div class="mt-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded">
+            <p class="text-amber-300 text-sm">
+              <strong>🔑 API Key:</strong> Get your API key from your <a href="/dashboard" class="text-amber-200 underline">CanopyIQ Dashboard</a> or <a href="/signup" class="text-amber-200 underline">create a free account</a>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 3 -->
+      <section>
+        <h2 class="text-2xl font-black text-navy-900 mb-4">Step 3: Restart Claude Code</h2>
+        
+        <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-bold text-green-900 mb-2">✅ Setup Complete!</h3>
+              <p class="text-green-800 mb-3">Close and reopen Claude Code. CanopyIQ will now monitor and secure all your tool usage.</p>
+              
+              <h4 class="font-bold text-green-900 mb-2">What you'll get:</h4>
+              <ul class="space-y-1 text-green-800 text-sm">
+                <li>• Real-time logging of all Claude tool calls</li>
+                <li>• Human approval workflows for risky operations</li>
+                <li>• Policy enforcement and rate limiting</li>
+                <li>• Slack/email notifications for security events</li>
+                <li>• Complete audit trail for compliance</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Advanced Configuration -->
+      <section>
+        <h2 class="text-2xl font-black text-navy-900 mb-4">Advanced Configuration</h2>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="bg-navy-50 border border-navy-200 rounded-lg p-6">
+            <h3 class="font-bold text-navy-900 mb-3">Environment Variables</h3>
+            <div class="space-y-2 text-sm">
+              <div class="bg-white rounded p-2">
+                <code class="text-navy-700">CANOPYIQ_API_KEY</code> - Your API key
+              </div>
+              <div class="bg-white rounded p-2">
+                <code class="text-navy-700">CANOPYIQ_SERVER_URL</code> - Custom server URL
+              </div>
+              <div class="bg-white rounded p-2">
+                <code class="text-navy-700">CANOPYIQ_TIMEOUT</code> - Request timeout (default: 30s)
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-navy-50 border border-navy-200 rounded-lg p-6">
+            <h3 class="font-bold text-navy-900 mb-3">Command Line Options</h3>
+            <div class="space-y-2 text-sm">
+              <div class="bg-white rounded p-2">
+                <code class="text-navy-700">--api-key</code> - Specify API key directly
+              </div>
+              <div class="bg-white rounded p-2">
+                <code class="text-navy-700">--server-url</code> - Custom CanopyIQ server
+              </div>
+              <div class="bg-white rounded p-2">
+                <code class="text-navy-700">--debug</code> - Enable debug logging
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Troubleshooting -->
+      <section>
+        <h2 class="text-2xl font-black text-navy-900 mb-4">Troubleshooting</h2>
+        
+        <div class="space-y-4">
+          <div class="border border-red-200 rounded-lg p-4">
+            <h3 class="font-bold text-red-900 mb-2">❌ MCP server not appearing in Claude Code?</h3>
+            <ul class="space-y-1 text-red-800 text-sm ml-4">
+              <li>• Verify the config file path is correct for your OS</li>
+              <li>• Check JSON syntax with a validator</li>
+              <li>• Ensure Claude Code was completely restarted</li>
+              <li>• Check terminal for npm/npx installation errors</li>
+            </ul>
+          </div>
+
+          <div class="border border-yellow-200 rounded-lg p-4">
+            <h3 class="font-bold text-yellow-900 mb-2">⚠️ Authentication errors?</h3>
+            <ul class="space-y-1 text-yellow-800 text-sm ml-4">
+              <li>• Verify your API key is correct</li>
+              <li>• Check that your CanopyIQ account is active</li>
+              <li>• Ensure no extra spaces in the configuration</li>
+            </ul>
+          </div>
+
+          <div class="border border-blue-200 rounded-lg p-4">
+            <h3 class="font-bold text-blue-900 mb-2">💡 Need help?</h3>
+            <p class="text-blue-800 text-sm">
+              Contact our support team at <a href="/contact" class="text-blue-600 underline">support@canopyiq.ai</a> 
+              or join our community for help with setup and configuration.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Footer Navigation -->
+    <div class="mt-12 pt-8 border-t border-navy-200">
+      <div class="flex items-center justify-between">
+        <a href="/documentation" class="inline-flex items-center gap-2 text-coral-500 hover:text-coral-600 font-bold">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Back to Documentation
+        </a>
+        
+        <div class="flex items-center gap-4">
+          <a href="/contact" class="text-navy-600 hover:text-navy-900 font-semibold">Get Help</a>
+          <a href="/dashboard" class="bg-coral-500 text-white px-4 py-2 rounded-lg hover:bg-coral-600 transition font-bold">
+            View Dashboard
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function copyCode(elementId) {
+      const element = document.getElementById(elementId);
+      const text = element.textContent || element.innerText;
+      
+      navigator.clipboard.writeText(text).then(() => {
+        const button = event.target;
+        const originalText = button.textContent;
+        button.textContent = '✓ Copied!';
+        button.className = 'text-green-400 hover:text-green-300 text-sm font-bold';
+        
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.className = 'text-coral-400 hover:text-coral-300 text-sm font-bold';
+        }, 2000);
+      });
+    }
+  </script>
+
+</body>
+</html>
