@@ -1,7 +1,7 @@
 """
 CanopyIQ Local Authentication
 """
-from passlib.context import CryptContext
+import bcrypt
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Optional
@@ -11,16 +11,22 @@ import secrets
 from database import User, UserRole
 from .models import User as AuthUser
 
-# Password hashing configuration
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 def hash_password(password: str) -> str:
     """Hash a password using bcrypt"""
-    return pwd_context.hash(password)
+    salt = bcrypt.gensalt()
+    password_bytes = password.encode('utf-8')
+    hashed = bcrypt.hashpw(password_bytes, salt)
+    return hashed.decode('utf-8')
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a password against its hash"""
-    return pwd_context.verify(plain_password, hashed_password)
+    try:
+        password_bytes = plain_password.encode('utf-8')
+        hashed_bytes = hashed_password.encode('utf-8')
+        return bcrypt.checkpw(password_bytes, hashed_bytes)
+    except Exception as e:
+        print(f"Password verification error: {e}")
+        return False
 
 async def create_local_user(
     db: AsyncSession,
@@ -86,7 +92,7 @@ async def has_any_admin_users(db: AsyncSession) -> bool:
 
 def db_user_to_auth_user(db_user: User) -> AuthUser:
     """Convert database User to auth User model"""
-    roles = [db_user.role.value] if db_user.role else []
+    roles = [db_user.role.value.lower()] if db_user.role else []
     
     return AuthUser(
         id=str(db_user.id),

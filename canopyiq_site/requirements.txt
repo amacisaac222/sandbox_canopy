@@ -6,7 +6,7 @@ pydantic
 email-validator
 authlib
 python-jose[cryptography]
-passlib[bcrypt]
+bcrypt>=4.0.0
 prometheus-client
 psycopg[binary,pool]
 alembic
