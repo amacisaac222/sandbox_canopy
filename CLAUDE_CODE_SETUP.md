@@ -6,7 +6,7 @@ This guide shows you how to connect CanopyIQ's AI Code Governance platform to Cl
 
 1. **Claude Code** installed and working
 2. **Node.js** 16+ installed
-3. **CanopyIQ account** (get API key from http://localhost:8080/admin/dashboard)
+3. **CanopyIQ account** (get API key from http://localhost:8080/admin/mcp)
 
 ## Step 1: Install the CanopyIQ MCP Server
 
@@ -26,7 +26,7 @@ npm start
 ### Option A: Use Production CanopyIQ (Recommended)
 
 1. **Visit CanopyIQ.ai:**
-   - Go to: https://canopyiq.ai/admin/dashboard
+   - Go to: https://canopyiq.ai/admin/mcp
    - Sign up or login with your account
    - Navigate to the "Setup" tab
    - Copy your generated API key
@@ -40,7 +40,7 @@ npm start
    ```
 
 2. **Get Your API Key:**
-   - Visit: http://localhost:8080/admin/dashboard
+   - Visit: http://localhost:8080/admin/mcp
    - Login with admin credentials
    - Navigate to the "Setup" tab
    - Copy your generated API key
@@ -130,7 +130,7 @@ Can you help me create a simple Python file?
 ```
 
 **Expected Result:**
-- CanopyIQ dashboard at https://canopyiq.ai/admin/dashboard shows "🟢 Live" connection status
+- CanopyIQ dashboard at https://canopyiq.ai/admin/mcp shows "🟢 Live" connection status
 - Real-time activity appears in the dashboard
 - File access is tracked in "Recent File Access by AI"
 
@@ -253,7 +253,7 @@ Add custom governance policies:
 
 ## Next Steps
 
-1. **Explore the Dashboard:** Visit http://localhost:8080/admin/dashboard
+1. **Explore the Dashboard:** Visit http://localhost:8080/admin/mcp
 2. **Monitor AI Activity:** Watch real-time events as you code with Claude
 3. **Test Approvals:** Try accessing sensitive files to see approval workflows
 4. **Check Project Memory:** Close/restart Claude Code to see context continuity
@@ -261,7 +261,7 @@ Add custom governance policies:
 
 ## Support
 
-- **Dashboard:** http://localhost:8080/admin/dashboard
+- **Dashboard:** http://localhost:8080/admin/mcp
 - **Setup Guide:** http://localhost:8080/admin/mcp  
 - **Activity Logs:** http://localhost:8080/admin/audit
 - **Issues:** https://github.com/amacisaac222/sandbox_canopy/issues

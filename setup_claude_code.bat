@@ -52,8 +52,8 @@ echo 🎉 Setup complete!
 echo.
 echo 📋 Next Steps:
 echo 1. Get your API key from:
-echo    Production: https://canopyiq.ai/admin/dashboard
-echo    Local: http://localhost:8080/admin/dashboard
+echo    Production: https://canopyiq.ai/admin/mcp
+echo    Local: http://localhost:8080/admin/mcp
 echo 2. Copy the example configuration below:
 echo.
 echo Production Configuration (Recommended):
