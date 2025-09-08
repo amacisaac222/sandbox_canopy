@@ -24,35 +24,48 @@
       <div class="bg-white rounded-lg p-6 border border-coral-200">
         <div class="flex items-center gap-3 mb-4">
           <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">1</div>
-          <h3 class="font-bold text-navy-900">Install MCP Server</h3>
+          <h3 class="font-bold text-navy-900">Clone Repository</h3>
         </div>
         <div class="bg-navy-900 rounded-md p-3 font-mono text-sm text-green-400 overflow-x-auto mb-3">
-          npm install -g {{ mcp_config.npm_package }}
+          git clone https://github.com/amacisaac222/sandbox_canopy.git<br>cd sandbox_canopy
         </div>
-        <p class="text-xs text-navy-600">Installs the CanopyIQ MCP server globally via npm</p>
+        <p class="text-xs text-navy-600">Downloads the CanopyIQ MCP server and setup scripts</p>
       </div>
 
       <!-- Step 2 -->
       <div class="bg-white rounded-lg p-6 border border-coral-200">
         <div class="flex items-center gap-3 mb-4">
           <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">2</div>
-          <h3 class="font-bold text-navy-900">Configure Claude</h3>
+          <h3 class="font-bold text-navy-900">Run Setup Script</h3>
         </div>
-        <p class="text-navy-700 text-sm mb-3">Edit your Claude Code config file:</p>
-        <div class="text-xs text-navy-600 space-y-1">
-          <div><strong>macOS:</strong></div>
-          <div class="font-mono bg-navy-50 p-1 rounded text-xs break-all">{{ mcp_config.claude_config_path_mac }}</div>
-          <div class="mt-2"><strong>Windows:</strong></div>
-          <div class="font-mono bg-navy-50 p-1 rounded text-xs break-all">{{ mcp_config.claude_config_path_windows }}</div>
+        <div class="bg-navy-900 rounded-md p-3 font-mono text-sm text-green-400 overflow-x-auto mb-3">
+          ./setup_claude_code.sh
         </div>
+        <p class="text-xs text-navy-600">Automated setup installs dependencies and shows Claude configuration</p>
       </div>
 
       <!-- Step 3 -->
       <div class="bg-white rounded-lg p-6 border border-coral-200">
         <div class="flex items-center gap-3 mb-4">
-          <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">✓</div>
-          <h3 class="font-bold text-navy-900">All Set!</h3>
+          <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">3</div>
+          <h3 class="font-bold text-navy-900">Configure Claude</h3>
         </div>
+        <p class="text-navy-700 text-sm mb-3">Add the configuration from setup script to:</p>
+        <div class="text-xs text-navy-600 space-y-1">
+          <div><strong>macOS:</strong></div>
+          <div class="font-mono bg-navy-50 p-1 rounded text-xs break-all">~/Library/Application Support/Claude/claude_desktop_config.json</div>
+          <div class="mt-2"><strong>Windows:</strong></div>
+          <div class="font-mono bg-navy-50 p-1 rounded text-xs break-all">%APPDATA%\Claude\claude_desktop_config.json</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Set Section -->
+    <div class="bg-green-50 rounded-lg border-2 border-green-200 p-6 mb-8">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">✓</div>
+        <h3 class="font-bold text-navy-900">All Set!</h3>
+      </div>
         <p class="text-navy-700 text-sm mb-3">Restart Claude Code and you'll see:</p>
         <div class="text-xs text-navy-600 space-y-1">
           <div>✅ Tool usage logging</div>
@@ -103,8 +116,8 @@
 {
   "mcpServers": {
     "canopyiq": {
-      "command": "{{ mcp_config.npm_package }}",
-      "args": ["--api-key", "{{ mcp_config.api_key }}"]
+      "command": "node",
+      "args": ["./sandbox_canopy/mcp-server/index.js", "--api-key", "{{ mcp_config.api_key }}", "--server-url", "https://canopyiq.ai"]
     }
   }
 }
@@ -137,7 +150,7 @@
         </div>
         <div class="flex items-center justify-between">
           <span class="font-semibold text-navy-700">NPM Package:</span>
-          <span class="text-navy-600 font-mono text-sm">{{ mcp_config.npm_package }}</span>
+          <span class="text-navy-600 font-mono text-sm">Local MCP Server (sandbox_canopy/mcp-server)</span>
         </div>
       </div>
     </div>
@@ -192,8 +205,8 @@ function copyConfig() {
   const config = `{
   "mcpServers": {
     "canopyiq": {
-      "command": "{{ mcp_config.npm_package }}",
-      "args": ["--api-key", "{{ mcp_config.api_key }}"]
+      "command": "node",
+      "args": ["./sandbox_canopy/mcp-server/index.js", "--api-key", "{{ mcp_config.api_key }}", "--server-url", "https://canopyiq.ai"]
     }
   }
 }`;
