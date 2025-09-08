@@ -1920,6 +1920,11 @@ async def admin_dashboard_simple(request: Request):
         </html>
         """)
     
+@app.get("/admin/dashboard", response_class=HTMLResponse)
+async def admin_dashboard(request: Request):
+    """Main AI Governance Dashboard - Real-time monitoring and approval workflows"""
+    return RedirectResponse(url="/admin/dashboard-simple", status_code=status.HTTP_302_FOUND)
+
 @app.get("/admin/dashboard-redirect", response_class=HTMLResponse)
 async def admin_dashboard_redirect(request: Request):
     """Redirect /admin/dashboard to working simple version"""
