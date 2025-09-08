@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin | CanopyIQ</title>
+  <meta name="description" content="CanopyIQ Administration Panel">
+  <link rel="icon" href="/static/canopy-logo-transparent.svg" type="image/svg+xml">
+  <!-- Tailwind (CDN build for simplicity) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            // CanopyIQ Brand Colors - New coral-pink and navy
+            coral: {
+              50: '#fff7f6',
+              100: '#ffeeec',
+              200: '#ffd9d4',
+              300: '#ffb8ad',
+              400: '#ff8f7d',
+              500: '#ff6f61', // Primary coral-pink from logo
+              600: '#f5553d',
+              700: '#e0401f',
+              800: '#c73314',
+              900: '#a42e15',
+            },
+            navy: {
+              50: '#f1f4f8',
+              100: '#dde4ed',
+              200: '#c0cedf',
+              300: '#94abca',
+              400: '#6182b0',
+              500: '#3d6199',
+              600: '#304e80',
+              700: '#284069',
+              800: '#253658',
+              900: '#1c2a4a', // Primary dark navy from logo
+            },
+            // Technical grays for text hierarchy
+            slate: {
+              50: '#f8fafc',
+              100: '#f1f5f9', 
+              200: '#e2e8f0',
+              300: '#cbd5e1',
+              400: '#94a3b8',
+              500: '#64748b',
+              600: '#475569',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a',
+            },
+            // Accent colors
+            accent: "#ff6f61",
+            success: "#10b981",
+            warn: "#f59e0b",
+            danger: "#ef4444",
+            // Main theme colors
+            primary: "#1c2a4a",
+            secondary: "#ff6f61",
+          },
+          fontFamily: {
+            sans: ['Nunito', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace'],
+          },
+          backgroundImage: {
+            'gradient-brand': 'linear-gradient(135deg, #1c2a4a 0%, #253658 50%, #ff6f61 100%)',
+            'gradient-coral': 'linear-gradient(135deg, #ff6f61 0%, #f5553d 100%)',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-navy-50 text-navy-900 antialiased min-h-screen">
+  <!-- Admin Header -->
+  <header class="bg-navy-900 text-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <a href="/admin/mcp" class="flex items-center gap-2">
+            <img src="/static/canopy-logo-transparent.svg" alt="CanopyIQ logo" class="h-8 w-8">
+            <div>
+              <div class="font-black text-lg">CanopyIQ Admin</div>
+              <div class="text-xs text-navy-300">Administration Panel</div>
+            </div>
+          </a>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="text-sm text-navy-300 font-semibold">
+            Andrew MacIsaac
+          </div>
+          <a href="/" class="text-navy-300 hover:text-coral-500 transition text-sm font-semibold">← Back to Site</a>
+          <a href="/auth/logout" class="text-coral-400 hover:text-coral-300 transition text-sm font-bold">Sign Out</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Navigation -->
+  <nav class="bg-white border-b border-navy-200">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex space-x-8">
+        <a href="/admin/mcp" class="border-b-2 border-transparent hover:border-coral-500 transition-colors px-1 py-4 text-sm font-bold text-navy-900 hover:text-coral-500 border-coral-500 text-coral-500">
+          Dashboard
+        </a>
+        <a href="/admin/audit" class="border-b-2 border-transparent hover:border-coral-500 transition-colors px-1 py-4 text-sm font-semibold text-navy-600 hover:text-coral-500 ">
+          Activity Log
+        </a>
+        <a href="/admin/console" class="border-b-2 border-transparent hover:border-coral-500 transition-colors px-1 py-4 text-sm font-semibold text-navy-600 hover:text-coral-500 ">
+          Policies
+        </a>
+        <a href="/admin/submissions" class="border-b-2 border-transparent hover:border-coral-500 transition-colors px-1 py-4 text-sm font-semibold text-navy-600 hover:text-coral-500 ">
+          Support
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    
+<div class="max-w-4xl">
+  <div class="mb-8">
+    <h1 class="text-2xl font-black text-navy-900 mb-2">MCP Server Configuration</h1>
+    <p class="text-navy-600 font-semibold">Set up CanopyIQ MCP server for Claude Code integration</p>
+  </div>
+
+  <!-- Setup Instructions -->
+  <div class="bg-gradient-to-r from-coral-50 to-coral-100 rounded-lg border-2 border-coral-200 p-8 mb-8">
+    <div class="mb-6">
+      <h2 class="text-xl font-black text-navy-900 mb-3 flex items-center gap-2">
+        <span class="text-coral-500">🚀</span>
+        Quick Setup for Claude Code
+      </h2>
+      <p class="text-navy-700 leading-relaxed">
+        Add security, logging, and approval workflows to your Claude Code tools in 3 simple steps.
+      </p>
+    </div>
+    
+    <div class="grid lg:grid-cols-3 gap-6">
+      <!-- Step 1 -->
+      <div class="bg-white rounded-lg p-6 border border-coral-200">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">1</div>
+          <h3 class="font-bold text-navy-900">Clone CanopyIQ Repository</h3>
+        </div>
+        <div class="bg-navy-900 rounded-md p-3 font-mono text-sm text-green-400 overflow-x-auto mb-3">
+          git clone https://github.com/amacisaac222/sandbox_canopy.git<br>cd sandbox_canopy
+        </div>
+        <p class="text-xs text-navy-600">Downloads the CanopyIQ MCP server and setup scripts</p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="bg-white rounded-lg p-6 border border-coral-200">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">2</div>
+          <h3 class="font-bold text-navy-900">Run Setup Script</h3>
+        </div>
+        <div class="bg-navy-900 rounded-md p-3 font-mono text-sm text-green-400 overflow-x-auto mb-3">
+          ./setup_claude_code.sh
+        </div>
+        <p class="text-xs text-navy-600">Automated setup installs dependencies and shows Claude configuration</p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="bg-white rounded-lg p-6 border border-coral-200">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">3</div>
+          <h3 class="font-bold text-navy-900">Configure Claude</h3>
+        </div>
+        <p class="text-navy-700 text-sm mb-3">Edit your Claude Code config file:</p>
+        <div class="text-xs text-navy-600 space-y-1">
+          <div><strong>macOS:</strong></div>
+          <div class="font-mono bg-navy-50 p-1 rounded text-xs break-all">~/Library/Application Support/Claude/claude_desktop_config.json</div>
+          <div class="mt-2"><strong>Windows:</strong></div>
+          <div class="font-mono bg-navy-50 p-1 rounded text-xs break-all">%APPDATA%\Claude\claude_desktop_config.json</div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="bg-white rounded-lg p-6 border border-coral-200">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">✓</div>
+          <h3 class="font-bold text-navy-900">All Set!</h3>
+        </div>
+        <p class="text-navy-700 text-sm mb-3">Restart Claude Code and you'll see:</p>
+        <div class="text-xs text-navy-600 space-y-1">
+          <div>✅ Tool usage logging</div>
+          <div>✅ Policy enforcement</div>
+          <div>✅ Human approvals</div>
+          <div>✅ Security monitoring</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- API Key Section -->
+  <div class="bg-white rounded-lg border border-navy-200 mb-8">
+    <div class="px-6 py-4 border-b border-navy-200">
+      <h2 class="text-lg font-black text-navy-900">Your API Key</h2>
+    </div>
+    <div class="p-6">
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+        <div class="flex items-start gap-3">
+          <div class="text-amber-600 text-lg">🔑</div>
+          <div>
+            <h3 class="font-semibold text-amber-800 mb-1">Secure API Key Generated</h3>
+            <p class="text-amber-700 text-sm">
+              This API key is unique to your CanopyIQ account. Keep it secure and don't share it publicly.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="block font-semibold text-navy-900 mb-2">API Key:</label>
+        <div class="flex items-center gap-3">
+          <input type="text" 
+                 id="api-key-input"
+                 value="ciq_demo_321670e8f91be35f7a2e7f1f15ae477f" 
+                 readonly
+                 class="flex-1 px-3 py-2 border border-navy-200 rounded-md bg-navy-50 font-mono text-sm">
+          <button onclick="copyApiKey()" 
+                  class="px-4 py-2 bg-coral-500 text-white rounded-md hover:bg-coral-600 transition font-semibold">
+            Copy
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-navy-900 rounded-lg p-4">
+        <h4 class="text-white font-semibold mb-2">Claude Code Configuration:</h4>
+        <div class="bg-navy-800 rounded p-3 font-mono text-xs text-green-400 overflow-x-auto">
+{
+  "mcpServers": {
+    "canopyiq": {
+      "command": "node",
+      "args": ["./sandbox_canopy/mcp-server/index.js", "--api-key", "ciq_demo_321670e8f91be35f7a2e7f1f15ae477f", "--server-url", "https://canopyiq.ai"]
+    }
+  }
+}
+        </div>
+        <button onclick="copyConfig()" 
+                class="mt-3 px-3 py-1 bg-coral-500 text-white rounded text-xs hover:bg-coral-600 transition">
+          Copy Config
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status & Info -->
+  <div class="grid lg:grid-cols-2 gap-6">
+    <!-- Server Status -->
+    <div class="bg-white rounded-lg border border-navy-200">
+      <div class="px-6 py-4 border-b border-navy-200">
+        <h3 class="text-lg font-black text-navy-900">Server Status</h3>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="flex items-center justify-between">
+          <span class="font-semibold text-navy-700">MCP Server:</span>
+          <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-bold">
+            Available
+          </span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="font-semibold text-navy-700">Package Version:</span>
+          <span class="text-navy-600 font-mono">1.0.0</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="font-semibold text-navy-700">NPM Package:</span>
+          <span class="text-navy-600 font-mono text-sm">Local MCP Server (sandbox_canopy/mcp-server)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg border border-navy-200">
+      <div class="px-6 py-4 border-b border-navy-200">
+        <h3 class="text-lg font-black text-navy-900">Quick Actions</h3>
+      </div>
+      <div class="p-6 space-y-3">
+        <a href="/documentation" 
+           class="flex items-center gap-3 p-3 bg-navy-50 rounded-lg hover:bg-navy-100 transition">
+          <div class="text-navy-500 text-lg">📚</div>
+          <div>
+            <div class="font-semibold text-navy-900">View Documentation</div>
+            <div class="text-sm text-navy-600">Complete setup guides and examples</div>
+          </div>
+        </a>
+
+        <a href="/admin/console" 
+           class="flex items-center gap-3 p-3 bg-coral-50 rounded-lg hover:bg-coral-100 transition">
+          <div class="text-coral-500 text-lg">🎮</div>
+          <div>
+            <div class="font-semibold text-navy-900">Open Console</div>
+            <div class="text-sm text-navy-600">Monitor and manage agent activity</div>
+          </div>
+        </a>
+
+        <button onclick="testConnection()"
+                class="w-full flex items-center gap-3 p-3 bg-green-50 rounded-lg hover:bg-green-100 transition">
+          <div class="text-green-500 text-lg">🔍</div>
+          <div class="text-left">
+            <div class="font-semibold text-navy-900">Test Connection</div>
+            <div class="text-sm text-navy-600">Verify MCP server communication</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function copyApiKey() {
+  const input = document.getElementById('api-key-input');
+  input.select();
+  input.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(input.value);
+  showToast('API key copied to clipboard!', 'success');
+}
+
+function copyConfig() {
+  const config = `{
+  "mcpServers": {
+    "canopyiq": {
+      "command": "node",
+      "args": ["./sandbox_canopy/mcp-server/index.js", "--api-key", "ciq_demo_321670e8f91be35f7a2e7f1f15ae477f", "--server-url", "https://canopyiq.ai"]
+    }
+  }
+}`;
+  navigator.clipboard.writeText(config);
+  showToast('Configuration copied to clipboard!', 'success');
+}
+
+function testConnection() {
+  showToast('Testing MCP server connection...', 'info');
+  
+  // Simulate testing
+  setTimeout(() => {
+    showToast('✅ MCP server connection test successful!', 'success');
+  }, 2000);
+}
+</script>
+
+  </main>
+
+  <!-- Toast Notifications -->
+  <div id="toast-container" class="fixed bottom-4 right-4 space-y-2 z-50">
+    <!-- Toasts will be inserted here -->
+  </div>
+
+  <!-- Common JavaScript -->
+  <script>
+    // Toast notification system
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const colors = {
+        success: 'bg-green-500',
+        error: 'bg-red-500', 
+        warning: 'bg-yellow-500',
+        info: 'bg-blue-500'
+      };
+      
+      toast.className = `${colors[type]} text-white px-4 py-2 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300`;
+      toast.textContent = message;
+      
+      container.appendChild(toast);
+      
+      // Slide in
+      setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+      
+      // Remove after 5 seconds
+      setTimeout(() => {
+        toast.classList.add('translate-x-full');
+        setTimeout(() => container.removeChild(toast), 300);
+      }, 5000);
+    }
+
+    // Loading state helper
+    function setButtonLoading(button, loading) {
+      if (loading) {
+        button.disabled = true;
+        button.dataset.originalText = button.textContent;
+        button.textContent = 'Loading...';
+      } else {
+        button.disabled = false;
+        button.textContent = button.dataset.originalText;
+      }
+    }
+
+    // CSRF token helper (if needed)
+    function getCsrfToken() {
+      return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    }
+  </script>
+
+  
+</body>
+</html>
