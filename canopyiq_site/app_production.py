@@ -1728,6 +1728,44 @@ async def metrics():
 async def robots():
       return Response("User-agent: *\nAllow: /\nSitemap: https://canopyiq.ai/sitemap.txt", media_type="text/plain")
 
+# ---------- MCP Server API Routes ----------
+
+@app.get("/api/v1/health")
+async def mcp_health_check():
+    """Health check endpoint for MCP server"""
+    return {"status": "healthy", "service": "canopyiq", "timestamp": time.time()}
+
+@app.get("/api/v1/events")
+async def mcp_get_events(limit: int = 50):
+    """Get recent AI events for MCP server"""
+    # Mock data for MCP server - replace with actual database query when models are ready
+    mock_events = [
+        {
+            "id": 1,
+            "timestamp": time.time(),
+            "event_type": "file_read",
+            "tool": "Read",
+            "file_path": "/project/src/main.py",
+            "risk_level": "low",
+            "approved": True,
+            "details": {"lines": 50, "size": "2.1KB"}
+        },
+        {
+            "id": 2,
+            "timestamp": time.time() - 300,
+            "event_type": "file_write", 
+            "tool": "Edit",
+            "file_path": "/project/config/.env",
+            "risk_level": "high",
+            "approved": False,
+            "details": {"pending_approval": True, "reason": "Sensitive file detected"}
+        }
+    ]
+    
+    return {
+        "events": mock_events[:limit]
+    }
+
 @app.exception_handler(StarletteHTTPException)
 async def http_exc_handler(request, exc):
       if exc.status_code == 404:
