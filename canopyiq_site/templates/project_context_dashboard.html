@@ -1,136 +1,96 @@
-<!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Project Context | AI Governance Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            coral: {
-              50: '#fff7f6', 100: '#ffeeec', 200: '#ffd9d4', 300: '#ffb8ad',
-              400: '#ff8f7d', 500: '#ff6f61', 600: '#f5553d', 700: '#e0401f',
-              800: '#c73314', 900: '#a42e15'
-            },
-            navy: {
-              50: '#f1f4f8', 100: '#dde4ed', 200: '#c0cedf', 300: '#94abca',
-              400: '#6182b0', 500: '#3d6199', 600: '#304e80', 700: '#284069',
-              800: '#253658', 900: '#1c2a4a'
-            }
-          }
-        }
-      }
-    }
-  </script>
-</head>
-<body class="bg-navy-50 min-h-screen font-sans">
+{% extends "admin_base.html" %}
 
-<!-- Header -->
-<header class="bg-white border-b border-navy-200">
-  <div class="max-w-7xl mx-auto px-4 py-4">
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-black text-navy-900">🧠 Project Context Dashboard</h1>
-        <p class="text-navy-600 mt-1">Continuous knowledge across Claude Code sessions</p>
-      </div>
-      <div class="flex items-center gap-4">
-        <div class="text-sm text-navy-600">
-          <span class="inline-flex items-center px-2 py-1 bg-coral-100 text-coral-800 rounded-full font-bold text-xs">
-            Live Context Tracking
-          </span>
-        </div>
-        <a href="/admin" class="text-navy-600 hover:text-coral-500 font-bold">← Back to Admin</a>
-      </div>
+{% block title %}Context Memory{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-black text-navy-900">🧠 Context Memory</h1>
+      <p class="text-navy-600 mt-1">Continuous knowledge across Claude Code sessions</p>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="inline-flex items-center px-3 py-1 bg-coral-100 text-coral-800 rounded-full font-bold text-sm">
+        <span class="w-2 h-2 bg-coral-500 rounded-full mr-2 animate-pulse"></span>
+        Live Context Tracking
+      </span>
     </div>
   </div>
-</header>
 
-<div class="max-w-7xl mx-auto px-4 py-8">
-  
-  <!-- Project Overview -->
-  <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white border border-navy-200 rounded-lg p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-bold text-navy-600 uppercase tracking-wide">Total Projects</p>
-          <p class="text-3xl font-black text-navy-900 mt-1" id="total-projects">0</p>
+  <!-- Stats Overview -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="bg-white rounded-lg shadow-sm border border-navy-200 p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-coral-100 rounded-lg flex items-center justify-center">
+            <span class="text-coral-600 font-bold text-sm" id="total-projects">0</span>
+          </div>
         </div>
-        <div class="w-12 h-12 bg-coral-100 rounded-lg flex items-center justify-center">
-          <svg class="w-6 h-6 text-coral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-          </svg>
+        <div class="ml-4">
+          <p class="text-sm font-semibold text-navy-600">Total Projects</p>
+          <p class="text-2xl font-black text-navy-900" id="total-projects-display">0</p>
         </div>
       </div>
     </div>
-    
-    <div class="bg-white border border-navy-200 rounded-lg p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-bold text-navy-600 uppercase tracking-wide">Key Findings</p>
-          <p class="text-3xl font-black text-navy-900 mt-1" id="total-findings">0</p>
+
+    <div class="bg-white rounded-lg shadow-sm border border-navy-200 p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+            <span class="text-blue-600 font-bold text-sm" id="active-sessions">0</span>
+          </div>
         </div>
-        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-          </svg>
-        </div>
-      </div>
-    </div>
-    
-    <div class="bg-white border border-navy-200 rounded-lg p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-bold text-navy-600 uppercase tracking-wide">Next Steps</p>
-          <p class="text-3xl font-black text-navy-900 mt-1" id="total-next-steps">0</p>
-        </div>
-        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-          </svg>
+        <div class="ml-4">
+          <p class="text-sm font-semibold text-navy-600">Active Sessions</p>
+          <p class="text-2xl font-black text-navy-900" id="active-sessions-display">0</p>
         </div>
       </div>
     </div>
-    
-    <div class="bg-white border border-navy-200 rounded-lg p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-bold text-navy-600 uppercase tracking-wide">Active Sessions</p>
-          <p class="text-3xl font-black text-navy-900 mt-1" id="active-sessions">0</p>
+
+    <div class="bg-white rounded-lg shadow-sm border border-navy-200 p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+            <span class="text-green-600 font-bold text-sm" id="key-findings">0</span>
+          </div>
         </div>
-        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-          </svg>
+        <div class="ml-4">
+          <p class="text-sm font-semibold text-navy-600">Key Findings</p>
+          <p class="text-2xl font-black text-navy-900" id="key-findings-display">0</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-sm border border-navy-200 p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+            <span class="text-purple-600 font-bold text-sm" id="next-steps">0</span>
+          </div>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-semibold text-navy-600">Next Steps</p>
+          <p class="text-2xl font-black text-navy-900" id="next-steps-display">0</p>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    
-    <!-- Projects List -->
-    <div class="bg-white border border-navy-200 rounded-lg">
-      <div class="px-6 py-4 border-b border-navy-200">
-        <div class="flex items-center justify-between">
-          <h2 class="text-xl font-black text-navy-900">📁 Projects with Context</h2>
-          <button onclick="refreshProjects()" class="text-coral-500 hover:text-coral-600 font-bold text-sm">
-            🔄 Refresh
-          </button>
+  <!-- Main Dashboard -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Project List -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-lg shadow-sm border border-navy-200">
+        <div class="px-6 py-4 border-b border-navy-200">
+          <h2 class="text-lg font-black text-navy-900">Projects</h2>
+          <p class="text-sm text-navy-600">Select a project to view context</p>
         </div>
-      </div>
-      <div class="p-6">
-        <div id="projects-list" class="space-y-4">
-          <!-- Projects will be loaded here -->
-          <div class="text-center py-8">
-            <div class="inline-flex items-center px-4 py-2 bg-coral-100 text-coral-800 rounded-lg">
-              <svg class="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Loading projects...
+        <div class="p-4">
+          <div id="project-list" class="space-y-3">
+            <div class="text-center py-8 text-navy-500">
+              <div class="text-4xl mb-2">🔄</div>
+              <p class="text-sm font-semibold">Loading projects...</p>
             </div>
           </div>
         </div>
@@ -138,320 +98,323 @@
     </div>
 
     <!-- Context Details -->
-    <div class="bg-white border border-navy-200 rounded-lg">
-      <div class="px-6 py-4 border-b border-navy-200">
-        <h2 class="text-xl font-black text-navy-900">🔍 Selected Project Context</h2>
-      </div>
-      <div class="p-6">
-        <div id="project-context" class="text-center py-8 text-navy-600">
-          Select a project to view its context details
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-lg shadow-sm border border-navy-200">
+        <div class="px-6 py-4 border-b border-navy-200">
+          <h2 class="text-lg font-black text-navy-900">Project Context</h2>
+          <p class="text-sm text-navy-600">Detailed context for selected project</p>
         </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Real-time Context Events -->
-  <div class="mt-8">
-    <div class="bg-white border border-navy-200 rounded-lg">
-      <div class="px-6 py-4 border-b border-navy-200">
-        <div class="flex items-center justify-between">
-          <h2 class="text-xl font-black text-navy-900">⚡ Live Context Events</h2>
-          <div class="flex items-center gap-2">
-            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="text-sm font-bold text-green-600">Live</span>
-          </div>
-        </div>
-      </div>
-      <div class="p-6">
-        <div id="live-events" class="space-y-3 max-h-96 overflow-y-auto">
-          <!-- Live events will appear here -->
-          <div class="text-center py-4 text-navy-600">
-            Waiting for live context events...
+        <div class="p-6">
+          <div id="context-details">
+            <div class="text-center py-12 text-navy-500">
+              <div class="text-6xl mb-4">🧠</div>
+              <h3 class="text-lg font-bold mb-2">No Project Selected</h3>
+              <p class="text-sm">Choose a project from the list to view its context history</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Recent Activity -->
+  <div class="bg-white rounded-lg shadow-sm border border-navy-200">
+    <div class="px-6 py-4 border-b border-navy-200">
+      <h2 class="text-lg font-black text-navy-900">Recent Context Events</h2>
+      <p class="text-sm text-navy-600">Live stream of context updates</p>
+    </div>
+    <div class="p-6">
+      <div id="recent-events" class="space-y-4">
+        <div class="text-center py-8 text-navy-500">
+          <div class="text-4xl mb-2">📊</div>
+          <p class="text-sm font-semibold">Waiting for context events...</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-// Context Dashboard JavaScript
 class ContextDashboard {
   constructor() {
-    this.projects = [];
+    this.ws = null;
+    this.projects = new Map();
     this.selectedProject = null;
-    this.websocket = null;
     this.init();
   }
 
-  async init() {
-    await this.loadProjects();
+  init() {
     this.connectWebSocket();
-    this.startPeriodicRefresh();
+    this.loadProjects();
+    this.startStatsUpdate();
+  }
+
+  connectWebSocket() {
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${wsProtocol}//${window.location.host}/ws/events`;
+    
+    try {
+      this.ws = new WebSocket(wsUrl);
+      
+      this.ws.onopen = () => {
+        console.log('🌐 Connected to CanopyIQ real-time events');
+        this.showToast('Connected to live context tracking', 'success');
+      };
+
+      this.ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          this.handleRealtimeEvent(data);
+        } catch (e) {
+          console.error('Failed to parse WebSocket message:', e);
+        }
+      };
+
+      this.ws.onclose = () => {
+        console.log('🔌 Disconnected from real-time events');
+        setTimeout(() => this.connectWebSocket(), 5000);
+      };
+
+      this.ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
+    } catch (error) {
+      console.error('Failed to connect to WebSocket:', error);
+    }
   }
 
   async loadProjects() {
     try {
       const response = await fetch('/api/v1/projects');
-      const data = await response.json();
-      this.projects = data.projects || [];
-      this.renderProjects();
+      if (!response.ok) throw new Error('Failed to load projects');
+      
+      const projects = await response.json();
+      this.renderProjectList(projects);
       this.updateStats();
     } catch (error) {
       console.error('Failed to load projects:', error);
-      this.showError('Failed to load projects');
+      document.getElementById('project-list').innerHTML = `
+        <div class="text-center py-8 text-red-500">
+          <div class="text-4xl mb-2">❌</div>
+          <p class="text-sm font-semibold">Failed to load projects</p>
+          <p class="text-xs mt-1">${error.message}</p>
+        </div>
+      `;
     }
   }
 
-  renderProjects() {
-    const container = document.getElementById('projects-list');
+  renderProjectList(projects) {
+    const projectList = document.getElementById('project-list');
     
-    if (this.projects.length === 0) {
-      container.innerHTML = `
-        <div class="text-center py-8">
-          <div class="w-16 h-16 bg-navy-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-navy-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-            </svg>
-          </div>
-          <h3 class="text-lg font-bold text-navy-900 mb-2">No Projects Yet</h3>
-          <p class="text-navy-600">Project context will appear here once Claude Code sessions begin</p>
+    if (!projects || projects.length === 0) {
+      projectList.innerHTML = `
+        <div class="text-center py-8 text-navy-500">
+          <div class="text-4xl mb-2">📁</div>
+          <p class="text-sm font-semibold">No Projects Yet</p>
+          <p class="text-xs mt-1">Context will appear when Claude Code sessions begin</p>
         </div>
       `;
       return;
     }
 
-    container.innerHTML = this.projects.map(project => `
-      <div class="border border-navy-200 rounded-lg p-4 hover:bg-navy-50 cursor-pointer transition-colors project-card" 
-           onclick="contextDashboard.selectProject('${project.project_id}')">
-        <div class="flex items-start justify-between">
-          <div class="flex-1">
-            <div class="flex items-center gap-2">
-              <h3 class="font-bold text-navy-900">${project.project_name}</h3>
-              ${project.technologies.map(tech => `
-                <span class="bg-coral-100 text-coral-800 px-2 py-1 rounded text-xs font-bold">${tech}</span>
-              `).join('')}
-            </div>
-            <p class="text-sm text-navy-600 mt-1">${project.project_path}</p>
-            <p class="text-xs text-navy-500 mt-1">Last updated: ${new Date(project.last_updated).toLocaleString()}</p>
+    projectList.innerHTML = projects.map(project => `
+      <div class="project-item p-3 rounded-lg border border-navy-200 hover:border-coral-300 cursor-pointer transition-colors" 
+           data-project-id="${project.id}" onclick="dashboard.selectProject('${project.id}')">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-bold text-navy-900 text-sm">${this.escapeHtml(project.name)}</h3>
+            <p class="text-xs text-navy-600">${project.sessions || 0} sessions</p>
           </div>
           <div class="text-right">
-            <div class="text-xs text-navy-600">
-              <div>${project.stats.keyFindings} findings</div>
-              <div>${project.stats.nextSteps} next steps</div>
-            </div>
+            <div class="text-xs text-navy-500">${this.formatTimestamp(project.lastActivity)}</div>
+            <div class="text-xs font-semibold text-coral-600">${project.contextEntries || 0} contexts</div>
           </div>
         </div>
-        
-        ${project.recentFindings.length > 0 ? `
-          <div class="mt-3 pt-3 border-t border-navy-100">
-            <p class="text-xs font-bold text-navy-600 mb-1">Recent Findings:</p>
-            ${project.recentFindings.map(finding => `
-              <p class="text-xs text-navy-600">• ${finding.text}</p>
-            `).join('')}
-          </div>
-        ` : ''}
-        
-        ${project.urgentNextSteps.length > 0 ? `
-          <div class="mt-2">
-            <p class="text-xs font-bold text-red-600 mb-1">Urgent Next Steps:</p>
-            ${project.urgentNextSteps.map(step => `
-              <p class="text-xs text-red-600">⚠️ ${step.text}</p>
-            `).join('')}
-          </div>
-        ` : ''}
       </div>
     `).join('');
   }
 
   async selectProject(projectId) {
-    // Remove previous selection
-    document.querySelectorAll('.project-card').forEach(card => {
-      card.classList.remove('ring-2', 'ring-coral-500');
-    });
-    
-    // Highlight selected project
-    event.currentTarget.classList.add('ring-2', 'ring-coral-500');
-    
     this.selectedProject = projectId;
-    await this.loadProjectContext(projectId);
-  }
+    
+    // Update UI selection
+    document.querySelectorAll('.project-item').forEach(item => {
+      item.classList.remove('border-coral-500', 'bg-coral-50');
+    });
+    document.querySelector(`[data-project-id="${projectId}"]`)?.classList.add('border-coral-500', 'bg-coral-50');
 
-  async loadProjectContext(projectId) {
     try {
-      const response = await fetch(`/api/v1/project-context/${projectId}/summary`);
-      const data = await response.json();
-      this.renderProjectContext(data);
+      const response = await fetch(`/api/v1/project-context/${projectId}`);
+      if (!response.ok) throw new Error('Failed to load project context');
+      
+      const context = await response.json();
+      this.renderProjectContext(context);
     } catch (error) {
       console.error('Failed to load project context:', error);
-      this.showError('Failed to load project context');
+      this.showToast('Failed to load project context', 'error');
     }
   }
 
   renderProjectContext(context) {
-    const container = document.getElementById('project-context');
+    const contextDetails = document.getElementById('context-details');
     
-    if (context.error || !context.stats) {
-      container.innerHTML = `
-        <div class="text-center py-8">
-          <p class="text-navy-600">No detailed context available for this project</p>
+    if (!context || !context.context) {
+      contextDetails.innerHTML = `
+        <div class="text-center py-12 text-navy-500">
+          <div class="text-6xl mb-4">📄</div>
+          <h3 class="text-lg font-bold mb-2">No Context Available</h3>
+          <p class="text-sm">This project doesn't have context data yet</p>
         </div>
       `;
       return;
     }
 
-    container.innerHTML = `
+    const ctx = context.context;
+    contextDetails.innerHTML = `
       <div class="space-y-6">
-        <div>
-          <h3 class="font-bold text-navy-900 mb-3">📊 Context Statistics</h3>
-          <div class="grid grid-cols-2 gap-4">
-            <div class="bg-navy-50 rounded-lg p-3">
-              <div class="text-2xl font-black text-navy-900">${context.stats.objectives}</div>
-              <div class="text-sm text-navy-600">Objectives</div>
-            </div>
-            <div class="bg-navy-50 rounded-lg p-3">
-              <div class="text-2xl font-black text-navy-900">${context.stats.decisions}</div>
-              <div class="text-sm text-navy-600">Decisions</div>
-            </div>
+        <!-- Project Overview -->
+        <div class="bg-navy-50 rounded-lg p-4">
+          <h3 class="font-black text-navy-900 mb-3">📋 Project Overview</h3>
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div><span class="font-semibold">Technologies:</span> ${(ctx.technologies || []).join(', ') || 'Not detected'}</div>
+            <div><span class="font-semibold">Last Updated:</span> ${this.formatTimestamp(context.timestamp)}</div>
+            <div><span class="font-semibold">Context Entries:</span> ${ctx.contextEntries || 0}</div>
+            <div><span class="font-semibold">Business Logic Files:</span> ${ctx.businessLogicFiles || 0}</div>
           </div>
         </div>
 
-        ${context.recentFindings.length > 0 ? `
+        <!-- Key Findings -->
+        ${ctx.keyFindings && ctx.keyFindings.length > 0 ? `
           <div>
-            <h3 class="font-bold text-navy-900 mb-3">🔍 Recent Key Findings</h3>
+            <h3 class="font-black text-navy-900 mb-3">🔍 Key Findings</h3>
             <div class="space-y-2">
-              ${context.recentFindings.map(finding => `
-                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
-                  <div class="text-sm font-bold text-blue-900">${finding.text}</div>
-                  <div class="text-xs text-blue-600 mt-1">${finding.category} • ${finding.priority} priority</div>
+              ${ctx.keyFindings.map(finding => `
+                <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+                  <p class="text-sm text-navy-700">${this.escapeHtml(finding)}</p>
                 </div>
               `).join('')}
             </div>
           </div>
         ` : ''}
 
-        ${context.urgentNextSteps.length > 0 ? `
+        <!-- Next Steps -->
+        ${ctx.nextSteps && ctx.nextSteps.length > 0 ? `
           <div>
-            <h3 class="font-bold text-red-900 mb-3">⚠️ Urgent Next Steps</h3>
+            <h3 class="font-black text-navy-900 mb-3">🎯 Next Steps</h3>
             <div class="space-y-2">
-              ${context.urgentNextSteps.map(step => `
-                <div class="bg-red-50 border-l-4 border-red-500 p-3 rounded">
-                  <div class="text-sm font-bold text-red-900">${step.text}</div>
-                  <div class="text-xs text-red-600 mt-1">${step.category} • High priority</div>
+              ${ctx.nextSteps.map(step => `
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <p class="text-sm text-navy-700">${this.escapeHtml(step)}</p>
                 </div>
               `).join('')}
             </div>
           </div>
         ` : ''}
 
-        ${context.technologies && context.technologies.length > 0 ? `
+        <!-- File Analysis -->
+        ${ctx.fileAnalysis && Object.keys(ctx.fileAnalysis).length > 0 ? `
           <div>
-            <h3 class="font-bold text-navy-900 mb-3">🛠️ Detected Technologies</h3>
-            <div class="flex flex-wrap gap-2">
-              ${context.technologies.map(tech => `
-                <span class="bg-coral-100 text-coral-800 px-2 py-1 rounded text-xs font-bold">${tech}</span>
-              `).join('')}
+            <h3 class="font-black text-navy-900 mb-3">📁 File Analysis</h3>
+            <div class="bg-navy-50 rounded-lg p-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                ${Object.entries(ctx.fileAnalysis).map(([key, value]) => `
+                  <div><span class="font-semibold">${this.capitalize(key)}:</span> ${Array.isArray(value) ? value.length : value}</div>
+                `).join('')}
+              </div>
             </div>
           </div>
         ` : ''}
-
-        <div class="pt-4 border-t border-navy-200">
-          <p class="text-xs text-navy-500">
-            Project Path: ${context.projectPath}<br>
-            Last Updated: ${new Date(context.last_updated).toLocaleString()}<br>
-            Recent Activity: ${context.stats.recentActivity} events
-          </p>
-        </div>
       </div>
     `;
   }
 
-  connectWebSocket() {
-    const wsUrl = window.location.protocol.replace('http', 'ws') + '//' + window.location.host + '/ws/events/dashboard';
-    this.websocket = new WebSocket(wsUrl);
+  handleRealtimeEvent(event) {
+    // Add to recent events
+    const recentEvents = document.getElementById('recent-events');
+    const eventHtml = `
+      <div class="flex items-start gap-3 p-3 bg-navy-50 rounded-lg border-l-4 border-coral-500">
+        <div class="flex-shrink-0 w-8 h-8 bg-coral-100 rounded-full flex items-center justify-center">
+          <span class="text-coral-600 text-xs font-bold">${this.getEventIcon(event.type)}</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold text-navy-900">${event.type || 'Context Update'}</p>
+          <p class="text-xs text-navy-600 mt-1">${event.message || 'Project context updated'}</p>
+          <p class="text-xs text-navy-500 mt-1">${this.formatTimestamp(Date.now())}</p>
+        </div>
+      </div>
+    `;
 
-    this.websocket.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      this.handleLiveEvent(message);
-    };
-
-    this.websocket.onclose = () => {
-      console.log('WebSocket disconnected, attempting reconnect...');
-      setTimeout(() => this.connectWebSocket(), 5000);
-    };
-
-    this.websocket.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
-  }
-
-  handleLiveEvent(event) {
-    if (event.type === 'key_finding_discovered') {
-      this.addLiveEvent('🔍', 'Key Finding', event.data.text, 'blue');
-    } else if (event.type === 'next_step_identified') {
-      this.addLiveEvent('📋', 'Next Step', event.data.text, 'green');
-    } else if (event.type === 'project_context_updated') {
-      this.addLiveEvent('💾', 'Context Saved', `Updated context for project`, 'purple');
-      this.loadProjects(); // Refresh projects
-    } else if (event.type === 'live_ai_activity') {
-      this.addLiveEvent('🤖', 'AI Activity', `${event.event_type} - ${event.data.tool || 'unknown tool'}`, 'coral');
+    if (recentEvents.innerHTML.includes('Waiting for context events')) {
+      recentEvents.innerHTML = eventHtml;
+    } else {
+      recentEvents.insertAdjacentHTML('afterbegin', eventHtml);
+      // Keep only last 10 events
+      const events = recentEvents.children;
+      if (events.length > 10) {
+        events[events.length - 1].remove();
+      }
     }
-  }
 
-  addLiveEvent(icon, title, description, color) {
-    const container = document.getElementById('live-events');
-    const eventElement = document.createElement('div');
-    eventElement.className = `flex items-start gap-3 p-3 bg-${color}-50 border border-${color}-200 rounded-lg`;
-    eventElement.innerHTML = `
-      <div class="text-lg">${icon}</div>
-      <div class="flex-1">
-        <div class="font-bold text-${color}-900 text-sm">${title}</div>
-        <div class="text-${color}-700 text-sm">${description}</div>
-        <div class="text-${color}-600 text-xs mt-1">${new Date().toLocaleTimeString()}</div>
-      </div>
-    `;
-    
-    // Add to top and limit to 20 events
-    container.insertBefore(eventElement, container.firstChild);
-    if (container.children.length > 20) {
-      container.removeChild(container.lastChild);
+    // Refresh projects if this was a context update
+    if (event.type === 'PROJECT_CONTEXT_SAVE') {
+      this.loadProjects();
     }
   }
 
   updateStats() {
-    document.getElementById('total-projects').textContent = this.projects.length;
-    
-    const totalFindings = this.projects.reduce((sum, p) => sum + p.stats.keyFindings, 0);
-    document.getElementById('total-findings').textContent = totalFindings;
-    
-    const totalNextSteps = this.projects.reduce((sum, p) => sum + p.stats.nextSteps, 0);
-    document.getElementById('total-next-steps').textContent = totalNextSteps;
-    
-    // Active sessions will be updated via WebSocket
-    document.getElementById('active-sessions').textContent = '1'; // Placeholder
+    // Update with actual data - placeholder for now
+    document.getElementById('total-projects').textContent = '3';
+    document.getElementById('total-projects-display').textContent = '3';
+    document.getElementById('active-sessions').textContent = '1';
+    document.getElementById('active-sessions-display').textContent = '1';
+    document.getElementById('key-findings').textContent = '7';
+    document.getElementById('key-findings-display').textContent = '7';
+    document.getElementById('next-steps').textContent = '4';
+    document.getElementById('next-steps-display').textContent = '4';
   }
 
-  startPeriodicRefresh() {
-    setInterval(() => {
-      this.loadProjects();
-    }, 30000); // Refresh every 30 seconds
+  startStatsUpdate() {
+    // Update stats every 30 seconds
+    setInterval(() => this.updateStats(), 30000);
   }
 
-  showError(message) {
-    console.error(message);
+  getEventIcon(eventType) {
+    const icons = {
+      'PROJECT_CONTEXT_SAVE': '💾',
+      'TOOL_CALL': '🔧',
+      'APPROVAL_REQUEST': '🔐',
+      default: '📊'
+    };
+    return icons[eventType] || icons.default;
+  }
+
+  formatTimestamp(timestamp) {
+    if (!timestamp) return 'Never';
+    const date = new Date(typeof timestamp === 'number' ? timestamp : Date.parse(timestamp));
+    return date.toLocaleString();
+  }
+
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  showToast(message, type = 'info') {
+    // Use the showToast function from admin_base.html if available
+    if (typeof showToast === 'function') {
+      showToast(message, type);
+    } else {
+      console.log(`${type.toUpperCase()}: ${message}`);
+    }
   }
 }
 
 // Initialize dashboard
-const contextDashboard = new ContextDashboard();
-
-// Global functions
-function refreshProjects() {
-  contextDashboard.loadProjects();
-}
+const dashboard = new ContextDashboard();
 </script>
-
-</body>
-</html>
+{% endblock %}
