@@ -328,8 +328,26 @@ def tojsonpretty(value):
           return "null"
       return json.dumps(value, indent=2, default=str)
 
+def timestamp_to_date(value):
+    """Convert timestamp to date string"""
+    if value is None:
+        return ""
+    try:
+        if isinstance(value, str):
+            dt = datetime.fromisoformat(value.replace('Z', '+00:00'))
+        elif isinstance(value, (int, float)):
+            dt = datetime.fromtimestamp(value)
+        elif isinstance(value, datetime):
+            dt = value
+        else:
+            return str(value)
+        return dt.strftime("%Y-%m-%d %H:%M")
+    except (ValueError, TypeError):
+        return str(value)
+
 if templates:
     templates.env.filters["tojsonpretty"] = tojsonpretty
+    templates.env.filters["timestamp_to_date"] = timestamp_to_date
     logger.info("✓ Jinja2 filters added successfully")
 else:
     logger.warning("⚠ Skipping Jinja2 filters - templates not available")
