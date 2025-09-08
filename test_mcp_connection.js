@@ -31,7 +31,7 @@ async function testConnection() {
     
     console.log('\n📋 Next Steps:');
     console.log('1. Start CanopyIQ backend: cd canopyiq_site && python -m uvicorn app:app --reload');
-    console.log('2. Get API key from: http://localhost:8080/admin/mcp');
+    console.log('2. Get API key from: https://canopyiq.ai/admin/mcp (or http://localhost:8080/admin/mcp for local dev)');
     console.log('3. Configure Claude Code with the API key');
     console.log('4. Restart Claude Code to activate AI governance');
     
