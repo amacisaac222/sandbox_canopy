@@ -7,4 +7,4 @@ import os
 if __name__ == "__main__":
     # Change to the canopyiq_site directory and run the app
     os.chdir("canopyiq_site")
-    subprocess.run([sys.executable, "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", os.environ.get("PORT", "8000")])
+    subprocess.run([sys.executable, "-m", "uvicorn", "app_production:app", "--host", "0.0.0.0", "--port", os.environ.get("PORT", "8000")])
