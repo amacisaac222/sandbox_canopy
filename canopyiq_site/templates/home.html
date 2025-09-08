@@ -42,12 +42,16 @@
           <div class="text-white">{</div>
           <div class="text-white ml-2">"mcpServers": {</div>
           <div class="text-white ml-4">"canopyiq": {</div>
-          <div class="text-white ml-6">"command": <span class="text-green-400">"npx"</span>,</div>
-          <div class="text-white ml-6">"args": [<span class="text-green-400">"canopyiq-mcp-server"</span>, <span class="text-green-400">"--api-key"</span>, <span class="text-green-400">"your-key"</span>]</div>
+          <div class="text-white ml-6">"command": <span class="text-green-400">"node"</span>,</div>
+          <div class="text-white ml-6">"args": [</div>
+          <div class="text-white ml-8"><span class="text-green-400">"/path/to/sandbox_canopy/mcp-server/bin/cli.js"</span>,</div>
+          <div class="text-white ml-8"><span class="text-green-400">"--api-key"</span>, <span class="text-green-400">"your-api-key"</span>,</div>
+          <div class="text-white ml-8"><span class="text-green-400">"--server-url"</span>, <span class="text-green-400">"https://canopyiq.ai"</span></div>
+          <div class="text-white ml-6">]</div>
           <div class="text-white ml-4">}</div>
           <div class="text-white ml-2">}</div>
           <div class="text-white">}</div>
-          <div class="text-coral-400 mt-2"># ✨ All Claude Code tool usage now monitored!</div>
+          <div class="text-coral-400 mt-2"># ✨ Setup script generates this config for you!</div>
         </div>
       </div>
     </div>
@@ -122,22 +126,19 @@
 
   <div class="grid lg:grid-cols-2 gap-12 items-center">
     <div>
-      <h3 class="text-2xl font-black text-white mb-6">30-Second MCP Setup</h3>
+      <h3 class="text-2xl font-black text-white mb-6">2-Minute Setup</h3>
       <div class="space-y-4">
         <div class="flex items-start gap-4">
           <div class="w-8 h-8 bg-coral-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
           <div>
-            <p class="text-white font-semibold">Add to your Claude Code config:</p>
+            <p class="text-white font-semibold">Clone CanopyIQ and run setup:</p>
             <div class="bg-navy-800 rounded-lg p-4 mt-2 font-mono text-sm overflow-x-auto">
-              <div class="text-navy-400 mb-2"># ~/.claude_desktop_config.json</div>
-              <div class="text-white">{</div>
-              <div class="text-white ml-2">"mcpServers": {</div>
-              <div class="text-white ml-4">"canopy": {</div>
-              <div class="text-white ml-6">"command": "npx",</div>
-              <div class="text-white ml-6">"args": ["@canopyiq/mcp-server"]</div>
-              <div class="text-white ml-4">}</div>
-              <div class="text-white ml-2">}</div>
-              <div class="text-white">}</div>
+              <div class="text-navy-400 mb-2"># Clone the repository</div>
+              <div class="text-green-400">git clone https://github.com/amacisaac222/sandbox_canopy.git</div>
+              <div class="text-green-400 mt-1">cd sandbox_canopy</div>
+              <div class="text-navy-400 mt-3 mb-2"># Run the setup script</div>
+              <div class="text-green-400">./setup_claude_code.sh</div>
+              <div class="text-navy-400 mt-2"># Windows: setup_claude_code.bat</div>
             </div>
           </div>
         </div>
@@ -145,16 +146,16 @@
         <div class="flex items-start gap-4">
           <div class="w-8 h-8 bg-coral-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
           <div>
-            <p class="text-white font-semibold">Restart Claude Code</p>
-            <p class="text-navy-300 text-sm font-semibold mt-1">CanopyIQ will appear in your available tools</p>
+            <p class="text-white font-semibold">Get your API key from CanopyIQ</p>
+            <p class="text-navy-300 text-sm font-semibold mt-1">Visit canopyiq.ai/signup to create account and get API key</p>
           </div>
         </div>
 
         <div class="flex items-start gap-4">
           <div class="w-8 h-8 bg-coral-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
           <div>
-            <p class="text-white font-semibold">Claude's tools now require approval</p>
-            <p class="text-navy-300 text-sm font-semibold mt-1">Get Slack notifications for risky operations</p>
+            <p class="text-white font-semibold">Add to Claude Code config</p>
+            <p class="text-navy-300 text-sm font-semibold mt-1">Setup script shows exact config - restart Claude Code and you're secured!</p>
           </div>
         </div>
       </div>
@@ -230,12 +231,12 @@
       <div class="flex items-start gap-4">
         <div class="w-8 h-8 bg-coral-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
         <div>
-          <h3 class="text-xl font-black text-white mb-2">Install MCP Server</h3>
+          <h3 class="text-xl font-black text-white mb-2">Clone CanopyIQ</h3>
           <div class="bg-navy-800 rounded-lg p-4 font-mono text-sm">
-            <div class="text-navy-400 mb-2"># Install globally via npm</div>
-            <div class="text-green-400">npm install -g canopyiq-mcp-server</div>
-            <div class="text-navy-400 mt-3 mb-2"># Or use npx (no install required)</div>
-            <div class="text-green-400">npx canopyiq-mcp-server --version</div>
+            <div class="text-navy-400 mb-2"># Clone the repository</div>
+            <div class="text-green-400">git clone https://github.com/amacisaac222/sandbox_canopy.git</div>
+            <div class="text-navy-400 mt-3 mb-2"># Navigate to directory</div>
+            <div class="text-green-400">cd sandbox_canopy</div>
           </div>
         </div>
       </div>
@@ -243,17 +244,13 @@
       <div class="flex items-start gap-4">
         <div class="w-8 h-8 bg-coral-500 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
         <div>
-          <h3 class="text-xl font-black text-white mb-2">Update Claude Config</h3>
+          <h3 class="text-xl font-black text-white mb-2">Run Setup Script</h3>
           <div class="bg-navy-800 rounded-lg p-4 font-mono text-sm">
-            <div class="text-navy-400 mb-2"># Edit ~/.claude_desktop_config.json</div>
-            <div class="text-white">{</div>
-            <div class="text-white ml-2">"mcpServers": {</div>
-            <div class="text-white ml-4">"canopyiq": {</div>
-            <div class="text-white ml-6">"command": <span class="text-green-400">"npx"</span>,</div>
-            <div class="text-white ml-6">"args": [<span class="text-green-400">"canopyiq-mcp-server"</span>]</div>
-            <div class="text-white ml-4">}</div>
-            <div class="text-white ml-2">}</div>
-            <div class="text-white">}</div>
+            <div class="text-navy-400 mb-2"># Run the automated setup</div>
+            <div class="text-green-400">./setup_claude_code.sh</div>
+            <div class="text-navy-400 mt-3 mb-2"># Windows users:</div>
+            <div class="text-green-400">setup_claude_code.bat</div>
+            <div class="text-navy-400 mt-3 mb-2"># Installs dependencies, shows Claude config</div>
           </div>
         </div>
       </div>
