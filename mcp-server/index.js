@@ -509,6 +509,219 @@ class CanopyIQMCPServer {
     }
   }
 
+  // 🧠 ENHANCED CONTINUOUS CONTEXT METHODS
+
+  addKeyFinding(finding, category = 'general', priority = 'medium', source = 'analysis') {
+    const newFinding = {
+      id: crypto.randomUUID().substring(0, 8),
+      text: finding,
+      category: category,
+      priority: priority,
+      source: source,
+      timestamp: new Date().toISOString(),
+      sessionId: this.sessionId
+    };
+
+    // Initialize keyFindings if not exists
+    if (!this.projectContext.keyFindings) {
+      this.projectContext.keyFindings = [];
+    }
+
+    // Avoid duplicates
+    const exists = this.projectContext.keyFindings.some(f => 
+      f.text.toLowerCase() === finding.toLowerCase()
+    );
+
+    if (!exists && finding.length > 10) {
+      this.projectContext.keyFindings.push(newFinding);
+      
+      // Keep only the most recent 50 findings
+      if (this.projectContext.keyFindings.length > 50) {
+        this.projectContext.keyFindings = this.projectContext.keyFindings
+          .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+          .slice(0, 50);
+      }
+
+      // Stream finding to dashboard
+      this.streamEvent('key_finding_discovered', newFinding);
+      this.log(`🔍 Key Finding: ${finding}`, 'info');
+    }
+  }
+
+  addNextStep(step, priority = 'medium', category = 'development') {
+    const newStep = {
+      id: crypto.randomUUID().substring(0, 8),
+      text: step,
+      priority: priority,
+      category: category,
+      timestamp: new Date().toISOString(),
+      sessionId: this.sessionId,
+      status: 'pending',
+      estimatedEffort: this.estimateEffort(step)
+    };
+
+    // Avoid duplicates
+    const exists = this.projectContext.nextSteps.some(s => 
+      s.text.toLowerCase() === step.toLowerCase()
+    );
+
+    if (!exists && step.length > 5) {
+      this.projectContext.nextSteps.push(newStep);
+      
+      // Keep only the most recent 30 next steps
+      if (this.projectContext.nextSteps.length > 30) {
+        this.projectContext.nextSteps = this.projectContext.nextSteps
+          .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+          .slice(0, 30);
+      }
+
+      // Stream next step to dashboard
+      this.streamEvent('next_step_identified', newStep);
+      this.log(`📋 Next Step: ${step}`, 'info');
+    }
+  }
+
+  estimateEffort(step) {
+    const effortKeywords = {
+      high: ['deploy', 'migrate', 'refactor', 'architecture', 'security', 'performance'],
+      medium: ['implement', 'build', 'create', 'add', 'update', 'configure'],
+      low: ['fix', 'adjust', 'tweak', 'document', 'review', 'test']
+    };
+
+    const stepLower = step.toLowerCase();
+    
+    for (const [effort, keywords] of Object.entries(effortKeywords)) {
+      if (keywords.some(keyword => stepLower.includes(keyword))) {
+        return effort;
+      }
+    }
+    
+    return 'medium';
+  }
+
+  analyzeFileForInsights(filePath, content) {
+    // Extract technical insights from file content
+    if (!content) return;
+
+    // Detect frameworks and technologies
+    this.detectTechnologies(content);
+    
+    // Analyze architecture patterns
+    this.analyzeArchitecture(filePath, content);
+    
+    // Extract business logic insights
+    this.extractBusinessLogic(filePath, content);
+  }
+
+  detectTechnologies(content) {
+    const technologies = {
+      // Frontend Frameworks
+      'React': /import.*react|jsx|useState|useEffect|createContext/i,
+      'Vue.js': /import.*vue|\.vue|v-if|v-for|v-model/i,
+      'Angular': /import.*@angular|ng-|ngIf|ngFor/i,
+      'Svelte': /import.*svelte|\$:|on:|bind:/i,
+      
+      // Backend Frameworks  
+      'FastAPI': /@app\.|from fastapi|async def.*\(request|HTTPException/i,
+      'Express.js': /app\.(get|post|put|delete)|express\(\)|req\.|res\./i,
+      'Django': /from django|models\.Model|def get|HttpResponse/i,
+      'Flask': /from flask|@app\.route|request\.|jsonify/i,
+      'Spring Boot': /@RestController|@Service|@Autowired|@Entity/i,
+      
+      // Databases
+      'PostgreSQL': /psycopg|postgresql:|SELECT.*FROM|pg_|SERIAL|UUID/i,
+      'MongoDB': /mongoose|db\.collection|ObjectId|find\(\)|insertOne/i,
+      'Redis': /redis\.|HSET|HGET|expire|lpush/i,
+      'SQLite': /sqlite3|\.db|pragma|AUTOINCREMENT/i,
+      
+      // Cloud & DevOps
+      'Docker': /FROM |COPY |RUN |EXPOSE|Dockerfile|docker-compose/i,
+      'AWS': /aws-|boto3|s3\.|ec2\.|lambda|dynamodb/i,
+      'Google Cloud': /google-cloud|gcp|firebase|firestore/i,
+      'Azure': /azure-|@azure/i,
+      
+      // Other Technologies
+      'WebSocket': /websocket|socket\.io|ws:|WebSocket\(/i,
+      'GraphQL': /graphql|gql`|Query|Mutation|resolver/i,
+      'JWT': /jsonwebtoken|jwt\.|token|Bearer/i,
+      'OAuth': /oauth|OpenID|auth0|passport/i
+    };
+
+    for (const [tech, pattern] of Object.entries(technologies)) {
+      if (pattern.test(content)) {
+        this.addKeyFinding(`Project uses ${tech}`, 'technology', 'low', 'code_analysis');
+      }
+    }
+  }
+
+  analyzeArchitecture(filePath, content) {
+    // Analyze architectural patterns
+    const patterns = {
+      'API Endpoints': /\/(api|v1|v2)\/|@app\.(get|post|put|delete)/i,
+      'Database Models': /class.*Model|Schema|Table|Entity/i,
+      'Authentication': /login|logout|auth|token|session|permission/i,
+      'Error Handling': /try.*catch|except:|error|throw|raise/i,
+      'Testing': /test\(|expect\(|assert|describe\(|it\(/i,
+      'Configuration': /config|settings|\.env|environment|process\.env/i,
+      'Middleware': /middleware|interceptor|guard|filter/i,
+      'State Management': /redux|vuex|pinia|context|store|state/i,
+      'Routing': /router|route|path|navigate|redirect/i,
+      'Validation': /validate|schema|yup|joi|zod/i
+    };
+
+    for (const [pattern, regex] of Object.entries(patterns)) {
+      if (regex.test(content)) {
+        this.addKeyFinding(`${path.basename(filePath)} implements ${pattern}`, 'architecture', 'medium', 'file_analysis');
+      }
+    }
+  }
+
+  extractBusinessLogic(filePath, content) {
+    // Extract business domain insights
+    const businessPatterns = {
+      'User Management': /user|account|profile|registration|signup/i,
+      'Payment Processing': /payment|billing|stripe|paypal|invoice/i,
+      'E-commerce': /cart|order|product|inventory|checkout/i,
+      'Content Management': /post|article|content|cms|blog/i,
+      'Analytics': /analytics|tracking|metrics|dashboard|report/i,
+      'Notifications': /notification|email|sms|push|alert/i,
+      'File Management': /upload|download|file|storage|attachment/i,
+      'Search': /search|index|elasticsearch|solr|query/i,
+      'Real-time Features': /websocket|live|real-time|streaming/i,
+      'AI/ML': /ai|ml|model|prediction|classification|neural/i
+    };
+
+    for (const [domain, pattern] of Object.entries(businessPatterns)) {
+      if (pattern.test(content)) {
+        this.addKeyFinding(`Project includes ${domain} functionality`, 'business_domain', 'medium', 'business_analysis');
+      }
+    }
+  }
+
+  generateContextSummary() {
+    const context = this.projectContext;
+    return {
+      sessionId: this.sessionId,
+      projectPath: context.projectPath,
+      duration: Date.now() - new Date(context.startTime).getTime(),
+      
+      // Key Statistics
+      stats: {
+        objectives: context.objectives?.length || 0,
+        keyFindings: context.keyFindings?.length || 0,
+        nextSteps: context.nextSteps?.length || 0,
+        decisions: context.decisions?.length || 0,
+        filesAccessed: this.fileAccessHistory.length,
+        toolCalls: this.usageTracker.toolCallCount
+      },
+      
+      // Recent Activity Summary
+      recentFindings: context.keyFindings?.slice(-5) || [],
+      urgentNextSteps: context.nextSteps?.filter(step => step.priority === 'high') || [],
+      lastActivity: context.lastActivity
+    };
+  }
+
   async onShutdown() {
     try {
       this.log('💾 Saving project context before shutdown...', 'info');

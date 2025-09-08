@@ -1925,6 +1925,15 @@ async def admin_dashboard(request: Request):
     """Main AI Governance Dashboard - Real-time monitoring and approval workflows"""
     return RedirectResponse(url="/admin/dashboard-simple", status_code=status.HTTP_302_FOUND)
 
+@app.get("/admin/context", response_class=HTMLResponse)
+async def admin_context_dashboard(request: Request):
+    """🧠 Project Context Dashboard - Continuous knowledge across Claude Code sessions"""
+    return templates.TemplateResponse("project_context_dashboard.html", {
+        "request": request,
+        "title": "Project Context Dashboard",
+        "description": "Continuous AI knowledge and context across Claude Code sessions"
+    })
+
 @app.get("/admin/dashboard-redirect", response_class=HTMLResponse)
 async def admin_dashboard_redirect(request: Request):
     """Redirect /admin/dashboard to working simple version"""
@@ -2202,6 +2211,181 @@ async def get_live_ai_governance_metrics():
             'last_activity': 0,
             'status': 'error'
         }
+
+# ---------- 🧠 Project Context APIs for Continuous Claude Code Sessions ----------
+
+@app.get("/api/v1/project-context/{project_id}")
+async def get_project_context(project_id: str):
+    """Get stored project context for continuous Claude Code sessions"""
+    try:
+        async with get_db_session() as db:
+            from database import AuditLog
+            
+            # Get the most recent context save for this project
+            context_log = await db.execute(
+                select(AuditLog)
+                .where(AuditLog.action == 'PROJECT_CONTEXT_SAVE')
+                .where(AuditLog.resource == f'project:{project_id}')
+                .order_by(desc(AuditLog.ts))
+                .limit(1)
+            )
+            
+            context_entry = context_log.scalar_one_or_none()
+            
+            if context_entry and context_entry.attributes:
+                logger.info(f"📚 Retrieved project context for {project_id}")
+                return context_entry.attributes
+            else:
+                return {"message": "No context found", "project_id": project_id}
+                
+    except Exception as e:
+        logger.error(f"Failed to get project context: {e}")
+        return {"error": "Failed to retrieve context", "project_id": project_id}
+
+@app.post("/api/v1/project-context")
+async def save_project_context(request: Request):
+    """Save project context for continuous Claude Code sessions"""
+    try:
+        context_data = await request.json()
+        project_id = context_data.get('projectId')
+        
+        if not project_id:
+            raise HTTPException(status_code=400, detail="Project ID required")
+        
+        async with get_db_session() as db:
+            from database import AuditLog
+            
+            # Store context in audit log
+            audit_log = AuditLog(
+                ts=int(time.time()),
+                actor=context_data.get('lastSessionId', 'unknown'),
+                action='PROJECT_CONTEXT_SAVE',
+                resource=f'project:{project_id}',
+                attributes=context_data
+            )
+            db.add(audit_log)
+            await db.commit()
+            
+            # Also broadcast context update to dashboards
+            await connection_manager.broadcast_to_dashboards({
+                'type': 'project_context_updated',
+                'projectId': project_id,
+                'summary': {
+                    'objectives': len(context_data.get('objectives', [])),
+                    'keyFindings': len(context_data.get('keyFindings', [])),
+                    'nextSteps': len(context_data.get('nextSteps', [])),
+                    'lastActivity': context_data.get('lastActivity')
+                },
+                'timestamp': time.time()
+            })
+            
+            logger.info(f"💾 Saved project context for {project_id}")
+            return {"status": "saved", "project_id": project_id}
+            
+    except Exception as e:
+        logger.error(f"Failed to save project context: {e}")
+        raise HTTPException(status_code=500, detail="Failed to save context")
+
+@app.get("/api/v1/project-context/{project_id}/summary")
+async def get_project_context_summary(project_id: str):
+    """Get a summary of project context for dashboard display"""
+    try:
+        async with get_db_session() as db:
+            from database import AuditLog
+            
+            # Get recent context and activity for this project
+            recent_contexts = await db.execute(
+                select(AuditLog)
+                .where(AuditLog.resource == f'project:{project_id}')
+                .where(AuditLog.action.in_(['PROJECT_CONTEXT_SAVE', 'AI_GOVERNANCE_TOOL_CALL_START']))
+                .order_by(desc(AuditLog.ts))
+                .limit(10)
+            )
+            
+            entries = recent_contexts.scalars().all()
+            
+            if entries:
+                latest_context = next((entry for entry in entries if entry.action == 'PROJECT_CONTEXT_SAVE'), None)
+                activity_count = len([entry for entry in entries if entry.action != 'PROJECT_CONTEXT_SAVE'])
+                
+                if latest_context and latest_context.attributes:
+                    context = latest_context.attributes
+                    return {
+                        'project_id': project_id,
+                        'last_updated': datetime.fromtimestamp(latest_context.ts).isoformat(),
+                        'stats': {
+                            'objectives': len(context.get('objectives', [])),
+                            'keyFindings': len(context.get('keyFindings', [])),
+                            'nextSteps': len(context.get('nextSteps', [])),
+                            'decisions': len(context.get('decisions', [])),
+                            'recentActivity': activity_count
+                        },
+                        'recentFindings': context.get('keyFindings', [])[-3:],
+                        'urgentNextSteps': [step for step in context.get('nextSteps', []) if step.get('priority') == 'high'][:3],
+                        'projectPath': context.get('projectPath'),
+                        'technologies': list(set([f.get('text', '') for f in context.get('keyFindings', []) if f.get('category') == 'technology']))[:5]
+                    }
+            
+            return {"message": "No context found", "project_id": project_id}
+            
+    except Exception as e:
+        logger.error(f"Failed to get project context summary: {e}")
+        return {"error": "Failed to retrieve context summary"}
+
+@app.get("/api/v1/projects")
+async def list_projects():
+    """List all projects with saved context for dashboard"""
+    try:
+        async with get_db_session() as db:
+            from database import AuditLog
+            
+            # Get all projects with saved context
+            projects_query = await db.execute(
+                select(AuditLog.resource, AuditLog.attributes, AuditLog.ts)
+                .where(AuditLog.action == 'PROJECT_CONTEXT_SAVE')
+                .where(AuditLog.resource.like('project:%'))
+                .order_by(desc(AuditLog.ts))
+            )
+            
+            projects_raw = projects_query.all()
+            projects_map = {}
+            
+            # Get the latest context for each project
+            for resource, attributes, timestamp in projects_raw:
+                project_id = resource.replace('project:', '')
+                if project_id not in projects_map and attributes:
+                    project_path = attributes.get('projectPath', '')
+                    project_name = project_path.split('/')[-1] or project_path.split('\\')[-1] or project_id
+                    
+                    projects_map[project_id] = {
+                        'project_id': project_id,
+                        'project_name': project_name,
+                        'project_path': project_path,
+                        'last_activity': attributes.get('lastActivity'),
+                        'last_updated': datetime.fromtimestamp(timestamp).isoformat(),
+                        'stats': {
+                            'objectives': len(attributes.get('objectives', [])),
+                            'keyFindings': len(attributes.get('keyFindings', [])),
+                            'nextSteps': len(attributes.get('nextSteps', [])),
+                            'decisions': len(attributes.get('decisions', []))
+                        },
+                        'technologies': list(set([
+                            f.get('text', '').replace('Project uses ', '') 
+                            for f in attributes.get('keyFindings', []) 
+                            if f.get('category') == 'technology'
+                        ]))[:3],
+                        'recentFindings': attributes.get('keyFindings', [])[-2:],
+                        'urgentNextSteps': [
+                            step for step in attributes.get('nextSteps', []) 
+                            if step.get('priority') == 'high'
+                        ][:2]
+                    }
+            
+            return {"projects": list(projects_map.values())}
+            
+    except Exception as e:
+        logger.error(f"Failed to list projects: {e}")
+        return {"error": "Failed to list projects", "projects": []}
 
 @app.exception_handler(StarletteHTTPException)
 async def http_exc_handler(request, exc):
