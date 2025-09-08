@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, status, Depends, UploadFile, File, HTTPException
+from fastapi import FastAPI, Request, Form, status, Depends, UploadFile, File, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -403,6 +403,57 @@ async def startup_event():
           logger.error(f"❌ Full traceback: {traceback.format_exc()}")
           # Don't re-raise the exception, let the app start anyway
           logger.info("🔄 Continuing startup despite error...")
+
+# ---------- WebSocket Connection Manager for Real-Time AI Governance ----------
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: dict[str, WebSocket] = {}
+        self.session_data: dict[str, dict] = {}
+
+    async def connect(self, websocket: WebSocket, session_id: str):
+        await websocket.accept()
+        self.active_connections[session_id] = websocket
+        self.session_data[session_id] = {
+            'connected_at': time.time(),
+            'events_received': 0,
+            'last_activity': time.time()
+        }
+        logger.info(f"📡 WebSocket connected: {session_id}")
+
+    def disconnect(self, session_id: str):
+        if session_id in self.active_connections:
+            del self.active_connections[session_id]
+        if session_id in self.session_data:
+            del self.session_data[session_id]
+        logger.info(f"🔌 WebSocket disconnected: {session_id}")
+
+    async def send_to_session(self, session_id: str, message: dict):
+        if session_id in self.active_connections:
+            try:
+                await self.active_connections[session_id].send_text(json.dumps(message))
+                self.session_data[session_id]['last_activity'] = time.time()
+                return True
+            except Exception as e:
+                logger.error(f"Failed to send message to {session_id}: {e}")
+                self.disconnect(session_id)
+        return False
+
+    async def broadcast_to_dashboards(self, message: dict):
+        """Broadcast event to all connected dashboard sessions"""
+        disconnected = []
+        for session_id, websocket in self.active_connections.items():
+            try:
+                await websocket.send_text(json.dumps(message))
+                self.session_data[session_id]['events_received'] += 1
+                self.session_data[session_id]['last_activity'] = time.time()
+            except Exception:
+                disconnected.append(session_id)
+
+        # Clean up disconnected sessions
+        for session_id in disconnected:
+            self.disconnect(session_id)
+
+connection_manager = ConnectionManager()
 
 # ---------- Helpers ----------
 def page(request: Request, *, title: str, desc: str, path: str, **ctx):
@@ -1157,9 +1208,10 @@ async def admin_settings(request: Request, db: AsyncSession = Depends(get_db)):
           settings=settings
       )
 
-@app.get("/admin/dashboard", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
-async def admin_dashboard(request: Request):
-    """Admin dashboard with graceful error handling"""
+@app.get("/admin/dashboard-broken", response_class=HTMLResponse, dependencies=[Depends(require_admin)])
+async def admin_dashboard_broken(request: Request):
+    """Original admin dashboard - debugging auth issues"""
+    logger.info("Admin dashboard accessed - starting function")
     import secrets
     from datetime import datetime
     
@@ -1903,6 +1955,248 @@ async def mcp_get_events(limit: int = 50):
     return {
         "events": mock_events[:limit]
     }
+
+# ---------- Real-Time WebSocket AI Governance Endpoints ----------
+
+@app.websocket("/ws/events/{session_id}")
+async def websocket_endpoint(websocket: WebSocket, session_id: str):
+    """WebSocket endpoint for real-time MCP server events and dashboard updates"""
+    await connection_manager.connect(websocket, session_id)
+    
+    try:
+        while True:
+            # Listen for messages from MCP server or dashboard
+            message = await websocket.receive_text()
+            data = json.loads(message)
+            
+            # Process the event from MCP server
+            await handle_mcp_event(session_id, data)
+            
+    except WebSocketDisconnect:
+        connection_manager.disconnect(session_id)
+    except Exception as e:
+        logger.error(f"WebSocket error for {session_id}: {e}")
+        connection_manager.disconnect(session_id)
+
+@app.post("/api/v1/events")
+async def receive_mcp_event(request: Request):
+    """HTTP endpoint for MCP server events (backup to WebSocket)"""
+    try:
+        data = await request.json()
+        await handle_mcp_event(data.get('sessionId', 'unknown'), data)
+        return {"status": "received"}
+    except Exception as e:
+        logger.error(f"Failed to process MCP event: {e}")
+        raise HTTPException(status_code=500, detail="Event processing failed")
+
+async def handle_mcp_event(session_id: str, event_data: dict):
+    """Process incoming events from MCP server and handle AI governance"""
+    event_type = event_data.get('type')
+    timestamp = event_data.get('timestamp', datetime.now().isoformat())
+    data = event_data.get('data', {})
+    
+    logger.info(f"🔄 AI Governance Event: {event_type} from {session_id}")
+    
+    # Store event in database for audit trail
+    try:
+        async with get_db_session() as db:
+            from database import AuditLog
+            audit_log = AuditLog(
+                ts=int(time.time()),
+                actor=session_id,
+                action=f"AI_GOVERNANCE_{event_type.upper()}",
+                resource=f"ai_tool:{data.get('tool', 'unknown')}",
+                attributes=event_data
+            )
+            db.add(audit_log)
+            await db.commit()
+    except Exception as e:
+        logger.warning(f"Failed to log audit event: {e}")
+    
+    # Handle specific event types for AI governance
+    await handle_ai_governance_event(session_id, event_type, data)
+    
+    # Broadcast to all connected dashboards for real-time updates
+    dashboard_event = {
+        'type': 'live_ai_activity',
+        'timestamp': timestamp,
+        'session_id': session_id,
+        'event_type': event_type,
+        'data': data
+    }
+    await connection_manager.broadcast_to_dashboards(dashboard_event)
+
+async def handle_ai_governance_event(session_id: str, event_type: str, data: dict):
+    """Handle specific AI governance events"""
+    if event_type == 'tool_call_start':
+        tool = data.get('tool', 'unknown')
+        logger.info(f"🤖 AI tool initiated: {tool} in session {session_id}")
+        
+    elif event_type == 'approval_required':
+        await handle_approval_request(session_id, data)
+        
+    elif event_type == 'tool_call_blocked':
+        tool = data.get('tool')
+        reason = data.get('reason')
+        logger.warning(f"🛑 AI tool blocked: {tool} - {reason} in session {session_id}")
+        
+    elif event_type == 'tool_call_complete':
+        tool = data.get('tool')
+        duration = data.get('duration', 0)
+        logger.info(f"✅ AI tool completed: {tool} in {duration}ms")
+
+async def handle_approval_request(session_id: str, approval_data: dict):
+    """Handle real-time approval requests from MCP server"""
+    approval_id = approval_data.get('id')
+    tool = approval_data.get('tool')
+    risk_level = approval_data.get('riskLevel', 'medium')
+    reason = approval_data.get('reason', 'Approval required')
+    
+    logger.warning(f"⏳ Approval Required: {tool} ({risk_level}) - {reason}")
+    
+    # Send urgent approval notification to all dashboards
+    urgent_notification = {
+        'type': 'urgent_approval_required',
+        'approval': {
+            'id': approval_id,
+            'session_id': session_id,
+            'tool': tool,
+            'arguments': approval_data.get('arguments', {}),
+            'risk_level': risk_level,
+            'reason': reason,
+            'timestamp': approval_data.get('timestamp'),
+            'status': 'pending'
+        },
+        'timestamp': time.time()
+    }
+    
+    await connection_manager.broadcast_to_dashboards(urgent_notification)
+
+@app.post("/api/v1/approvals")
+async def create_approval_request(request: Request):
+    """Endpoint for MCP servers to create approval requests"""
+    try:
+        data = await request.json()
+        approval_id = data.get('id', 'unknown')
+        
+        logger.info(f"📝 New approval request received: {approval_id}")
+        
+        # Store approval request (in production, save to database)
+        # For now, just broadcast to dashboard
+        await connection_manager.broadcast_to_dashboards({
+            'type': 'new_approval_request',
+            'approval': data,
+            'timestamp': time.time()
+        })
+        
+        return {"status": "created", "id": approval_id}
+        
+    except Exception as e:
+        logger.error(f"Failed to create approval request: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create approval request")
+
+@app.post("/api/v1/approvals/{approval_id}/respond")
+async def respond_to_approval(
+    approval_id: str, 
+    request: Request,
+    approved: bool = Form(...),
+    reason: str = Form(None)
+):
+    """Admin endpoint to approve/reject real-time AI tool requests"""
+    try:
+        # Create response message for MCP servers
+        response_message = {
+            'type': 'approval_response',
+            'data': {
+                'approvalId': approval_id,
+                'approved': approved,
+                'reason': reason or ("Approved by admin" if approved else "Denied by admin"),
+                'timestamp': datetime.now().isoformat(),
+                'admin': 'dashboard_admin'  # In production, get from session
+            }
+        }
+        
+        # Broadcast response to all MCP server sessions
+        await connection_manager.broadcast_to_dashboards(response_message)
+        
+        # Log the approval decision
+        try:
+            async with get_db_session() as db:
+                from database import AuditLog
+                audit_log = AuditLog(
+                    ts=int(time.time()),
+                    actor="admin_dashboard",
+                    action="AI_APPROVAL_DECISION",
+                    resource=f"approval:{approval_id}",
+                    attributes={
+                        'approved': approved,
+                        'reason': reason or ("Approved" if approved else "Denied"),
+                        'approval_id': approval_id
+                    }
+                )
+                db.add(audit_log)
+                await db.commit()
+        except Exception as e:
+            logger.warning(f"Failed to log approval decision: {e}")
+        
+        action = 'APPROVED' if approved else 'DENIED'
+        logger.info(f"📝 AI Governance Decision: {action} approval {approval_id}")
+        
+        return {"status": "sent", "approved": approved, "message": "Response sent to AI systems"}
+        
+    except Exception as e:
+        logger.error(f"Failed to send approval response: {e}")
+        raise HTTPException(status_code=500, detail="Failed to send approval response")
+
+@app.get("/api/v1/dashboard/live-metrics")
+async def get_live_ai_governance_metrics():
+    """Get real-time AI governance dashboard metrics"""
+    try:
+        # Count active MCP connections
+        active_sessions = len(connection_manager.active_connections)
+        
+        # Get recent events from database
+        async with get_db_session() as db:
+            from database import AuditLog
+            
+            # Count recent AI governance events
+            recent_events = await db.execute(
+                select(AuditLog)
+                .where(AuditLog.action.like('AI_GOVERNANCE_%'))
+                .where(AuditLog.ts > int(time.time()) - 86400)  # Last 24 hours
+            )
+            events_count = len(recent_events.scalars().all())
+            
+            # Count approval events
+            approval_events = await db.execute(
+                select(AuditLog)
+                .where(AuditLog.action == 'AI_APPROVAL_DECISION')
+                .where(AuditLog.ts > int(time.time()) - 86400)  # Last 24 hours
+            )
+            approvals_count = len(approval_events.scalars().all())
+        
+        live_metrics = {
+            'active_ai_sessions': active_sessions,
+            'connected_mcps': len([s for s in connection_manager.session_data.values()]),
+            'ai_events_today': events_count,
+            'approvals_processed': approvals_count,
+            'last_activity': max([s.get('last_activity', 0) for s in connection_manager.session_data.values()] or [0]),
+            'status': 'active' if active_sessions > 0 else 'standby'
+        }
+        
+        return live_metrics
+        
+    except Exception as e:
+        logger.error(f"Failed to get live metrics: {e}")
+        # Return fallback metrics
+        return {
+            'active_ai_sessions': len(connection_manager.active_connections),
+            'connected_mcps': 0,
+            'ai_events_today': 0,
+            'approvals_processed': 0,
+            'last_activity': 0,
+            'status': 'error'
+        }
 
 @app.exception_handler(StarletteHTTPException)
 async def http_exc_handler(request, exc):
