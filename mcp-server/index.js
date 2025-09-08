@@ -230,6 +230,9 @@ class CanopyIQMCPServer {
           nextSteps: this.projectContext.nextSteps,
           sessionCount: this.projectContext.previousSessions?.length || 0
         });
+
+        // 🧠 INJECT CONTEXT into Claude session for continuous knowledge
+        await this.injectContextIntoSession();
       }
     } catch (error) {
       this.log(`No previous project context found - starting fresh`, 'info');
@@ -719,6 +722,148 @@ class CanopyIQMCPServer {
       recentFindings: context.keyFindings?.slice(-5) || [],
       urgentNextSteps: context.nextSteps?.filter(step => step.priority === 'high') || [],
       lastActivity: context.lastActivity
+    };
+  }
+
+  // 🧠 CONTEXT INJECTION FOR NEW CLAUDE SESSIONS
+  async injectContextIntoSession() {
+    try {
+      // Generate context summary for Claude
+      const contextSummary = this.generateContextForClaude();
+      
+      if (contextSummary.hasContent) {
+        this.log('🧠 Injecting project context into new Claude Code session...', 'info');
+        
+        // Log context injection for the user to see
+        console.log('\n' + '='.repeat(80));
+        console.log('🧠 CANOPYIQ: CONTINUOUS CONTEXT RESTORED');
+        console.log('='.repeat(80));
+        console.log(contextSummary.summary);
+        console.log('='.repeat(80) + '\n');
+        
+        // Stream context injection event
+        this.streamEvent('context_injected', {
+          summary: contextSummary.summary,
+          stats: contextSummary.stats,
+          timestamp: new Date().toISOString()
+        });
+      }
+    } catch (error) {
+      this.log(`Context injection failed: ${error.message}`, 'warn');
+    }
+  }
+
+  generateContextForClaude() {
+    const context = this.projectContext;
+    let summary = '';
+    let hasContent = false;
+
+    // Project Overview
+    if (context.projectPath) {
+      summary += `📁 PROJECT: ${path.basename(context.projectPath)}\n`;
+      summary += `   Path: ${context.projectPath}\n\n`;
+      hasContent = true;
+    }
+
+    // Key Findings
+    if (context.keyFindings && context.keyFindings.length > 0) {
+      summary += `🔍 KEY FINDINGS FROM PREVIOUS SESSIONS (${context.keyFindings.length} total):\n`;
+      const recentFindings = context.keyFindings
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+        .slice(0, 8);
+      
+      recentFindings.forEach((finding, index) => {
+        const priority = finding.priority === 'high' ? '⚠️' : finding.priority === 'medium' ? '📌' : '💡';
+        summary += `   ${priority} ${finding.text} (${finding.category})\n`;
+      });
+      summary += '\n';
+      hasContent = true;
+    }
+
+    // Next Steps
+    if (context.nextSteps && context.nextSteps.length > 0) {
+      const pendingSteps = context.nextSteps.filter(step => step.status === 'pending');
+      if (pendingSteps.length > 0) {
+        summary += `📋 NEXT STEPS FROM PREVIOUS SESSIONS (${pendingSteps.length} pending):\n`;
+        const urgentSteps = pendingSteps.filter(step => step.priority === 'high').slice(0, 5);
+        const normalSteps = pendingSteps.filter(step => step.priority !== 'high').slice(0, 5);
+        
+        urgentSteps.forEach(step => {
+          summary += `   🚨 [HIGH] ${step.text} (${step.category})\n`;
+        });
+        
+        normalSteps.forEach(step => {
+          const icon = step.estimatedEffort === 'high' ? '🔧' : step.estimatedEffort === 'low' ? '🔨' : '⚙️';
+          summary += `   ${icon} ${step.text} (${step.category})\n`;
+        });
+        summary += '\n';
+        hasContent = true;
+      }
+    }
+
+    // Recent Objectives
+    if (context.objectives && context.objectives.length > 0) {
+      const activeObjectives = context.objectives.filter(obj => !obj.completed).slice(0, 5);
+      if (activeObjectives.length > 0) {
+        summary += `🎯 ACTIVE OBJECTIVES (${activeObjectives.length} active):\n`;
+        activeObjectives.forEach(objective => {
+          const priority = objective.priority === 'high' ? '🔥' : '📌';
+          summary += `   ${priority} ${objective.description}\n`;
+        });
+        summary += '\n';
+        hasContent = true;
+      }
+    }
+
+    // Recent Decisions
+    if (context.decisions && context.decisions.length > 0) {
+      summary += `⚡ RECENT TECHNICAL DECISIONS (${context.decisions.length} total):\n`;
+      context.decisions.slice(-3).forEach(decision => {
+        summary += `   💡 ${decision.description || decision.summary}\n`;
+      });
+      summary += '\n';
+      hasContent = true;
+    }
+
+    // Technologies Detected
+    const technologies = new Set();
+    if (context.keyFindings) {
+      context.keyFindings
+        .filter(f => f.category === 'technology')
+        .forEach(f => technologies.add(f.text.replace('Project uses ', '')));
+    }
+    
+    if (technologies.size > 0) {
+      summary += `🛠️ DETECTED TECHNOLOGIES: ${Array.from(technologies).slice(0, 8).join(', ')}\n\n`;
+      hasContent = true;
+    }
+
+    // Session Info
+    const sessionCount = context.previousSessions?.length || 0;
+    if (sessionCount > 0) {
+      summary += `📊 CONTEXT STATISTICS:\n`;
+      summary += `   • Previous Sessions: ${sessionCount}\n`;
+      summary += `   • Total Findings: ${context.keyFindings?.length || 0}\n`;
+      summary += `   • Pending Next Steps: ${context.nextSteps?.filter(s => s.status === 'pending').length || 0}\n`;
+      summary += `   • Active Objectives: ${context.objectives?.filter(o => !o.completed).length || 0}\n\n`;
+    }
+
+    if (hasContent) {
+      summary += `💡 This context was automatically restored by CanopyIQ to maintain\n`;
+      summary += `   continuity across your Claude Code development sessions.\n`;
+      summary += `   Your previous progress, findings, and next steps are preserved above.`;
+    }
+
+    return {
+      hasContent,
+      summary,
+      stats: {
+        findings: context.keyFindings?.length || 0,
+        nextSteps: context.nextSteps?.length || 0,
+        objectives: context.objectives?.length || 0,
+        decisions: context.decisions?.length || 0,
+        technologies: technologies.size
+      }
     };
   }
 
