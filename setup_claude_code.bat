@@ -51,9 +51,26 @@ echo.
 echo 🎉 Setup complete!
 echo.
 echo 📋 Next Steps:
-echo 1. Get your API key from: http://localhost:8080/admin/dashboard
+echo 1. Get your API key from:
+echo    Production: https://canopyiq.ai/admin/dashboard
+echo    Local: http://localhost:8080/admin/dashboard
 echo 2. Copy the example configuration below:
 echo.
+echo Production Configuration (Recommended):
+echo {
+echo   "mcpServers": {
+echo     "canopyiq": {
+echo       "command": "node",
+echo       "args": [
+echo         "%cd%\\mcp-server\\index.js",
+echo         "--api-key", "YOUR_API_KEY_HERE",
+echo         "--server-url", "https://canopyiq.ai"
+echo       ]
+echo     }
+echo   }
+echo }
+echo.
+echo Local Development Configuration:
 echo {
 echo   "mcpServers": {
 echo     "canopyiq": {

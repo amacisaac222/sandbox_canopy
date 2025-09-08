@@ -23,6 +23,16 @@ npm start
 
 ## Step 2: Get Your CanopyIQ API Key
 
+### Option A: Use Production CanopyIQ (Recommended)
+
+1. **Visit CanopyIQ.ai:**
+   - Go to: https://canopyiq.ai/admin/dashboard
+   - Sign up or login with your account
+   - Navigate to the "Setup" tab
+   - Copy your generated API key
+
+### Option B: Local Development
+
 1. **Start CanopyIQ Backend:**
    ```bash
    cd canopyiq_site
@@ -58,6 +68,23 @@ npm start
 
 Open `claude_desktop_config.json` and add this configuration:
 
+### For Production CanopyIQ.ai (Recommended)
+```json
+{
+  "mcpServers": {
+    "canopyiq": {
+      "command": "node",
+      "args": [
+        "C:/Users/amaci/Desktop/canopy/mcp-server/index.js",
+        "--api-key", "YOUR_API_KEY_HERE",
+        "--server-url", "https://canopyiq.ai"
+      ]
+    }
+  }
+}
+```
+
+### For Local Development
 ```json
 {
   "mcpServers": {
@@ -76,14 +103,15 @@ Open `claude_desktop_config.json` and add this configuration:
 **Replace:**
 - `C:/Users/amaci/Desktop/canopy/mcp-server/index.js` with your actual path
 - `YOUR_API_KEY_HERE` with the API key from Step 2
+- Use `https://canopyiq.ai` for production or `http://localhost:8080` for local
 
 ### Alternative: Use the CLI Tool
 
 ```bash
-# Make the CLI executable (if needed)
-node mcp-server/bin/cli.js --help
+# For production CanopyIQ.ai
+node mcp-server/bin/cli.js --api-key YOUR_API_KEY_HERE --server-url https://canopyiq.ai
 
-# Run with your API key
+# For local development  
 node mcp-server/bin/cli.js --api-key YOUR_API_KEY_HERE --server-url http://localhost:8080
 ```
 
@@ -102,7 +130,7 @@ Can you help me create a simple Python file?
 ```
 
 **Expected Result:**
-- CanopyIQ dashboard shows "🟢 Live" connection status
+- CanopyIQ dashboard at https://canopyiq.ai/admin/dashboard shows "🟢 Live" connection status
 - Real-time activity appears in the dashboard
 - File access is tracked in "Recent File Access by AI"
 
