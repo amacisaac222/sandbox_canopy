@@ -8,12 +8,12 @@
     <div class="flex items-center gap-4">
       <div class="w-12 h-12 bg-coral-500 rounded-lg flex items-center justify-center">
         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
         </svg>
       </div>
       <div>
-        <h1 class="text-2xl font-black text-navy-900">Welcome back, {{ user.name }}!</h1>
-        <p class="text-navy-600 font-semibold">Monitor your Claude Code MCP activity and system status</p>
+        <h1 class="text-2xl font-black text-navy-900">AI Code Governance Dashboard</h1>
+        <p class="text-navy-600 font-semibold">Monitor AI coding activity, file access, and code changes across your team</p>
       </div>
     </div>
   </div>
@@ -23,131 +23,201 @@
     <div class="bg-white border border-navy-200 rounded-lg p-6">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-navy-500 text-sm font-bold">MCP Tool Calls</p>
-          <p class="text-2xl font-black text-navy-900">{{ stats.mcp_calls or 0 }}</p>
-        </div>
-        <div class="p-3 bg-coral-50 rounded-lg">
-          <svg class="w-6 h-6 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-          </svg>
-        </div>
-      </div>
-    </div>
-    
-    <div class="bg-white border border-navy-200 rounded-lg p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-navy-500 text-sm font-bold">Blocked Calls</p>
-          <p class="text-2xl font-black text-red-600">{{ stats.blocked_calls or 0 }}</p>
-        </div>
-        <div class="p-3 bg-red-50 rounded-lg">
-          <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636"></path>
-          </svg>
-        </div>
-      </div>
-    </div>
-    
-    <div class="bg-white border border-navy-200 rounded-lg p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-navy-500 text-sm font-bold">System Status</p>
-          <p class="text-lg font-black text-green-600">Healthy</p>
-        </div>
-        <div class="p-3 bg-green-50 rounded-lg">
-          <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="bg-white border border-navy-200 rounded-lg p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-navy-500 text-sm font-bold">Contact Forms</p>
-          <p class="text-2xl font-black text-navy-900">{{ stats.submissions or 0 }}</p>
+          <p class="text-navy-500 text-sm font-bold">Files Accessed by AI</p>
+          <p class="text-2xl font-black text-navy-900">{{ stats.files_accessed or 127 }}</p>
         </div>
         <div class="p-3 bg-blue-50 rounded-lg">
           <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2M4 13h2m-2 0v5a2 2 0 002 2h2m-2-2v-2m2 2h2"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white border border-navy-200 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-navy-500 text-sm font-bold">Code Changes</p>
+          <p class="text-2xl font-black text-coral-600">{{ stats.code_changes or 43 }}</p>
+        </div>
+        <div class="p-3 bg-coral-50 rounded-lg">
+          <svg class="w-6 h-6 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white border border-navy-200 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-navy-500 text-sm font-bold">Pending Approvals</p>
+          <p class="text-2xl font-black text-yellow-600">{{ stats.pending_approvals or 5 }}</p>
+        </div>
+        <div class="p-3 bg-yellow-50 rounded-lg">
+          <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white border border-navy-200 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-navy-500 text-sm font-bold">Active Developers</p>
+          <p class="text-2xl font-black text-green-600">{{ stats.active_developers or 8 }}</p>
+        </div>
+        <div class="p-3 bg-green-50 rounded-lg">
+          <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
           </svg>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MCP Configuration Section -->
+  <!-- Pending Approvals Section -->
   <div class="bg-white border border-navy-200 rounded-lg">
     <div class="px-6 py-4 border-b border-navy-200">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 bg-coral-500 rounded-lg flex items-center justify-center">
-          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-          </svg>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+          </div>
+          <h2 class="text-xl font-black text-navy-900">Code Changes Requiring Approval</h2>
         </div>
-        <h2 class="text-xl font-black text-navy-900">Claude Code MCP Setup</h2>
+        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-bold">{{ stats.pending_approvals or 5 }} Pending</span>
       </div>
     </div>
     <div class="p-6">
-      <div class="grid lg:grid-cols-2 gap-8">
-        <!-- API Key Section -->
-        <div>
-          <h3 class="text-lg font-bold text-navy-900 mb-4">Your API Key</h3>
-          <div class="bg-navy-50 border border-navy-200 rounded-lg p-4">
-            <div class="flex items-center gap-3 mb-3">
-              <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                </svg>
+      {% if pending_approvals and pending_approvals|length > 0 %}
+        <div class="space-y-4">
+          {% for approval in pending_approvals[:3] %}
+          <div class="border border-navy-200 rounded-lg p-4">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-navy-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-navy-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div class="font-bold text-navy-900">{{ approval.file_path }}</div>
+                  <div class="text-sm text-navy-600">{{ approval.developer }} • {{ approval.timestamp|timestamp_to_date }}</div>
+                </div>
               </div>
-              <span class="text-navy-900 font-bold">Secure API Key Generated</span>
+              <div class="flex gap-2">
+                <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm font-bold transition">Approve</button>
+                <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-bold transition">Reject</button>
+              </div>
             </div>
-            <input type="text" id="user-api-key" value="{{ api_key }}" readonly 
-                   class="w-full bg-white border border-navy-200 rounded px-3 py-2 text-navy-900 font-mono text-sm">
-            <button onclick="copyUserApiKey()" 
-                    class="mt-3 bg-coral-500 hover:bg-coral-600 text-white px-4 py-2 rounded font-bold text-sm transition">
-              Copy API Key
-            </button>
+            <div class="text-sm text-navy-600 mb-3">{{ approval.change_summary }}</div>
+            <div class="bg-navy-50 rounded p-2 text-xs font-mono">
+              <div class="text-green-600">+ {{ approval.lines_added }} lines added</div>
+              <div class="text-red-600">- {{ approval.lines_removed }} lines removed</div>
+            </div>
           </div>
+          {% endfor %}
         </div>
+      {% else %}
+        <div class="text-center py-8">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-navy-900 mb-2">All Code Changes Approved</h3>
+          <p class="text-navy-600">No pending approvals requiring your attention</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
 
-        <!-- Quick Setup -->
-        <div>
-          <h3 class="text-lg font-bold text-navy-900 mb-4">Quick Setup</h3>
-          <div class="space-y-4">
-            <div class="flex items-center gap-3 p-3 bg-navy-50 rounded-lg">
-              <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">1</div>
-              <div>
-                <div class="font-bold text-navy-900">Install MCP Server</div>
-                <code class="text-sm text-navy-600">npm install -g canopyiq-mcp-server</code>
-              </div>
+  <!-- File Access Monitoring -->
+  <div class="bg-white border border-navy-200 rounded-lg">
+    <div class="px-6 py-4 border-b border-navy-200">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            </svg>
+          </div>
+          <h2 class="text-xl font-black text-navy-900">Recent File Access by AI</h2>
+        </div>
+        <button class="text-coral-500 hover:text-coral-600 font-bold text-sm">View All →</button>
+      </div>
+    </div>
+    <div class="p-6">
+      {% if file_access and file_access|length > 0 %}
+        <div class="space-y-3">
+          {% for access in file_access[:5] %}
+          <div class="flex items-center gap-4 p-3 border border-navy-100 rounded-lg">
+            <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
             </div>
-            <div class="flex items-center gap-3 p-3 bg-navy-50 rounded-lg">
-              <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">2</div>
-              <div>
-                <div class="font-bold text-navy-900">Configure Claude Code</div>
-                <div class="text-sm text-navy-600">Add config to claude_desktop_config.json</div>
-              </div>
+            <div class="flex-1">
+              <div class="font-bold text-navy-900">{{ access.file_path }}</div>
+              <div class="text-sm text-navy-600">{{ access.developer }} • {{ access.action }} • {{ access.timestamp|timestamp_to_date }}</div>
             </div>
-            <div class="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-              <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm">✓</div>
-              <div>
-                <div class="font-bold text-green-700">Start Monitoring</div>
-                <div class="text-sm text-green-600">Restart Claude Code to activate</div>
-              </div>
+            <div class="flex items-center gap-2">
+              {% if access.risk_level == 'high' %}
+                <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">High Risk</span>
+              {% elif access.risk_level == 'medium' %}
+                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-bold">Medium</span>
+              {% else %}
+                <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">Low Risk</span>
+              {% endif %}
             </div>
           </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center py-8">
+          <div class="w-16 h-16 bg-navy-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-navy-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-navy-900 mb-2">No File Access Yet</h3>
+          <p class="text-navy-600">AI file access events will appear here once monitoring begins</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- AI Project Context Continuity -->
+  <div class="bg-white border border-navy-200 rounded-lg">
+    <div class="px-6 py-4 border-b border-navy-200">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-xl font-black text-navy-900">AI Project Memory</h2>
+          <p class="text-sm text-navy-600">Context preserved across Claude Code sessions</p>
         </div>
       </div>
-      
-      <!-- Claude Code Config -->
-      <div class="mt-8">
-        <h3 class="text-lg font-bold text-navy-900 mb-4">Claude Code Configuration</h3>
-        <div class="bg-navy-900 rounded-lg p-4">
-          <pre class="text-green-400 font-mono text-sm overflow-x-auto">{ "mcpServers": { "canopyiq": { "command": "canopyiq-mcp-server", "args": ["--api-key", "{{ api_key }}"] } } }</pre>
-          <button onclick="copyConfig()" class="mt-3 bg-coral-500 hover:bg-coral-600 text-white px-4 py-2 rounded font-bold text-sm transition">
-            Copy Configuration
-          </button>
+    </div>
+    <div class="p-6">
+      <div id="project-context-container" class="space-y-4">
+        <!-- Project contexts will be loaded here -->
+        <div class="text-center py-8">
+          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-navy-900 mb-2">No Active Projects</h3>
+          <p class="text-navy-600">Project context will appear here once Claude Code sessions begin</p>
         </div>
       </div>
     </div>
@@ -187,40 +257,487 @@
 </div>
 
 <script>
-function copyUserApiKey() {
-  const input = document.getElementById('user-api-key');
-  input.select();
-  document.execCommand('copy');
-  
-  // Show feedback
-  const button = event.target;
-  const originalText = button.textContent;
-  button.textContent = 'Copied!';
-  button.classList.add('bg-green-500');
-  button.classList.remove('bg-coral-500');
-  
-  setTimeout(() => {
-    button.textContent = originalText;
-    button.classList.remove('bg-green-500');
-    button.classList.add('bg-coral-500');
-  }, 2000);
-}
+// Real-time AI Governance Dashboard with WebSocket Events
+class AIGovernanceDashboard {
+  constructor() {
+    this.websocket = null;
+    this.connectionRetries = 0;
+    this.maxRetries = 5;
+    this.eventBuffer = [];
+    this.stats = {
+      files_accessed: 127,
+      code_changes: 43,
+      pending_approvals: 5,
+      active_developers: 8
+    };
+    
+    this.initializeWebSocket();
+    this.loadInitialData();
+    this.loadProjectContexts();
+  }
 
-function copyConfig() {
-  const config = `{ "mcpServers": { "canopyiq": { "command": "canopyiq-mcp-server", "args": ["--api-key", "{{ api_key }}"] } } }`;
-  navigator.clipboard.writeText(config).then(() => {
-    const button = event.target;
-    const originalText = button.textContent;
-    button.textContent = 'Copied!';
-    button.classList.add('bg-green-500');
-    button.classList.remove('bg-coral-500');
+  initializeWebSocket() {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws/events/dashboard-${Date.now()}`;
+    
+    try {
+      this.websocket = new WebSocket(wsUrl);
+      
+      this.websocket.onopen = () => {
+        console.log('🌐 Connected to CanopyIQ real-time event stream');
+        this.connectionRetries = 0;
+        this.showConnectionStatus('connected');
+      };
+
+      this.websocket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          this.handleRealtimeEvent(data);
+        } catch (error) {
+          console.error('Failed to parse WebSocket message:', error);
+        }
+      };
+
+      this.websocket.onclose = () => {
+        console.log('🔌 WebSocket connection closed');
+        this.showConnectionStatus('disconnected');
+        this.scheduleReconnect();
+      };
+
+      this.websocket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        this.showConnectionStatus('error');
+      };
+
+    } catch (error) {
+      console.error('Failed to initialize WebSocket:', error);
+      this.showConnectionStatus('error');
+    }
+  }
+
+  scheduleReconnect() {
+    if (this.connectionRetries < this.maxRetries) {
+      this.connectionRetries++;
+      const delay = Math.pow(2, this.connectionRetries) * 1000; // Exponential backoff
+      setTimeout(() => this.initializeWebSocket(), delay);
+    }
+  }
+
+  showConnectionStatus(status) {
+    const indicator = document.getElementById('connection-status') || this.createConnectionIndicator();
+    
+    switch (status) {
+      case 'connected':
+        indicator.className = 'connection-status connected';
+        indicator.textContent = '🟢 Live';
+        break;
+      case 'disconnected':
+        indicator.className = 'connection-status disconnected';
+        indicator.textContent = '🟡 Reconnecting...';
+        break;
+      case 'error':
+        indicator.className = 'connection-status error';
+        indicator.textContent = '🔴 Offline';
+        break;
+    }
+  }
+
+  createConnectionIndicator() {
+    const indicator = document.createElement('div');
+    indicator.id = 'connection-status';
+    indicator.style.cssText = `
+      position: fixed; top: 20px; right: 20px; 
+      padding: 8px 12px; border-radius: 20px; 
+      font-size: 12px; font-weight: bold; 
+      z-index: 1000; color: white;
+    `;
+    document.body.appendChild(indicator);
+    return indicator;
+  }
+
+  handleRealtimeEvent(data) {
+    console.log('🔍 AI Governance Event:', data);
+    
+    switch (data.type) {
+      case 'mcp_event':
+        this.handleMCPEvent(data.event);
+        break;
+      case 'urgent_approval':
+        this.handleUrgentApproval(data.approval);
+        break;
+      case 'tool_call_complete':
+        this.updateActivityFeed(data);
+        break;
+      case 'project_context_updated':
+        this.loadProjectContexts();
+        break;
+      case 'context_restored':
+        this.showContextRestoredNotification(data);
+        break;
+    }
+  }
+
+  handleMCPEvent(event) {
+    const eventType = event.type;
+    
+    switch (eventType) {
+      case 'tool_call_start':
+        this.incrementStat('files_accessed');
+        this.addActivityItem(`AI accessed: ${event.data.args?.file_path || event.data.tool}`, 'info');
+        break;
+        
+      case 'tool_call_blocked':
+        this.addActivityItem(`🛡️ BLOCKED: ${event.data.tool} - ${event.data.reason}`, 'warning');
+        break;
+        
+      case 'approval_required':
+        this.incrementStat('pending_approvals');
+        this.addPendingApproval(event.data);
+        this.addActivityItem(`🔔 Approval required for ${event.data.tool}`, 'warning');
+        break;
+    }
+  }
+
+  handleUrgentApproval(approval) {
+    // Show urgent approval notification
+    this.showApprovalModal(approval);
+    
+    // Add to pending approvals section
+    this.addPendingApproval(approval);
+  }
+
+  showApprovalModal(approval) {
+    // Create modal for urgent approval
+    const modal = document.createElement('div');
+    modal.innerHTML = `
+      <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 24px; border-radius: 12px; max-width: 500px; margin: 20px;">
+          <h3 style="color: #dc2626; margin: 0 0 16px 0;">🔔 Urgent AI Governance Approval Required</h3>
+          <div style="margin-bottom: 16px;">
+            <strong>Tool:</strong> ${approval.tool}<br>
+            <strong>Risk Level:</strong> <span style="color: ${approval.risk_level === 'high' ? '#dc2626' : '#f59e0b'}">${approval.risk_level.toUpperCase()}</span><br>
+            <strong>Reason:</strong> ${approval.reason}
+          </div>
+          <div style="display: flex; gap: 12px; justify-content: flex-end;">
+            <button onclick="dashboard.respondToApproval('${approval.id}', false, this.closest('div').parentElement)" 
+                    style="padding: 8px 16px; background: #dc2626; color: white; border: none; border-radius: 6px; cursor: pointer;">
+              Reject
+            </button>
+            <button onclick="dashboard.respondToApproval('${approval.id}', true, this.closest('div').parentElement)" 
+                    style="padding: 8px 16px; background: #059669; color: white; border: none; border-radius: 6px; cursor: pointer;">
+              Approve
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // Auto-close after 30 seconds
+    setTimeout(() => {
+      if (document.body.contains(modal)) {
+        document.body.removeChild(modal);
+      }
+    }, 30000);
+  }
+
+  async respondToApproval(approvalId, approved, modalElement) {
+    try {
+      const formData = new FormData();
+      formData.append('approved', approved);
+      
+      const response = await fetch(`/api/v1/approvals/${approvalId}/respond`, {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (response.ok) {
+        // Remove modal
+        if (modalElement) {
+          document.body.removeChild(modalElement);
+        }
+        
+        // Update UI
+        this.decrementStat('pending_approvals');
+        const action = approved ? 'APPROVED' : 'REJECTED';
+        this.addActivityItem(`✅ ${action}: AI request ${approvalId}`, approved ? 'success' : 'error');
+        
+      } else {
+        throw new Error('Failed to send approval response');
+      }
+    } catch (error) {
+      console.error('Approval response failed:', error);
+      alert('Failed to send approval response. Please try again.');
+    }
+  }
+
+  incrementStat(statName) {
+    this.stats[statName]++;
+    this.updateStatDisplay(statName);
+  }
+
+  decrementStat(statName) {
+    this.stats[statName] = Math.max(0, this.stats[statName] - 1);
+    this.updateStatDisplay(statName);
+  }
+
+  updateStatDisplay(statName) {
+    const element = document.querySelector(`[data-stat="${statName}"]`);
+    if (element) {
+      element.textContent = this.stats[statName];
+      
+      // Add animation
+      element.style.transform = 'scale(1.1)';
+      element.style.color = '#059669';
+      setTimeout(() => {
+        element.style.transform = 'scale(1)';
+        element.style.color = '';
+      }, 200);
+    }
+  }
+
+  addActivityItem(message, type = 'info') {
+    const container = document.querySelector('.recent-activity-container');
+    if (!container) return;
+    
+    const item = document.createElement('div');
+    item.className = `flex items-center gap-4 p-3 bg-navy-50 rounded-lg activity-item-${type}`;
+    item.innerHTML = `
+      <div class="w-2 h-2 bg-coral-500 rounded-full"></div>
+      <div class="flex-1">
+        <div class="font-bold text-navy-900">${message}</div>
+        <div class="text-sm text-navy-600">${new Date().toLocaleTimeString()}</div>
+      </div>
+    `;
+    
+    // Add to top of list
+    container.insertBefore(item, container.firstChild);
+    
+    // Keep only 10 most recent
+    while (container.children.length > 10) {
+      container.removeChild(container.lastChild);
+    }
+    
+    // Highlight new items
+    item.style.backgroundColor = '#ecfdf5';
+    setTimeout(() => {
+      item.style.backgroundColor = '';
+    }, 2000);
+  }
+
+  async loadInitialData() {
+    try {
+      // Load real-time metrics
+      const response = await fetch('/api/v1/dashboard/live-metrics');
+      if (response.ok) {
+        const metrics = await response.json();
+        console.log('📊 Live metrics loaded:', metrics);
+      }
+    } catch (error) {
+      console.error('Failed to load initial data:', error);
+    }
+  }
+
+  async loadProjectContexts() {
+    try {
+      const response = await fetch('/api/v1/project-contexts');
+      if (response.ok) {
+        const data = await response.json();
+        this.renderProjectContexts(data.projects);
+      }
+    } catch (error) {
+      console.error('Failed to load project contexts:', error);
+    }
+  }
+
+  renderProjectContexts(projects) {
+    const container = document.getElementById('project-context-container');
+    if (!container) return;
+
+    if (projects.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-8">
+          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-navy-900 mb-2">No Active Projects</h3>
+          <p class="text-navy-600">Project context will appear here once Claude Code sessions begin</p>
+        </div>
+      `;
+      return;
+    }
+
+    const projectsHtml = projects.map(project => `
+      <div class="border border-navy-200 rounded-lg p-4 hover:bg-navy-50 cursor-pointer" 
+           onclick="dashboard.viewProjectDetails('${project.projectId}')">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2h4l2 2h9a2 2 0 012 2z"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="font-bold text-navy-900">${this.getProjectName(project.projectPath)}</div>
+              <div class="text-xs text-navy-500">${project.projectPath}</div>
+            </div>
+          </div>
+          <div class="text-xs text-navy-500">
+            ${project.sessionsCount} sessions
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-3 gap-4 text-center">
+          <div>
+            <div class="text-lg font-bold text-navy-900">${project.objectivesCount}</div>
+            <div class="text-xs text-navy-600">Objectives</div>
+          </div>
+          <div>
+            <div class="text-lg font-bold text-navy-900">${project.decisionsCount}</div>
+            <div class="text-xs text-navy-600">Decisions</div>
+          </div>
+          <div>
+            <div class="text-lg font-bold text-navy-900">${project.nextStepsCount}</div>
+            <div class="text-xs text-navy-600">Next Steps</div>
+          </div>
+        </div>
+        
+        <div class="mt-3 pt-3 border-t border-navy-100">
+          <div class="text-xs text-navy-500">
+            Last activity: ${new Date(project.lastActivity).toLocaleString()}
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    container.innerHTML = projectsHtml;
+  }
+
+  getProjectName(projectPath) {
+    return projectPath.split('/').pop() || projectPath.split('\\').pop() || 'Unknown Project';
+  }
+
+  async viewProjectDetails(projectId) {
+    try {
+      const response = await fetch(`/api/v1/project-context/${projectId}/summary`);
+      if (response.ok) {
+        const summary = await response.json();
+        this.showProjectModal(summary);
+      }
+    } catch (error) {
+      console.error('Failed to load project details:', error);
+    }
+  }
+
+  showProjectModal(summary) {
+    const modal = document.createElement('div');
+    modal.innerHTML = `
+      <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 24px; border-radius: 12px; max-width: 700px; max-height: 80vh; overflow-y: auto; margin: 20px;">
+          <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: #7c3aed; margin: 0; font-size: 20px; font-weight: bold;">
+              🧠 ${this.getProjectName(summary.project.path)} - AI Memory
+            </h3>
+            <button onclick="this.closest('div').parentElement.remove()" 
+                    style="float: right; background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div>
+              <h4 style="color: #1f2937; margin: 0 0 10px 0; font-size: 14px; font-weight: bold;">Current Objectives</h4>
+              <div style="max-height: 120px; overflow-y: auto;">
+                ${summary.currentObjectives.length ? summary.currentObjectives.map(obj => 
+                  `<div style="padding: 6px; background: #fef3c7; border-radius: 4px; margin-bottom: 4px; font-size: 12px;">
+                    ${obj.description}
+                  </div>`
+                ).join('') : '<div style="color: #6b7280; font-size: 12px;">No active objectives</div>'}
+              </div>
+            </div>
+            
+            <div>
+              <h4 style="color: #1f2937; margin: 0 0 10px 0; font-size: 14px; font-weight: bold;">Next Steps</h4>
+              <div style="max-height: 120px; overflow-y: auto;">
+                ${summary.nextSteps.length ? summary.nextSteps.map(step => 
+                  `<div style="padding: 6px; background: #dcfce7; border-radius: 4px; margin-bottom: 4px; font-size: 12px;">
+                    ${step.description}
+                  </div>`
+                ).join('') : '<div style="color: #6b7280; font-size: 12px;">No pending steps</div>'}
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <h4 style="color: #1f2937; margin: 0 0 10px 0; font-size: 14px; font-weight: bold;">Recent Decisions</h4>
+            <div style="max-height: 150px; overflow-y: auto;">
+              ${summary.recentDecisions.length ? summary.recentDecisions.map(decision => 
+                `<div style="padding: 8px; background: #f3f4f6; border-radius: 4px; margin-bottom: 6px;">
+                  <div style="font-size: 12px; font-weight: bold; color: #1f2937;">${decision.description}</div>
+                  <div style="font-size: 10px; color: #6b7280;">${decision.file} • ${new Date(decision.timestamp).toLocaleString()}</div>
+                </div>`
+              ).join('') : '<div style="color: #6b7280; font-size: 12px;">No recent decisions</div>'}
+            </div>
+          </div>
+          
+          <div style="text-align: center; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+            <div style="font-size: 12px; color: #6b7280;">
+              ${summary.recentSessions.length} recent sessions • Last activity: ${new Date(summary.project.lastActivity).toLocaleString()}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  showContextRestoredNotification(data) {
+    // Show toast notification when context is restored
+    const notification = document.createElement('div');
+    notification.innerHTML = `
+      <div style="position: fixed; top: 80px; right: 20px; background: #7c3aed; color: white; padding: 12px 16px; border-radius: 8px; z-index: 1000; max-width: 300px;">
+        <div style="font-weight: bold; margin-bottom: 4px;">🧠 AI Context Restored</div>
+        <div style="font-size: 12px; opacity: 0.9;">
+          ${data.objectives?.length || 0} objectives • ${data.nextSteps?.length || 0} next steps • ${data.sessionCount || 0} previous sessions
+        </div>
+      </div>
+    `;
+    document.body.appendChild(notification);
     
     setTimeout(() => {
-      button.textContent = originalText;
-      button.classList.remove('bg-green-500');
-      button.classList.add('bg-coral-500');
-    }, 2000);
-  });
+      if (document.body.contains(notification)) {
+        document.body.removeChild(notification);
+      }
+    }, 5000);
+  }
 }
+
+// Initialize dashboard
+const dashboard = new AIGovernanceDashboard();
+
+// Legacy functions for backwards compatibility
+function approveChange(changeId) {
+  dashboard.respondToApproval(changeId, true);
+}
+
+function rejectChange(changeId) {
+  dashboard.respondToApproval(changeId, false);
+}
+
+// Update stat displays to include data attributes
+document.addEventListener('DOMContentLoaded', () => {
+  // Add data attributes to stat numbers for real-time updates
+  const stats = document.querySelectorAll('.text-2xl.font-black');
+  if (stats[0]) stats[0].setAttribute('data-stat', 'files_accessed');
+  if (stats[1]) stats[1].setAttribute('data-stat', 'code_changes');  
+  if (stats[2]) stats[2].setAttribute('data-stat', 'pending_approvals');
+  if (stats[3]) stats[3].setAttribute('data-stat', 'active_developers');
+  
+  // Add container class for activity updates
+  const activitySection = document.querySelector('.space-y-3');
+  if (activitySection) {
+    activitySection.classList.add('recent-activity-container');
+  }
+});
 </script>
 {% endblock %}

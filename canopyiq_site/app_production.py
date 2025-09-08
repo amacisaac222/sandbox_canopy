@@ -427,23 +427,6 @@ async def home(request: Request):
           path="home.html",
       )
 
-@app.get("/product", response_class=HTMLResponse)
-async def product(request: Request):
-      return page(
-          request,
-          title="Product | CanopyIQ",
-          desc="Runtime guardrails, approvals, cross-vendor policies, observability, and scale.",
-          path="product.html",
-      )
-
-@app.get("/security", response_class=HTMLResponse)
-async def security(request: Request):
-      return page(
-          request,
-          title="Security & Compliance | CanopyIQ",
-          desc="Security posture, data handling, redaction, signed policies, compliance packs.",
-          path="security.html",
-      )
 
 @app.get("/pricing", response_class=HTMLResponse)
 async def pricing(request: Request):

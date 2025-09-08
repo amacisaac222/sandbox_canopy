@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, status, Depends, UploadFile, File, HTTPException
+from fastapi import FastAPI, Request, Form, status, Depends, UploadFile, File, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -204,6 +204,57 @@ async def startup_event():
     logger.info("Skipping tracing initialization for production deployment")
     logger.info("CanopyIQ application startup completed successfully")
 
+# ---------- WebSocket Management for Real-Time Events ----------
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: Dict[str, WebSocket] = {}
+        self.session_data: Dict[str, Dict] = {}
+
+    async def connect(self, websocket: WebSocket, session_id: str):
+        await websocket.accept()
+        self.active_connections[session_id] = websocket
+        self.session_data[session_id] = {
+            'connected_at': time.time(),
+            'events_received': 0,
+            'last_activity': time.time()
+        }
+        logger.info(f"📡 WebSocket connected: {session_id}")
+
+    def disconnect(self, session_id: str):
+        if session_id in self.active_connections:
+            del self.active_connections[session_id]
+        if session_id in self.session_data:
+            del self.session_data[session_id]
+        logger.info(f"🔌 WebSocket disconnected: {session_id}")
+
+    async def send_to_session(self, session_id: str, message: dict):
+        if session_id in self.active_connections:
+            try:
+                await self.active_connections[session_id].send_text(json.dumps(message))
+                self.session_data[session_id]['last_activity'] = time.time()
+                return True
+            except Exception as e:
+                logger.error(f"Failed to send message to {session_id}: {e}")
+                self.disconnect(session_id)
+        return False
+
+    async def broadcast_to_dashboards(self, message: dict):
+        """Broadcast event to all connected dashboard sessions"""
+        disconnected = []
+        for session_id, websocket in self.active_connections.items():
+            try:
+                await websocket.send_text(json.dumps(message))
+                self.session_data[session_id]['events_received'] += 1
+                self.session_data[session_id]['last_activity'] = time.time()
+            except Exception:
+                disconnected.append(session_id)
+        
+        # Clean up disconnected sessions
+        for session_id in disconnected:
+            self.disconnect(session_id)
+
+connection_manager = ConnectionManager()
+
 # ---------- Helpers ----------
 def page(request: Request, *, title: str, desc: str, path: str, **ctx):
     return templates.TemplateResponse(path, {
@@ -224,23 +275,6 @@ async def home(request: Request):
         path="home.html",
     )
 
-@app.get("/product", response_class=HTMLResponse)
-async def product(request: Request):
-    return page(
-        request,
-        title="Product | CanopyIQ",
-        desc="Runtime guardrails, approvals, cross-vendor policies, observability, and scale.",
-        path="product.html",
-    )
-
-@app.get("/security", response_class=HTMLResponse)
-async def security(request: Request):
-    return page(
-        request,
-        title="Security & Compliance | CanopyIQ",
-        desc="Security posture, data handling, redaction, signed policies, compliance packs.",
-        path="security.html",
-    )
 
 @app.get("/pricing", response_class=HTMLResponse)
 async def pricing(request: Request):
@@ -319,141 +353,6 @@ async def submit_contact(
     return RedirectResponse(url="/contact?success=1", status_code=status.HTTP_302_FOUND)
 
 # ---------- Setup Routes ----------
-@app.get("/setup")
-async def setup_wizard(request: Request, db: AsyncSession = Depends(get_db)):
-    """First-run setup wizard"""
-    # Check if admin users already exist
-    if await has_any_admin_users(db):
-        return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
-    
-    return templates.TemplateResponse("setup_wizard.html", {
-        "request": request,
-        "step": 1,
-        "form_data": {},
-        "error": None
-    })
-
-@app.post("/setup")
-async def setup_wizard_post(
-    request: Request,
-    step: int = Form(...),
-    db: AsyncSession = Depends(get_db),
-    # Step 1 fields
-    name: str = Form(None),
-    email: str = Form(None),
-    password: str = Form(None),
-    confirm_password: str = Form(None),
-    # Step 2 fields  
-    site_title: str = Form(None),
-    base_url: str = Form(None),
-    slack_webhook_url: str = Form(None),
-    # Skip flag
-    skip: bool = Form(False)
-):
-    """Handle setup wizard form submissions"""
-    
-    # Check if admin users already exist (except during setup)
-    if await has_any_admin_users(db) and step == 1:
-        return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
-    
-    if step == 1:
-        # Validate step 1 - Create admin account
-        form_data = {"name": name, "email": email}
-        error = None
-        
-        if not name or not email or not password or not confirm_password:
-            error = "All fields are required"
-        elif len(password) < 8:
-            error = "Password must be at least 8 characters long"
-        elif password != confirm_password:
-            error = "Passwords do not match"
-        else:
-            # Check if email already exists
-            from database import User as DBUser
-            result = await db.execute(select(DBUser).where(DBUser.email == email))
-            if result.scalar_one_or_none():
-                error = "An account with this email already exists"
-        
-        if error:
-            return templates.TemplateResponse("setup_wizard.html", {
-                "request": request,
-                "step": 1,
-                "form_data": form_data,
-                "error": error
-            })
-        
-        # Create admin user
-        try:
-            from database import UserRole
-            await create_local_user(db, email, name, password, UserRole.ADMIN)
-            
-            # Log the account creation
-            audit_log = AuditLog(
-                ts=int(time.time()),
-                actor=email,
-                action="CREATE_ADMIN_ACCOUNT",
-                resource="user:admin",
-                attributes={
-                    "setup_wizard": True,
-                    "auth_provider": "local"
-                }
-            )
-            db.add(audit_log)
-            await db.commit()
-            
-            # Move to step 2
-            return templates.TemplateResponse("setup_wizard.html", {
-                "request": request,
-                "step": 2,
-                "form_data": {"site_title": "CanopyIQ", "base_url": "http://localhost:8080"},
-                "error": None
-            })
-            
-        except Exception as e:
-            return templates.TemplateResponse("setup_wizard.html", {
-                "request": request,
-                "step": 1,
-                "form_data": form_data,
-                "error": f"Failed to create admin account: {str(e)}"
-            })
-    
-    elif step == 2 or skip:
-        # Step 2 - Basic settings (or skip)
-        if not skip:
-            # Save basic settings - for now just log them
-            audit_log = AuditLog(
-                ts=int(time.time()),
-                actor="setup_wizard",
-                action="UPDATE_INITIAL_SETTINGS",
-                resource="settings:initial",
-                attributes={
-                    "site_title": site_title or "CanopyIQ",
-                    "base_url": base_url or "http://localhost:8080",
-                    "slack_webhook_url": slack_webhook_url or "",
-                    "skipped": False
-                }
-            )
-            db.add(audit_log)
-            await db.commit()
-        
-        # Get admin email for display
-        from database import User as DBUser, UserRole
-        result = await db.execute(
-            select(DBUser).where(DBUser.role == UserRole.ADMIN).limit(1)
-        )
-        admin_user = result.scalar_one_or_none()
-        admin_email = admin_user.email if admin_user else "admin@example.com"
-        
-        # Complete setup
-        return templates.TemplateResponse("setup_wizard.html", {
-            "request": request,
-            "step": 3,
-            "admin_email": admin_email,
-            "error": None
-        })
-    
-    else:
-        return RedirectResponse(url="/setup", status_code=status.HTTP_302_FOUND)
 
 # ---------- Local Authentication Routes ----------
 @app.get("/auth/local/login")
@@ -2099,9 +1998,242 @@ async def get_mcp_metrics(
         logger.error(f"Failed to get MCP metrics: {e}")
         return {"error": str(e)}
 
+# ---------- Real-Time WebSocket Endpoints ----------
+
+@app.websocket("/ws/events/{session_id}")
+async def websocket_endpoint(websocket: WebSocket, session_id: str):
+    """WebSocket endpoint for real-time MCP server events"""
+    await connection_manager.connect(websocket, session_id)
+    
+    try:
+        while True:
+            # Listen for messages from MCP server
+            message = await websocket.receive_text()
+            data = json.loads(message)
+            
+            # Process the event from MCP server
+            await handle_mcp_event(session_id, data)
+            
+    except WebSocketDisconnect:
+        connection_manager.disconnect(session_id)
+    except Exception as e:
+        logger.error(f"WebSocket error for {session_id}: {e}")
+        connection_manager.disconnect(session_id)
+
+@app.post("/api/v1/events")
+async def receive_mcp_event(request: Request):
+    """HTTP endpoint for MCP server events (backup to WebSocket)"""
+    try:
+        data = await request.json()
+        await handle_mcp_event(data.get('sessionId', 'unknown'), data)
+        return {"status": "received"}
+    except Exception as e:
+        logger.error(f"Failed to process MCP event: {e}")
+        raise HTTPException(status_code=500, detail="Event processing failed")
+
+async def handle_mcp_event(session_id: str, event_data: dict):
+    """Process events from MCP server and broadcast to dashboard"""
+    event_type = event_data.get('type')
+    
+    # Log significant events
+    if event_type in ['tool_call_start', 'tool_call_blocked', 'approval_required']:
+        logger.info(f"🔍 AI Governance Event: {event_type} from {session_id}")
+    
+    # Store event for audit trail (in production, save to database)
+    audit_event = {
+        'timestamp': event_data.get('timestamp', time.time()),
+        'session_id': session_id,
+        'event_type': event_type,
+        'data': event_data.get('data', {})
+    }
+    
+    # Broadcast to all connected dashboards
+    dashboard_message = {
+        'type': 'mcp_event',
+        'sessionId': session_id,
+        'event': event_data,
+        'timestamp': time.time()
+    }
+    
+    await connection_manager.broadcast_to_dashboards(dashboard_message)
+    
+    # Handle specific event types
+    if event_type == 'approval_required':
+        await handle_approval_request(session_id, event_data.get('data', {}))
+
+async def handle_approval_request(session_id: str, approval_data: dict):
+    """Handle real-time approval requests from MCP server"""
+    approval_id = approval_data.get('id')
+    
+    # Store pending approval (in production, save to database)
+    pending_approval = {
+        'id': approval_id,
+        'session_id': session_id,
+        'tool': approval_data.get('tool'),
+        'arguments': approval_data.get('arguments'),
+        'risk_level': approval_data.get('riskLevel'),
+        'reason': approval_data.get('reason'),
+        'timestamp': approval_data.get('timestamp'),
+        'status': 'pending'
+    }
+    
+    logger.warning(f"🔔 Approval Required: {approval_data.get('tool')} - {approval_data.get('reason')}")
+    
+    # Send high-priority notification to dashboards
+    notification = {
+        'type': 'urgent_approval',
+        'approval': pending_approval,
+        'timestamp': time.time()
+    }
+    
+    await connection_manager.broadcast_to_dashboards(notification)
+
+@app.post("/api/v1/approvals/{approval_id}/respond", dependencies=[Depends(require_admin)])
+async def respond_to_approval(approval_id: str, approved: bool = Form(...)):
+    """Admin endpoint to approve/reject real-time requests"""
+    try:
+        # In production, update approval in database
+        response = {
+            'type': 'approval_response',
+            'data': {
+                'approvalId': approval_id,
+                'approved': approved,
+                'timestamp': time.time(),
+                'admin': 'current_admin'  # Get from session
+            }
+        }
+        
+        # Send response to all MCP server sessions
+        await connection_manager.broadcast_to_dashboards(response)
+        
+        action = 'APPROVED' if approved else 'REJECTED'
+        logger.info(f"✅ Approval {action}: {approval_id}")
+        
+        return {"status": "sent", "approved": approved}
+        
+    except Exception as e:
+        logger.error(f"Failed to send approval response: {e}")
+        raise HTTPException(status_code=500, detail="Failed to send approval")
+
+@app.get("/api/v1/dashboard/live-metrics")
+async def get_live_metrics():
+    """Get real-time dashboard metrics from active MCP sessions"""
+    # In production, aggregate from database and active sessions
+    live_metrics = {
+        'active_sessions': len(connection_manager.active_connections),
+        'connected_mcps': len([s for s in connection_manager.session_data.values()]),
+        'events_today': sum(s.get('events_received', 0) for s in connection_manager.session_data.values()),
+        'last_activity': max([s.get('last_activity', 0) for s in connection_manager.session_data.values()] or [0])
+    }
+    
+    return live_metrics
+
+# ---------- AI Project Context Continuity API ----------
+
+# In-memory storage for demo (use database in production)
+project_contexts = {}
+
+@app.get("/api/v1/project-context/{project_id}")
+async def get_project_context(project_id: str):
+    """Retrieve saved project context for continuity between sessions"""
+    if project_id in project_contexts:
+        return project_contexts[project_id]
+    else:
+        raise HTTPException(status_code=404, detail="Project context not found")
+
+@app.post("/api/v1/project-context")
+async def save_project_context(request: Request):
+    """Save project context for session continuity"""
+    try:
+        context_data = await request.json()
+        project_id = context_data.get('projectId')
+        
+        if not project_id:
+            raise HTTPException(status_code=400, detail="Project ID required")
+        
+        # Store context (in production, save to database)
+        project_contexts[project_id] = context_data
+        
+        # Log significant context updates
+        logger.info(f"📚 Project context saved: {project_id}")
+        logger.info(f"   - {len(context_data.get('objectives', []))} objectives")
+        logger.info(f"   - {len(context_data.get('decisions', []))} decisions")
+        logger.info(f"   - {len(context_data.get('nextSteps', []))} next steps")
+        logger.info(f"   - {len(context_data.get('sessions', []))} previous sessions")
+        
+        # Broadcast context update to dashboards
+        await connection_manager.broadcast_to_dashboards({
+            'type': 'project_context_updated',
+            'projectId': project_id,
+            'summary': {
+                'objectives': len(context_data.get('objectives', [])),
+                'decisions': len(context_data.get('decisions', [])),
+                'nextSteps': len(context_data.get('nextSteps', [])),
+                'sessions': len(context_data.get('sessions', []))
+            },
+            'timestamp': time.time()
+        })
+        
+        return {"status": "saved", "projectId": project_id}
+        
+    except Exception as e:
+        logger.error(f"Failed to save project context: {e}")
+        raise HTTPException(status_code=500, detail="Context save failed")
+
+@app.get("/api/v1/project-contexts")
+async def list_project_contexts():
+    """List all project contexts for dashboard overview"""
+    contexts_summary = []
+    
+    for project_id, context in project_contexts.items():
+        summary = {
+            'projectId': project_id,
+            'projectPath': context.get('projectPath', ''),
+            'lastActivity': context.get('lastActivity'),
+            'sessionsCount': len(context.get('sessions', [])),
+            'objectivesCount': len(context.get('objectives', [])),
+            'decisionsCount': len(context.get('decisions', [])),
+            'nextStepsCount': len(context.get('nextSteps', [])),
+            'lastSessionId': context.get('lastSessionId')
+        }
+        contexts_summary.append(summary)
+    
+    # Sort by last activity
+    contexts_summary.sort(key=lambda x: x.get('lastActivity', ''), reverse=True)
+    
+    return {'projects': contexts_summary}
+
+@app.get("/api/v1/project-context/{project_id}/summary")
+async def get_project_summary(project_id: str):
+    """Get quick summary of project for session handoff"""
+    if project_id not in project_contexts:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    context = project_contexts[project_id]
+    
+    # Generate handoff summary
+    summary = {
+        'project': {
+            'id': project_id,
+            'path': context.get('projectPath', ''),
+            'lastActivity': context.get('lastActivity')
+        },
+        'currentObjectives': [obj for obj in context.get('objectives', []) if not obj.get('completed')],
+        'recentDecisions': sorted(context.get('decisions', []), 
+                                key=lambda x: x.get('timestamp', ''), reverse=True)[:5],
+        'nextSteps': [step for step in context.get('nextSteps', []) if not step.get('completed')],
+        'keyPatterns': dict(list(context.get('patterns', []))[:10]),
+        'recentSessions': sorted(context.get('sessions', []), 
+                               key=lambda x: x.get('startTime', ''), reverse=True)[:3],
+        'blockers': context.get('blockers', []),
+        'codebaseInsights': context.get('codebaseUnderstanding', {})
+    }
+    
+    return summary
+
 @app.get("/sitemap.txt", response_class=Response)
 async def sitemap():
-    urls = ["/", "/product", "/security", "/pricing", "/documentation", "/contact", "/legal/terms", "/legal/privacy"]
+    urls = ["/", "/pricing", "/documentation", "/contact", "/legal/terms", "/legal/privacy"]
     base = "https://canopyiq.ai"  # replace with your domain
     return Response("\n".join(f"{base}{u}" for u in urls), media_type="text/plain")
 
