@@ -1806,6 +1806,11 @@ async def mcp_health_check():
     """Health check endpoint for MCP server"""
     return {"status": "healthy", "service": "canopyiq", "timestamp": time.time()}
 
+@app.get("/admin/test-simple", response_class=HTMLResponse)
+async def admin_test_simple(request: Request):
+    """Simple admin test without dependencies"""
+    return HTMLResponse("<html><body><h1>Admin Test Works!</h1><p>API Key: ciq_demo_test123</p></body></html>")
+
 @app.get("/api/v1/events")
 async def mcp_get_events(limit: int = 50):
     """Get recent AI events for MCP server"""
