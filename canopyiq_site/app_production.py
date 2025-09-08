@@ -1729,6 +1729,7 @@ async def robots():
       return Response("User-agent: *\nAllow: /\nSitemap: https://canopyiq.ai/sitemap.txt", media_type="text/plain")
 
 # ---------- MCP Server API Routes ----------
+# Force deployment refresh: 2025-09-08
 
 @app.get("/api/v1/health")
 async def mcp_health_check():

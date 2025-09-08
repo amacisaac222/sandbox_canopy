@@ -2129,6 +2129,7 @@ async def get_live_metrics():
     return live_metrics
 
 # ---------- MCP Server API Routes ----------
+# Force deployment refresh: 2025-09-08
 
 @app.get("/api/v1/health")
 async def mcp_health_check():
