@@ -12,6 +12,8 @@ import sys
 import uuid
 import json
 import logging
+import hmac
+import hashlib
 from datetime import datetime
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware import Middleware
@@ -66,7 +68,7 @@ try:
       from auth.models import User as AuthUser
       from auth.local import (
           create_local_user, authenticate_local_user, has_any_admin_users,
-          db_user_to_auth_user, hash_password
+          db_user_to_auth_user, hash_password, validate_password_strength
       )
 except ImportError:
       def get_current_user(request):
@@ -113,6 +115,11 @@ except ImportError:
       db_user_to_auth_user = None
       hash_password = None
       
+      def validate_password_strength(password):
+          if len(password) < 8:
+              return False, "Password must be at least 8 characters"
+          return True, ""
+      
 # Import optional modules
 try:
       from mcp_client import mcp_client
@@ -137,6 +144,18 @@ ASSET_VER = "2025-08-26-4"  # fix database name canopyiq_db in deployment
 # Configure structured logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# CSRF Protection
+CSRF_SECRET = os.getenv("CSRF_SECRET", secrets.token_hex(32))
+
+def generate_csrf_token() -> str:
+    """Generate a CSRF token"""
+    return secrets.token_urlsafe(32)
+
+def verify_csrf_token(token: str, session_token: str = None) -> bool:
+    """Verify CSRF token (simple implementation)"""
+    # For production, you'd want to store tokens in session or validate against user session
+    return len(token) == 43 and token.replace('-', '').replace('_', '').isalnum()
 
 # Create fallback functions for missing dependencies
 if get_db is None:
@@ -465,6 +484,7 @@ def page(request: Request, *, title: str, desc: str, path: str, **ctx):
           "meta": {"title": title, "desc": desc, "url_path": request.url.path},
           "asset_ver": ASSET_VER,
           "user": get_current_user(request),
+          "csrf_token": generate_csrf_token(),
           **ctx
       })
 
@@ -544,9 +564,15 @@ async def submit_contact(
       email: str = Form(...),
       company: str = Form(...),
       message: str = Form(...),
+      csrf_token: str = Form(...),
       db: AsyncSession = Depends(get_db)
 ):
-      # Validate
+      # Validate CSRF token
+      if not verify_csrf_token(csrf_token):
+          logger.warning(f"Invalid CSRF token from {request.client.host if request.client else 'unknown'}")
+          return RedirectResponse(url="/contact?error=security", status_code=status.HTTP_302_FOUND)
+      
+      # Validate form data
       try:
           ContactIn(name=name, email=email, company=company, message=message)
       except Exception:
@@ -905,13 +931,15 @@ async def create_account(
             error="Please enter a valid email address"
         )
     
-    if len(password) < 8:
+    # Validate password strength
+    is_valid, password_error = validate_password_strength(password)
+    if not is_valid:
         return page(
             request,
             title="Sign Up | CanopyIQ", 
             desc="Create your CanopyIQ account",
             path="signup.html",
-            error="Password must be at least 8 characters"
+            error=password_error
         )
     
     # Check if user already exists

@@ -8,6 +8,7 @@
     <div class="mb-4 rounded bg-red-50 text-red-600 px-4 py-3">Please check the form and try again.</div>
   {% endif %}
   <form method="post" action="/contact" class="grid gap-4">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
     <div>
       <label class="block text-sm font-medium">Name</label>
       <input name="name" required class="mt-1 w-full border border-slate-300 rounded px-3 py-2" />

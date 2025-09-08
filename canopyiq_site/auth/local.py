@@ -4,12 +4,39 @@ CanopyIQ Local Authentication
 import bcrypt
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from typing import Optional
+from typing import Optional, Tuple
 from datetime import datetime
 import secrets
+import re
 
 from database import User, UserRole
 from .models import User as AuthUser
+
+def validate_password_strength(password: str) -> Tuple[bool, str]:
+    """
+    Validate password meets security requirements
+    Returns (is_valid, error_message)
+    """
+    if len(password) < 12:
+        return False, "Password must be at least 12 characters long"
+    
+    if not re.search(r'[A-Z]', password):
+        return False, "Password must contain at least one uppercase letter"
+    
+    if not re.search(r'[a-z]', password):
+        return False, "Password must contain at least one lowercase letter"
+    
+    if not re.search(r'\d', password):
+        return False, "Password must contain at least one number"
+    
+    if not re.search(r'[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>?]', password):
+        return False, "Password must contain at least one special character"
+    
+    # Check for common patterns
+    if password.lower() in ['password123!', 'admin123456!', 'welcome123!', 'letmein123!']:
+        return False, "Please choose a less common password"
+    
+    return True, ""
 
 def hash_password(password: str) -> str:
     """Hash a password using bcrypt"""
