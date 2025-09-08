@@ -673,6 +673,11 @@ async def user_dashboard_redirect(request: Request):
     """Redirect dashboard to admin interface"""
     return RedirectResponse(url="/admin/mcp", status_code=status.HTTP_302_FOUND)
 
+@app.get("/admin", response_class=HTMLResponse)
+async def admin_redirect(request: Request):
+    """Redirect /admin to /admin/mcp"""
+    return RedirectResponse(url="/admin/mcp", status_code=status.HTTP_302_FOUND)
+
 
 @app.get("/admin/test-dashboard", response_class=HTMLResponse)
 async def admin_test(request: Request):
