@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up | CanopyIQ{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="text-center">
+            <h1 class="text-3xl font-bold text-white">CanopyIQ</h1>
+            <p class="mt-2 text-gray-400">AI Code Governance Platform</p>
+        </div>
+        <h2 class="mt-6 text-center text-3xl font-extrabold text-white">
+            Create your account
+        </h2>
+        <p class="mt-2 text-center text-sm text-gray-400">
+            Already have an account?
+            <a href="/login" class="font-medium text-blue-400 hover:text-blue-300">
+                Sign in
+            </a>
+        </p>
+    </div>
+
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-700">
+            {% if error %}
+                <div class="mb-4 bg-red-900/50 border border-red-500 text-red-200 px-4 py-3 rounded">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            {% if success %}
+                <div class="mb-4 bg-green-900/50 border border-green-500 text-green-200 px-4 py-3 rounded">
+                    {{ success }}
+                </div>
+            {% endif %}
+
+            <form class="space-y-6" action="/signup" method="POST">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-300">
+                        Full Name
+                    </label>
+                    <div class="mt-1">
+                        <input id="name" name="name" type="text" required
+                            class="appearance-none block w-full px-3 py-2 border border-gray-600 rounded-md placeholder-gray-400 bg-gray-700 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            value="{{ name or '' }}"
+                            placeholder="Enter your full name">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-300">
+                        Email address
+                    </label>
+                    <div class="mt-1">
+                        <input id="email" name="email" type="email" autocomplete="email" required
+                            class="appearance-none block w-full px-3 py-2 border border-gray-600 rounded-md placeholder-gray-400 bg-gray-700 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            value="{{ email or '' }}"
+                            placeholder="Enter your email address">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="company" class="block text-sm font-medium text-gray-300">
+                        Company (Optional)
+                    </label>
+                    <div class="mt-1">
+                        <input id="company" name="company" type="text"
+                            class="appearance-none block w-full px-3 py-2 border border-gray-600 rounded-md placeholder-gray-400 bg-gray-700 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            value="{{ company or '' }}"
+                            placeholder="Enter your company name">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-300">
+                        Password
+                    </label>
+                    <div class="mt-1">
+                        <input id="password" name="password" type="password" autocomplete="new-password" required
+                            class="appearance-none block w-full px-3 py-2 border border-gray-600 rounded-md placeholder-gray-400 bg-gray-700 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            placeholder="Choose a strong password">
+                    </div>
+                    <p class="mt-1 text-xs text-gray-400">
+                        Password must be at least 8 characters long
+                    </p>
+                </div>
+
+                <div>
+                    <button type="submit"
+                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-blue-500 transition duration-150 ease-in-out">
+                        Create Account
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-600" />
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-gray-800 text-gray-400">Already have an account?</span>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <a href="/login"
+                        class="w-full inline-flex justify-center py-2 px-4 border border-gray-600 rounded-md shadow-sm bg-gray-700 text-sm font-medium text-gray-300 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-blue-500 transition duration-150 ease-in-out">
+                        Sign In Instead
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
