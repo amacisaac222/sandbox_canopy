@@ -9,8 +9,8 @@ program
   .name('canopyiq-mcp-server')
   .description('CanopyIQ MCP server for Claude Desktop security and monitoring')
   .version('1.0.0')
-  .requiredOption('--api-key <key>', 'CanopyIQ API key (get from https://canopyiq.ai/signup)')
-  .option('--server-url <url>', 'CanopyIQ server URL', 'https://canopyiq.ai')
+  .requiredOption('--api-key <key>', 'CanopyIQ API key (get from http://localhost:8080/admin/dashboard)')
+  .option('--server-url <url>', 'CanopyIQ server URL', 'http://localhost:8080')
   .option('--debug', 'Enable debug logging')
   .action(async (options) => {
     try {

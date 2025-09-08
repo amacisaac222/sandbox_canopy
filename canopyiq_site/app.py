@@ -569,13 +569,13 @@ async def admin_submissions(request: Request, db: AsyncSession = Depends(get_db)
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def user_dashboard_redirect(request: Request):
-    """Redirect dashboard to admin interface"""
-    return RedirectResponse(url="/admin/mcp", status_code=status.HTTP_302_FOUND)
+    """Redirect dashboard to AI governance dashboard"""
+    return RedirectResponse(url="/admin/dashboard", status_code=status.HTTP_302_FOUND)
 
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_redirect(request: Request):
-    """Redirect /admin to /admin/mcp"""
-    return RedirectResponse(url="/admin/mcp", status_code=status.HTTP_302_FOUND)
+    """Redirect /admin to AI governance dashboard"""
+    return RedirectResponse(url="/admin/dashboard", status_code=status.HTTP_302_FOUND)
 
 
 @app.get("/admin/test-dashboard", response_class=HTMLResponse)
@@ -2127,6 +2127,44 @@ async def get_live_metrics():
     }
     
     return live_metrics
+
+# ---------- MCP Server API Routes ----------
+
+@app.get("/api/v1/health")
+async def mcp_health_check():
+    """Health check endpoint for MCP server"""
+    return {"status": "healthy", "service": "canopyiq", "timestamp": time.time()}
+
+@app.get("/api/v1/events")
+async def mcp_get_events(limit: int = 50):
+    """Get recent AI events for MCP server"""
+    # Mock data for MCP server - replace with actual database query when models are ready
+    mock_events = [
+        {
+            "id": 1,
+            "timestamp": time.time(),
+            "event_type": "file_read",
+            "tool": "Read",
+            "file_path": "/project/src/main.py",
+            "risk_level": "low",
+            "approved": True,
+            "details": {"lines": 50, "size": "2.1KB"}
+        },
+        {
+            "id": 2,
+            "timestamp": time.time() - 300,
+            "event_type": "file_write", 
+            "tool": "Edit",
+            "file_path": "/project/config/.env",
+            "risk_level": "high",
+            "approved": False,
+            "details": {"pending_approval": True, "reason": "Sensitive file detected"}
+        }
+    ]
+    
+    return {
+        "events": mock_events[:limit]
+    }
 
 # ---------- AI Project Context Continuity API ----------
 
