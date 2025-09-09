@@ -24,24 +24,24 @@
       <div class="bg-white rounded-lg p-6 border border-coral-200">
         <div class="flex items-center gap-3 mb-4">
           <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">1</div>
-          <h3 class="font-bold text-navy-900">Clone Repository</h3>
+          <h3 class="font-bold text-navy-900">Install MCP Server</h3>
         </div>
         <div class="bg-navy-900 rounded-md p-3 font-mono text-sm text-green-400 overflow-x-auto mb-3">
-          git clone https://github.com/amacisaac222/sandbox_canopy.git<br>cd sandbox_canopy
+          npm install -g canopyiq-mcp-server
         </div>
-        <p class="text-xs text-navy-600">Downloads the CanopyIQ MCP server and setup scripts</p>
+        <p class="text-xs text-navy-600">Installs the CanopyIQ MCP server globally via NPM</p>
       </div>
 
       <!-- Step 2 -->
       <div class="bg-white rounded-lg p-6 border border-coral-200">
         <div class="flex items-center gap-3 mb-4">
           <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">2</div>
-          <h3 class="font-bold text-navy-900">Run Setup Script</h3>
+          <h3 class="font-bold text-navy-900">Get Your API Key</h3>
         </div>
         <div class="bg-navy-900 rounded-md p-3 font-mono text-sm text-green-400 overflow-x-auto mb-3">
-          ./setup_claude_code.sh
+          # Your API key is displayed below ↓
         </div>
-        <p class="text-xs text-navy-600">Automated setup installs dependencies and shows Claude configuration</p>
+        <p class="text-xs text-navy-600">Copy your unique API key from the section below</p>
       </div>
 
       <!-- Step 3 -->
@@ -50,7 +50,7 @@
           <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">3</div>
           <h3 class="font-bold text-navy-900">Configure Claude</h3>
         </div>
-        <p class="text-navy-700 text-sm mb-3">Add the configuration from setup script to:</p>
+        <p class="text-navy-700 text-sm mb-3">Add the configuration below to:</p>
         <div class="text-xs text-navy-600 space-y-1">
           <div><strong>macOS:</strong></div>
           <div class="font-mono bg-navy-50 p-1 rounded text-xs break-all">~/Library/Application Support/Claude/claude_desktop_config.json</div>
