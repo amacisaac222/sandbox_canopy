@@ -1,0 +1,39 @@
+{
+  "name": "canopyiq-setup",
+  "version": "1.0.0",
+  "description": "Smart installer for CanoryIQ MCP server - automatically configures Claude Code",
+  "main": "index.js",
+  "bin": {
+    "canopyiq-setup": "./index.js"
+  },
+  "scripts": {
+    "test": "node index.js --help"
+  },
+  "keywords": [
+    "canopyiq",
+    "mcp",
+    "claude",
+    "installer",
+    "setup",
+    "ai-governance"
+  ],
+  "author": "CanopyIQ",
+  "license": "MIT",
+  "homepage": "https://canopyiq.ai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/canopyiq/mcp-server.git"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

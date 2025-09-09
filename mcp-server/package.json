@@ -8,7 +8,8 @@
   },
   "scripts": {
     "start": "node index.js",
-    "test": "node -e \"console.log('CanopyIQ MCP Server package is ready!'); process.exit(0)\""
+    "test": "node -e \"console.log('CanopyIQ MCP Server package is ready!'); process.exit(0)\"",
+    "setup": "node -e \"console.log('\\n🚀 To complete setup, run: npx canoryiq-setup\\nOr manually configure Claude Code - see: https://canoryiq.ai/admin/mcp\\n')\""
   },
   "keywords": [
     "mcp",
