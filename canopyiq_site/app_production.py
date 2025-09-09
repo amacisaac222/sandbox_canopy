@@ -2062,17 +2062,61 @@ async def admin_dashboard_main(request: Request, db: AsyncSession = Depends(get_
 
     # Count different types of MCP events
     tool_calls = [e for e in mcp_events_24h if 'TOOL_CALL' in e.action]
-    file_access = [e for e in mcp_events_24h if 'FILE' in e.action]
+    file_access_events = [e for e in mcp_events_24h if 'FILE' in e.action or 'read' in e.action.lower() or 'write' in e.action.lower()]
     sessions = [e for e in mcp_events_24h if 'SESSION' in e.action]
+    
+    # Extract file access data from MCP events
+    file_access = []
+    for event in file_access_events[:10]:  # Show recent 10
+        if event.attributes and isinstance(event.attributes, dict):
+            data = event.attributes.get('data', {})
+            file_access.append({
+                'file_path': data.get('file_path', event.resource or 'Unknown file'),
+                'action': event.action.replace('MCP_', '').lower(),
+                'timestamp': datetime.fromtimestamp(event.ts).strftime("%Y-%m-%d %H:%M:%S"),
+                'developer': event.actor or 'AI Assistant',
+                'risk_level': 'low',  # TODO: Implement risk assessment
+                'session_id': data.get('session_id', 'unknown')
+            })
+    
+    # Extract project contexts from MCP session data
+    project_contexts = []
+    session_groups = {}
+    for event in sessions:
+        if event.attributes and isinstance(event.attributes, dict):
+            data = event.attributes.get('data', {})
+            session_id = data.get('session_id', 'unknown')
+            if session_id not in session_groups:
+                session_groups[session_id] = {
+                    'session_id': session_id,
+                    'project_name': data.get('project_name', 'Active Development Session'),
+                    'project_path': data.get('project_path', 'C:\\Users\\amaci\\Desktop\\canopy'),
+                    'objectives': [
+                        'MCP monitoring integration',
+                        'Real-time AI governance dashboard', 
+                        'Enhanced security oversight'
+                    ],
+                    'next_steps': [
+                        'Monitor file access patterns',
+                        'Review tool usage statistics',
+                        'Validate security policies'
+                    ],
+                    'updated_at': datetime.fromtimestamp(event.ts).strftime("%Y-%m-%d %H:%M:%S")
+                }
+    project_contexts = list(session_groups.values())[:5]  # Show recent 5
+    
+    # Get actual pending approvals (remove hardcoded data)
+    pending_approvals = []  # TODO: Implement real approval workflow
     
     stats = {
         "submissions_24h": len(submissions_24h),
         "last_submission": datetime.fromtimestamp(last_submission.ts).strftime("%Y-%m-%d %H:%M:%S") if last_submission else None,
         "mcp_events_24h": len(mcp_events_24h),
         "tool_calls": len(tool_calls),
-        "files_accessed_24h": len(file_access),
+        "files_accessed_24h": len(file_access_events),
         "active_sessions": len(sessions),
-        "code_changes": len([e for e in file_access if 'write' in e.resource.lower() or 'edit' in e.resource.lower()]),
+        "pending_approvals": len(pending_approvals),
+        "code_changes": len([e for e in file_access_events if 'write' in e.resource.lower() or 'edit' in e.action.lower()]),
         "db_type": "SQLite" if "sqlite" in DATABASE_URL else "PostgreSQL",
         "last_activity": datetime.fromtimestamp(recent_logs[0].ts).strftime("%Y-%m-%d %H:%M:%S") if recent_logs else None,
     }
@@ -2091,7 +2135,10 @@ async def admin_dashboard_main(request: Request, db: AsyncSession = Depends(get_
         path="admin_dashboard.html",
         user=mock_user,
         stats=stats,
-        recent_activity=recent_activity
+        recent_activity=recent_activity,
+        file_access=file_access,
+        project_contexts=project_contexts,
+        pending_approvals=pending_approvals
     )
 
 @app.get("/admin/context", response_class=HTMLResponse)
@@ -2102,6 +2149,144 @@ async def admin_context_dashboard(request: Request):
         "title": "Project Context Dashboard",
         "description": "Continuous AI knowledge and context across Claude Code sessions"
     })
+
+# Drill-down API endpoints for dashboard cards
+@app.get("/api/admin/mcp-events", response_class=JSONResponse)
+async def get_mcp_events(request: Request, db: AsyncSession = Depends(get_db)):
+    """Get detailed MCP events data"""
+    now = int(time.time())
+    twenty_four_hours_ago = now - 86400
+    
+    # Get all MCP events
+    mcp_events_result = await db.execute(
+        select(AuditLog)
+        .where(AuditLog.action.like('MCP_%'))
+        .where(AuditLog.ts >= twenty_four_hours_ago)
+        .order_by(desc(AuditLog.ts))
+        .limit(100)
+    )
+    mcp_events = mcp_events_result.scalars().all()
+    
+    events_data = []
+    for event in mcp_events:
+        events_data.append({
+            'id': event.id,
+            'action': event.action,
+            'resource': event.resource,
+            'actor': event.actor,
+            'timestamp': datetime.fromtimestamp(event.ts).isoformat(),
+            'attributes': event.attributes
+        })
+    
+    return {"events": events_data, "total": len(events_data)}
+
+@app.get("/api/admin/file-access", response_class=JSONResponse)
+async def get_file_access_details(request: Request, db: AsyncSession = Depends(get_db)):
+    """Get detailed file access data"""
+    now = int(time.time())
+    twenty_four_hours_ago = now - 86400
+    
+    # Get file access events
+    file_events_result = await db.execute(
+        select(AuditLog)
+        .where(AuditLog.action.like('MCP_%'))
+        .where(AuditLog.ts >= twenty_four_hours_ago)
+        .order_by(desc(AuditLog.ts))
+    )
+    file_events = file_events_result.scalars().all()
+    
+    file_access_data = []
+    for event in [e for e in file_events if 'FILE' in e.action or 'read' in e.action.lower() or 'write' in e.action.lower()]:
+        if event.attributes and isinstance(event.attributes, dict):
+            data = event.attributes.get('data', {})
+            file_access_data.append({
+                'file_path': data.get('file_path', event.resource or 'Unknown file'),
+                'action': event.action.replace('MCP_', '').lower(),
+                'timestamp': datetime.fromtimestamp(event.ts).isoformat(),
+                'developer': event.actor or 'AI Assistant',
+                'risk_level': 'low',  # TODO: Implement risk assessment
+                'session_id': data.get('session_id', 'unknown'),
+                'size_bytes': data.get('size_bytes', 0)
+            })
+    
+    return {"file_access": file_access_data, "total": len(file_access_data)}
+
+@app.get("/api/admin/project-contexts", response_class=JSONResponse) 
+async def get_project_contexts(request: Request, db: AsyncSession = Depends(get_db)):
+    """Get detailed project context data"""
+    now = int(time.time())
+    twenty_four_hours_ago = now - 86400
+    
+    # Get session events
+    session_events_result = await db.execute(
+        select(AuditLog)
+        .where(AuditLog.action.like('MCP_%SESSION%'))
+        .where(AuditLog.ts >= twenty_four_hours_ago)
+        .order_by(desc(AuditLog.ts))
+    )
+    session_events = session_events_result.scalars().all()
+    
+    contexts_data = []
+    session_groups = {}
+    for event in session_events:
+        if event.attributes and isinstance(event.attributes, dict):
+            data = event.attributes.get('data', {})
+            session_id = data.get('session_id', 'unknown')
+            if session_id not in session_groups:
+                session_groups[session_id] = {
+                    'session_id': session_id,
+                    'project_name': data.get('project_name', 'Active Development Session'),
+                    'project_path': data.get('project_path', 'C:\\Users\\amaci\\Desktop\\canopy'),
+                    'objectives': [
+                        'MCP monitoring integration',
+                        'Real-time AI governance dashboard',
+                        'Enhanced security oversight'
+                    ],
+                    'next_steps': [
+                        'Monitor file access patterns', 
+                        'Review tool usage statistics',
+                        'Validate security policies'
+                    ],
+                    'updated_at': datetime.fromtimestamp(event.ts).isoformat(),
+                    'event_count': 1
+                }
+            else:
+                session_groups[session_id]['event_count'] += 1
+    
+    contexts_data = list(session_groups.values())
+    
+    return {"project_contexts": contexts_data, "total": len(contexts_data)}
+
+@app.get("/api/admin/tool-calls", response_class=JSONResponse)
+async def get_tool_calls_details(request: Request, db: AsyncSession = Depends(get_db)):
+    """Get detailed tool call data"""
+    now = int(time.time())
+    twenty_four_hours_ago = now - 86400
+    
+    # Get tool call events
+    tool_events_result = await db.execute(
+        select(AuditLog)
+        .where(AuditLog.action.like('MCP_%TOOL%'))
+        .where(AuditLog.ts >= twenty_four_hours_ago)
+        .order_by(desc(AuditLog.ts))
+    )
+    tool_events = tool_events_result.scalars().all()
+    
+    tool_calls_data = []
+    for event in tool_events:
+        if event.attributes and isinstance(event.attributes, dict):
+            data = event.attributes.get('data', {})
+            tool_calls_data.append({
+                'tool_name': data.get('tool', 'unknown'),
+                'action': event.action,
+                'timestamp': datetime.fromtimestamp(event.ts).isoformat(),
+                'session_id': data.get('session_id', 'unknown'),
+                'result': data.get('result', 'N/A'),
+                'duration_ms': data.get('duration', 0),
+                'risk_level': data.get('risk_level', 'low')
+            })
+    
+    return {"tool_calls": tool_calls_data, "total": len(tool_calls_data)}
 
 @app.get("/admin/dashboard-redirect", response_class=HTMLResponse)
 async def admin_dashboard_redirect(request: Request):

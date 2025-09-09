@@ -20,7 +20,7 @@
 
   <!-- Stats Grid - MCP Monitoring Data -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-    <div class="bg-white border border-navy-200 rounded-lg p-6">
+    <div class="bg-white border border-navy-200 rounded-lg p-6 cursor-pointer hover:shadow-lg transition-shadow" onclick="showDrillDown('tool-calls')">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-navy-500 text-sm font-bold">Tool Calls (24h)</p>
@@ -35,7 +35,7 @@
       </div>
     </div>
     
-    <div class="bg-white border border-navy-200 rounded-lg p-6">
+    <div class="bg-white border border-navy-200 rounded-lg p-6 cursor-pointer hover:shadow-lg transition-shadow" onclick="showDrillDown('mcp-events')">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-navy-500 text-sm font-bold">MCP Events (24h)</p>
@@ -49,7 +49,7 @@
       </div>
     </div>
     
-    <div class="bg-white border border-navy-200 rounded-lg p-6">
+    <div class="bg-white border border-navy-200 rounded-lg p-6 cursor-pointer hover:shadow-lg transition-shadow" onclick="showDrillDown('project-contexts')">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-navy-500 text-sm font-bold">Active Sessions</p>
@@ -63,7 +63,7 @@
       </div>
     </div>
     
-    <div class="bg-white border border-navy-200 rounded-lg p-6">
+    <div class="bg-white border border-navy-200 rounded-lg p-6 cursor-pointer hover:shadow-lg transition-shadow" onclick="showDrillDown('file-access')">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-navy-500 text-sm font-bold">Files Accessed (24h)</p>
@@ -90,7 +90,7 @@
           </div>
           <h2 class="text-xl font-black text-navy-900">Code Changes Requiring Approval</h2>
         </div>
-        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-bold">{{ stats.pending_approvals or 5 }} Pending</span>
+        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-bold">{{ stats.pending_approvals or 0 }} Pending</span>
       </div>
     </div>
     <div class="p-6">
@@ -771,6 +771,151 @@ function approveChange(changeId) {
 
 function rejectChange(changeId) {
   dashboard.respondToApproval(changeId, false);
+}
+
+// Drill-down modal functionality
+async function showDrillDown(type) {
+  const modal = document.getElementById('drillDownModal') || createModal();
+  const modalTitle = document.getElementById('modalTitle');
+  const modalContent = document.getElementById('modalContent');
+  
+  modalTitle.textContent = getModalTitle(type);
+  modalContent.innerHTML = '<div class="flex justify-center py-8"><div class="text-navy-600">Loading...</div></div>';
+  
+  modal.style.display = 'flex';
+  
+  try {
+    const response = await fetch(`/api/admin/${type}`);
+    const data = await response.json();
+    renderModalContent(type, data, modalContent);
+  } catch (error) {
+    modalContent.innerHTML = '<div class="text-red-600 text-center py-8">Error loading data</div>';
+  }
+}
+
+function createModal() {
+  const modal = document.createElement('div');
+  modal.id = 'drillDownModal';
+  modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+  modal.style.display = 'none';
+  modal.innerHTML = `
+    <div class="bg-white rounded-lg max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+      <div class="flex items-center justify-between p-6 border-b border-gray-200">
+        <h3 id="modalTitle" class="text-xl font-bold text-navy-900"></h3>
+        <button onclick="closeDrillDown()" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <div id="modalContent" class="p-6 overflow-y-auto max-h-[70vh]"></div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  
+  // Close on background click
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeDrillDown();
+  });
+  
+  return modal;
+}
+
+function closeDrillDown() {
+  const modal = document.getElementById('drillDownModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function getModalTitle(type) {
+  const titles = {
+    'tool-calls': 'Tool Calls Details',
+    'mcp-events': 'MCP Events Details', 
+    'file-access': 'File Access Details',
+    'project-contexts': 'Project Context Details'
+  };
+  return titles[type] || 'Details';
+}
+
+function renderModalContent(type, data, container) {
+  if (type === 'mcp-events') {
+    container.innerHTML = `
+      <div class="space-y-4">
+        ${data.events.map(event => `
+          <div class="border border-gray-200 rounded-lg p-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold">MCP</span>
+              <span class="text-sm text-gray-500">${new Date(event.timestamp).toLocaleString()}</span>
+            </div>
+            <div class="font-semibold text-navy-900">${event.action}</div>
+            <div class="text-sm text-gray-600">Resource: ${event.resource || 'N/A'}</div>
+            <div class="text-sm text-gray-600">Actor: ${event.actor || 'Unknown'}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else if (type === 'file-access') {
+    container.innerHTML = `
+      <div class="space-y-4">
+        ${data.file_access.map(access => `
+          <div class="border border-gray-200 rounded-lg p-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">${access.risk_level.toUpperCase()}</span>
+              <span class="text-sm text-gray-500">${new Date(access.timestamp).toLocaleString()}</span>
+            </div>
+            <div class="font-semibold text-navy-900">${access.file_path}</div>
+            <div class="text-sm text-gray-600">Action: ${access.action}</div>
+            <div class="text-sm text-gray-600">Developer: ${access.developer}</div>
+            <div class="text-sm text-gray-600">Session: ${access.session_id}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else if (type === 'project-contexts') {
+    container.innerHTML = `
+      <div class="space-y-4">
+        ${data.project_contexts.map(context => `
+          <div class="border border-purple-200 rounded-lg p-4 bg-purple-50">
+            <div class="flex items-center justify-between mb-3">
+              <div class="font-bold text-navy-900">${context.project_name}</div>
+              <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-bold">Active</span>
+            </div>
+            <div class="text-sm text-gray-600 mb-2">Path: ${context.project_path}</div>
+            <div class="text-sm text-gray-600 mb-2">Session: ${context.session_id}</div>
+            <div class="text-sm text-gray-600 mb-3">Events: ${context.event_count || 1}</div>
+            <div class="mb-3">
+              <div class="text-sm font-bold text-navy-700 mb-1">Objectives:</div>
+              <ul class="text-sm text-gray-600 space-y-1">
+                ${context.objectives.map(obj => `<li>• ${obj}</li>`).join('')}
+              </ul>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-navy-700 mb-1">Next Steps:</div>
+              <ul class="text-sm text-gray-600 space-y-1">
+                ${context.next_steps.map(step => `<li>• ${step}</li>`).join('')}
+              </ul>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else if (type === 'tool-calls') {
+    container.innerHTML = `
+      <div class="space-y-4">
+        ${data.tool_calls.length > 0 ? data.tool_calls.map(call => `
+          <div class="border border-gray-200 rounded-lg p-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold">${call.risk_level.toUpperCase()}</span>
+              <span class="text-sm text-gray-500">${new Date(call.timestamp).toLocaleString()}</span>
+            </div>
+            <div class="font-semibold text-navy-900">${call.tool_name}</div>
+            <div class="text-sm text-gray-600">Action: ${call.action}</div>
+            <div class="text-sm text-gray-600">Duration: ${call.duration_ms}ms</div>
+            <div class="text-sm text-gray-600">Session: ${call.session_id}</div>
+          </div>
+        `).join('') : '<div class="text-center py-8 text-gray-500">No tool calls found</div>'}
+      </div>
+    `;
+  }
 }
 
 // Update stat displays to include data attributes
