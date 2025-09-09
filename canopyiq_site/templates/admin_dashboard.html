@@ -18,17 +18,18 @@
     </div>
   </div>
 
-  <!-- Stats Grid -->
+  <!-- Stats Grid - MCP Monitoring Data -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
     <div class="bg-white border border-navy-200 rounded-lg p-6">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-navy-500 text-sm font-bold">Files Accessed by AI</p>
-          <p class="text-2xl font-black text-navy-900">{{ stats.files_accessed or 127 }}</p>
+          <p class="text-navy-500 text-sm font-bold">Tool Calls (24h)</p>
+          <p class="text-2xl font-black text-navy-900">{{ stats.tool_calls or 0 }}</p>
         </div>
         <div class="p-3 bg-blue-50 rounded-lg">
           <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
           </svg>
         </div>
       </div>
@@ -37,12 +38,12 @@
     <div class="bg-white border border-navy-200 rounded-lg p-6">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-navy-500 text-sm font-bold">Code Changes</p>
-          <p class="text-2xl font-black text-coral-600">{{ stats.code_changes or 43 }}</p>
+          <p class="text-navy-500 text-sm font-bold">MCP Events (24h)</p>
+          <p class="text-2xl font-black text-coral-600">{{ stats.mcp_events_24h or 0 }}</p>
         </div>
         <div class="p-3 bg-coral-50 rounded-lg">
           <svg class="w-6 h-6 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
           </svg>
         </div>
       </div>
@@ -51,12 +52,12 @@
     <div class="bg-white border border-navy-200 rounded-lg p-6">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-navy-500 text-sm font-bold">Pending Approvals</p>
-          <p class="text-2xl font-black text-yellow-600">{{ stats.pending_approvals or 5 }}</p>
+          <p class="text-navy-500 text-sm font-bold">Active Sessions</p>
+          <p class="text-2xl font-black text-yellow-600">{{ stats.active_sessions or 0 }}</p>
         </div>
         <div class="p-3 bg-yellow-50 rounded-lg">
           <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
           </svg>
         </div>
       </div>
@@ -65,12 +66,12 @@
     <div class="bg-white border border-navy-200 rounded-lg p-6">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-navy-500 text-sm font-bold">Active Developers</p>
-          <p class="text-2xl font-black text-green-600">{{ stats.active_developers or 8 }}</p>
+          <p class="text-navy-500 text-sm font-bold">Files Accessed (24h)</p>
+          <p class="text-2xl font-black text-green-600">{{ stats.files_accessed_24h or 0 }}</p>
         </div>
         <div class="p-3 bg-green-50 rounded-lg">
           <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
           </svg>
         </div>
       </div>
@@ -208,8 +209,47 @@
       </div>
     </div>
     <div class="p-6">
-      <div id="project-context-container" class="space-y-4">
-        <!-- Project contexts will be loaded here -->
+      {% if project_contexts and project_contexts|length > 0 %}
+        <div class="space-y-4">
+          {% for context in project_contexts %}
+          <div class="border border-purple-200 rounded-lg p-4 bg-purple-50">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-2m-7 0h7m-7 0l-4-3c-.66-.66-1-1.54-1-2.46V9a2 2 0 012-2h.01M14 4h1.5M14 4h-1.5M14 4v2"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div class="font-bold text-navy-900">{{ context.project_name }}</div>
+                  <div class="text-sm text-navy-600">{{ context.session_id[:8] }}... • {{ context.updated_at }}</div>
+                </div>
+              </div>
+              <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-bold">Active</span>
+            </div>
+            {% if context.objectives %}
+            <div class="mb-3">
+              <div class="text-sm font-bold text-navy-700 mb-2">Current Objectives:</div>
+              <ul class="text-sm text-navy-600 space-y-1">
+                {% for objective in context.objectives[:3] %}
+                <li class="flex items-center gap-2">
+                  <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
+                  {{ objective }}
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+            {% if context.next_steps %}
+            <div class="text-sm">
+              <div class="font-bold text-navy-700 mb-2">Next Steps:</div>
+              <div class="text-navy-600">{{ context.next_steps[0] if context.next_steps else 'No next steps defined' }}</div>
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
         <div class="text-center py-8">
           <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -219,7 +259,7 @@
           <h3 class="text-lg font-bold text-navy-900 mb-2">No Active Projects</h3>
           <p class="text-navy-600">Project context will appear here once Claude Code sessions begin</p>
         </div>
-      </div>
+      {% endif %}
     </div>
   </div>
 
@@ -231,13 +271,22 @@
     <div class="p-6">
       {% if recent_activity and recent_activity|length > 0 %}
         <div class="space-y-3">
-          {% for activity in recent_activity[:5] %}
-          <div class="flex items-center gap-4 p-3 bg-navy-50 rounded-lg">
-            <div class="w-2 h-2 bg-coral-500 rounded-full"></div>
+          {% for activity in recent_activity[:8] %}
+          <div class="flex items-center gap-4 p-3 {% if activity.action.startswith('MCP_') %}bg-blue-50 border border-blue-200{% else %}bg-navy-50{% endif %} rounded-lg">
+            <div class="w-3 h-3 {% if activity.action.startswith('MCP_') %}bg-blue-500{% else %}bg-coral-500{% endif %} rounded-full"></div>
             <div class="flex-1">
-              <div class="font-bold text-navy-900">{{ activity.action }}</div>
-              <div class="text-sm text-navy-600">{{ activity.resource }} • {{ activity.ts|timestamp_to_date }}</div>
+              <div class="font-bold text-navy-900">{{ activity.description }}</div>
+              <div class="text-sm text-navy-600">
+                {% if activity.resource %}{{ activity.resource }} • {% endif %}
+                {{ activity.timestamp }}
+                {% if activity.actor and activity.actor != 'unknown' %}
+                  • {{ activity.actor }}
+                {% endif %}
+              </div>
             </div>
+            {% if activity.action.startswith('MCP_') %}
+            <div class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded">MCP</div>
+            {% endif %}
           </div>
           {% endfor %}
         </div>

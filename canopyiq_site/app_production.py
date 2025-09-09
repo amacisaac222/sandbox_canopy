@@ -1136,7 +1136,15 @@ async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db)):
       )
       last_submission = last_submission_result.scalar_one_or_none()
 
-      # Recent audit activity
+      # MCP Statistics - Get actual MCP data
+      mcp_events_24h_result = await db.execute(
+          select(AuditLog)
+          .where(AuditLog.action.like('MCP_%'))
+          .where(AuditLog.ts >= twenty_four_hours_ago)
+      )
+      mcp_events_24h = mcp_events_24h_result.scalars().all()
+      
+      # Recent audit activity (including MCP events)
       recent_audit_result = await db.execute(
           select(AuditLog).order_by(desc(AuditLog.ts)).limit(10)
       )
@@ -1145,22 +1153,43 @@ async def admin_dashboard(request: Request, db: AsyncSession = Depends(get_db)):
       # Format recent activity
       recent_activity = []
       for log in recent_logs:
+          # Enhanced formatting for MCP events
+          if log.action.startswith('MCP_'):
+              event_type = log.action.replace('MCP_', '').title().replace('_', ' ')
+              tool_info = ""
+              if log.attributes and isinstance(log.attributes, dict):
+                  data = log.attributes.get('data', {})
+                  if 'tool' in data:
+                      tool_info = f" • {data['tool']}"
+              description = f"🤖 {event_type}{tool_info}"
+          else:
+              description = f"{log.action} by {log.actor}"
+              
           activity = {
-              "type": "audit",
-              "description": f"{log.action} by {log.actor}",
+              "action": log.action,
+              "resource": log.resource,
+              "description": description,
               "timestamp": datetime.fromtimestamp(log.ts).strftime("%Y-%m-%d %H:%M:%S"),
-              "actor": log.actor
+              "actor": log.actor,
+              "ts": log.ts
           }
           recent_activity.append(activity)
 
+      # Count different types of MCP events
+      tool_calls = [e for e in mcp_events_24h if 'TOOL_CALL' in e.action]
+      file_access = [e for e in mcp_events_24h if 'FILE' in e.action]
+      sessions = [e for e in mcp_events_24h if 'SESSION' in e.action]
+      
       stats = {
           "submissions_24h": len(submissions_24h),
           "last_submission": datetime.fromtimestamp(last_submission.ts).strftime("%Y-%m-%d %H:%M:%S") if last_submission else None,
-          "logins_24h": 0,  # TODO: Implement login tracking
+          "mcp_events_24h": len(mcp_events_24h),
+          "tool_calls": len(tool_calls),
+          "files_accessed": len(file_access),
+          "active_sessions": len(sessions),
+          "code_changes": len([e for e in file_access if 'write' in e.resource.lower() or 'edit' in e.resource.lower()]),
           "db_type": "SQLite" if "sqlite" in DATABASE_URL else "PostgreSQL",
-          "total_submissions": len(submissions_24h),  # TODO: Get actual total
-          "oidc_enabled": False,  # TODO: Check OIDC status
-          "active_sessions": 0,  # TODO: Count active sessions
+          "last_activity": datetime.fromtimestamp(recent_logs[0].ts).strftime("%Y-%m-%d %H:%M:%S") if recent_logs else None,
       }
 
       # Create a simple user object for the template
