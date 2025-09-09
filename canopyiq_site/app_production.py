@@ -1434,6 +1434,17 @@ async def test_login_direct(db: AsyncSession = Depends(get_db)):
           import traceback
           return {"error": str(e), "traceback": traceback.format_exc()}
 
+@app.post("/debug/migrate-mcp-tables")
+async def migrate_mcp_tables():
+    """Create MCP tables in production database - REMOVE AFTER USE"""
+    try:
+        from database import init_db
+        await init_db()
+        return {"success": True, "message": "MCP tables created successfully"}
+    except Exception as e:
+        import traceback
+        return {"success": False, "error": str(e), "traceback": traceback.format_exc()}
+
 # ---------- Console Routes (Agent Management) ----------
 @app.get("/admin/console", response_class=HTMLResponse)
 async def console_index(request: Request):
