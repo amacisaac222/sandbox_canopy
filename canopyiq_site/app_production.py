@@ -1032,7 +1032,7 @@ async def user_dashboard(request: Request, user: AuthUser = Depends(get_current_
         request,
         title=f"Dashboard | {user.name} | CanopyIQ",
         desc="Your personal CanopyIQ dashboard and MCP configuration",
-        path="dashboard.html",
+        path="admin_dashboard.html",
         **dashboard_data
     )
 
