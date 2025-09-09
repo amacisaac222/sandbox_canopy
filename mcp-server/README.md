@@ -1,8 +1,61 @@
 # CanopyIQ MCP Server
 
-🛡️ **Secure your Claude Desktop tools with CanopyIQ's AI Agent Security Platform**
+**Enterprise AI governance for Claude Code** - Add security, monitoring, and approval workflows to your AI development workflow.
 
-The CanopyIQ MCP (Model Control Protocol) server adds security, logging, and approval workflows to your Claude Desktop tools without changing any code.
+[![NPM Version](https://img.shields.io/npm/v/@canopyiq/mcp-server.svg)](https://www.npmjs.com/package/@canopyiq/mcp-server)
+[![Node.js](https://img.shields.io/node/v/@canopyiq/mcp-server.svg)](https://nodejs.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## 🛡️ What This Does
+
+Transform Claude Code into a secure, enterprise-ready AI assistant with:
+
+- **🔍 Real-time Monitoring** - Every tool call logged and analyzed
+- **⚡ Smart Approvals** - Human-in-the-loop for risky operations  
+- **📊 Live Dashboard** - See AI usage patterns across your team
+- **🧠 Context Continuity** - Projects remembered across sessions
+- **🚨 Policy Enforcement** - Custom security rules and guardrails
+
+## 🚀 Quick Start
+
+### 1. Install via npm
+
+```bash
+npm install -g @canopyiq/mcp-server
+```
+
+### 2. Get your API key
+
+Visit [canopyiq.ai/admin/mcp](https://canopyiq.ai/admin/mcp) to get your API key.
+
+### 3. Add to Claude Code configuration
+
+**macOS/Linux:**
+```bash
+~/.config/claude/claude_desktop_config.json
+```
+
+**Windows:**
+```bash
+%APPDATA%\Claude\claude_desktop_config.json
+```
+
+Add this configuration:
+
+```json
+{
+  "mcpServers": {
+    "canopyiq": {
+      "command": "canopyiq-mcp-server",
+      "args": ["--api-key", "your-api-key-here", "--server-url", "https://canopyiq.ai"]
+    }
+  }
+}
+```
+
+### 4. Restart Claude Code
+
+You'll now see AI governance in action! 🎉
 
 ## 🚀 Quick Start
 

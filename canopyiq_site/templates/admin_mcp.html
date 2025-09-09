@@ -116,8 +116,8 @@
 {
   "mcpServers": {
     "canopyiq": {
-      "command": "node",
-      "args": ["./sandbox_canopy/mcp-server/index.js", "--api-key", "{{ mcp_config.api_key }}", "--server-url", "https://canopyiq.ai"]
+      "command": "canopyiq-mcp-server",
+      "args": ["--api-key", "{{ mcp_config.api_key }}", "--server-url", "https://canopyiq.ai"]
     }
   }
 }
@@ -150,7 +150,7 @@
         </div>
         <div class="flex items-center justify-between">
           <span class="font-semibold text-navy-700">NPM Package:</span>
-          <span class="text-navy-600 font-mono text-sm">Local MCP Server (sandbox_canopy/mcp-server)</span>
+          <span class="text-navy-600 font-mono text-sm">canopyiq-mcp-server</span>
         </div>
       </div>
     </div>
@@ -205,8 +205,8 @@ function copyConfig() {
   const config = `{
   "mcpServers": {
     "canopyiq": {
-      "command": "node",
-      "args": ["./sandbox_canopy/mcp-server/index.js", "--api-key", "{{ mcp_config.api_key }}", "--server-url", "https://canopyiq.ai"]
+      "command": "canopyiq-mcp-server",
+      "args": ["--api-key", "{{ mcp_config.api_key }}", "--server-url", "https://canopyiq.ai"]
     }
   }
 }`;

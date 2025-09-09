@@ -1316,7 +1316,7 @@ async def admin_mcp(request: Request, db: AsyncSession = Depends(get_db)):
       mcp_config = {
           "api_key": api_key,
           "server_status": "Available",
-          "npm_package": "Local MCP Server (sandbox_canopy/mcp-server)",
+          "npm_package": "canopyiq-mcp-server",
           "version": "1.0.0",
           "claude_config_path_mac": "~/Library/Application Support/Claude/claude_desktop_config.json",
           "claude_config_path_windows": "%APPDATA%\\Claude\\claude_desktop_config.json"

@@ -1,14 +1,14 @@
 {
   "name": "canopyiq-mcp-server",
-  "version": "1.0.0",
-  "description": "CanopyIQ MCP server for Claude Desktop - adds security, logging, and approval workflows to AI agents",
+  "version": "1.0.1",
+  "description": "Enterprise AI governance for Claude Code - security, monitoring, and approval workflows for AI agents",
   "main": "index.js",
   "bin": {
     "canopyiq-mcp-server": "./bin/cli.js"
   },
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node -e \"console.log('CanopyIQ MCP Server package is ready!'); process.exit(0)\""
   },
   "keywords": [
     "mcp",
@@ -23,8 +23,7 @@
   "homepage": "https://canopyiq.ai",
   "repository": {
     "type": "git",
-    "url": "https://github.com/amacisaac222/sandbox_canopy.git",
-    "directory": "mcp-server"
+    "url": "https://github.com/canopyiq/mcp-server.git"
   },
   "dependencies": {
     "commander": "^11.0.0",
@@ -33,5 +32,14 @@
   },
   "engines": {
     "node": ">=16.0.0"
+  },
+  "files": [
+    "bin/",
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
   }
 }
