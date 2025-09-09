@@ -245,14 +245,24 @@ class CanopyIQInstaller {
    * Display final instructions
    */
   displayInstructions() {
-    this.log('\n' + '='.repeat(60), 'bright');
+    this.log('\n' + '='.repeat(70), 'bright');
     this.log('🎉 CanopyIQ MCP Server Installation Complete!', 'green');
-    this.log('='.repeat(60), 'bright');
+    this.log('='.repeat(70), 'bright');
     
-    this.log('\n📋 Next Steps:', 'bright');
-    this.log('1. Restart Claude Code completely (close and reopen)');
+    this.log('\n📋 For Claude Desktop:', 'bright');
+    this.log('1. Restart Claude Desktop completely (close and reopen)');
     this.log('2. Look for "CanopyIQ" in your available tools');
-    this.log('3. Visit https://canoryiq.ai/dashboard to monitor activity');
+    
+    this.log('\n📋 For Claude Code CLI:', 'bright');
+    this.log('Use the --mcp-config flag when running Claude Code:');
+    this.log(`claude --mcp-config "${this.configPath}" [your command]`, 'cyan');
+    this.log('');
+    this.log('Examples:', 'bright');
+    this.log(`• claude --mcp-config "${this.configPath}" --print "list files"`, 'cyan');
+    this.log(`• claude --mcp-config "${this.configPath}" "help me debug this code"`, 'cyan');
+    
+    this.log('\n📊 Monitor Activity:', 'bright');
+    this.log('   Visit: https://canoryiq.ai/dashboard to monitor activity');
     
     this.log('\n🛠️  Configuration Location:', 'bright');
     this.log(`   ${this.configPath}`);
