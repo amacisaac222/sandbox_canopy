@@ -19,46 +19,73 @@
       </p>
     </div>
     
-    <div class="grid lg:grid-cols-3 gap-6">
-      <!-- Step 1 -->
-      <div class="bg-white rounded-lg p-6 border border-coral-200">
-        <div class="flex items-center gap-3 mb-4">
-          <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">1</div>
-          <h3 class="font-bold text-navy-900">Install MCP Server</h3>
-        </div>
-        <div class="bg-navy-900 rounded-md p-3 font-mono text-sm text-green-400 overflow-x-auto mb-3">
-          npm install -g canopyiq-mcp-server
-        </div>
-        <p class="text-xs text-navy-600">Installs the CanopyIQ MCP server globally via NPM</p>
+    <!-- One-Line Installer (Primary Method) -->
+    <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border-2 border-green-200 p-6 mb-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">✨</div>
+        <h3 class="font-bold text-navy-900 text-lg">Recommended: One-Line Installer</h3>
       </div>
-
-      <!-- Step 2 -->
-      <div class="bg-white rounded-lg p-6 border border-coral-200">
-        <div class="flex items-center gap-3 mb-4">
-          <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">2</div>
-          <h3 class="font-bold text-navy-900">Get Your API Key</h3>
-        </div>
-        <div class="bg-navy-900 rounded-md p-3 font-mono text-sm text-green-400 overflow-x-auto mb-3">
-          # Your API key is displayed below ↓
-        </div>
-        <p class="text-xs text-navy-600">Copy your unique API key from the section below</p>
+      <div class="bg-navy-900 rounded-md p-4 font-mono text-lg text-green-400 overflow-x-auto mb-4 text-center">
+        npx canopyiq-setup
       </div>
-
-      <!-- Step 3 -->
-      <div class="bg-white rounded-lg p-6 border border-coral-200">
-        <div class="flex items-center gap-3 mb-4">
-          <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">3</div>
-          <h3 class="font-bold text-navy-900">Configure Claude</h3>
-        </div>
-        <p class="text-navy-700 text-sm mb-3">Add the configuration below to:</p>
-        <div class="text-xs text-navy-600 space-y-1">
-          <div><strong>macOS:</strong></div>
-          <div class="font-mono bg-navy-50 p-1 rounded text-xs break-all">~/Library/Application Support/Claude/claude_desktop_config.json</div>
-          <div class="mt-2"><strong>Windows:</strong></div>
-          <div class="font-mono bg-navy-50 p-1 rounded text-xs break-all">%APPDATA%\Claude\claude_desktop_config.json</div>
-        </div>
+      <p class="text-sm text-navy-700 mb-3">
+        <strong>Automatically installs, configures, and validates everything!</strong> 
+        No manual config editing required. Works on Windows, macOS, and Linux.
+      </p>
+      <div class="flex flex-wrap gap-2">
+        <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-semibold">✅ Auto-detects Claude location</span>
+        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold">✅ Creates backups</span>
+        <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-semibold">✅ Validates installation</span>
       </div>
     </div>
+
+    <!-- Manual Setup (Fallback) -->
+    <details class="mb-6">
+      <summary class="cursor-pointer bg-navy-50 rounded p-3 font-semibold text-navy-800 hover:bg-navy-100 transition">
+        📋 Manual Setup (Advanced Users)
+      </summary>
+      
+      <div class="grid lg:grid-cols-3 gap-6 mt-4">
+        <!-- Step 1 -->
+        <div class="bg-white rounded-lg p-6 border border-coral-200">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">1</div>
+            <h3 class="font-bold text-navy-900">Install MCP Server</h3>
+          </div>
+          <div class="bg-navy-900 rounded-md p-3 font-mono text-sm text-green-400 overflow-x-auto mb-3">
+            npm install -g canopyiq-mcp-server
+          </div>
+          <p class="text-xs text-navy-600">Installs the CanopyIQ MCP server globally via NPM</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-white rounded-lg p-6 border border-coral-200">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">2</div>
+            <h3 class="font-bold text-navy-900">Get Your API Key</h3>
+          </div>
+          <div class="bg-navy-900 rounded-md p-3 font-mono text-sm text-green-400 overflow-x-auto mb-3">
+            # Your API key is displayed below ↓
+          </div>
+          <p class="text-xs text-navy-600">Copy your unique API key from the section below</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-white rounded-lg p-6 border border-coral-200">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="bg-coral-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">3</div>
+            <h3 class="font-bold text-navy-900">Configure Claude</h3>
+          </div>
+          <p class="text-navy-700 text-sm mb-3">Add the configuration below to:</p>
+          <div class="text-xs text-navy-600 space-y-1">
+            <div><strong>macOS:</strong></div>
+            <div class="font-mono bg-navy-50 p-1 rounded text-xs break-all">~/Library/Application Support/Claude/claude_desktop_config.json</div>
+            <div class="mt-2"><strong>Windows:</strong></div>
+            <div class="font-mono bg-navy-50 p-1 rounded text-xs break-all">%APPDATA%\Claude\claude_desktop_config.json</div>
+          </div>
+        </div>
+      </div>
+    </details>
 
     <!-- All Set Section -->
     <div class="bg-green-50 rounded-lg border-2 border-green-200 p-6 mb-8">
