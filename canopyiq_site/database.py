@@ -23,6 +23,13 @@ except ImportError:
 
 from sqlalchemy.orm import relationship, sessionmaker
 
+# Import MCP models
+try:
+    from mcp_models import MCPSession, MCPToolCall, MCPFileAccess, MCPProjectContext, MCPMetrics
+except ImportError:
+    # MCP models not available yet, will be imported after creation
+    pass
+
 # Get database URL from environment, fallback to SQLite for development
 DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("CP_DB_URL", "sqlite+aiosqlite:///./canopyiq.db")
 

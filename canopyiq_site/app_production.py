@@ -2037,36 +2037,51 @@ async def handle_mcp_event(session_id: str, event_data: dict):
     timestamp = event_data.get('timestamp', datetime.now().isoformat())
     data = event_data.get('data', {})
     
-    logger.info(f"🔄 AI Governance Event: {event_type} from {session_id}")
+    logger.info(f"🔄 MCP Event: {event_type} from {session_id}")
     
     # Store event in database for audit trail
     try:
-        async with get_db_session() as db:
+        async for db in get_db():
             from database import AuditLog
             audit_log = AuditLog(
                 ts=int(time.time()),
                 actor=session_id,
-                action=f"AI_GOVERNANCE_{event_type.upper()}",
-                resource=f"ai_tool:{data.get('tool', 'unknown')}",
+                action=f"MCP_{event_type.upper()}",
+                resource=f"mcp_tool:{data.get('tool', 'unknown')}",
                 attributes=event_data
             )
             db.add(audit_log)
-            await db.commit()
+            
+            # Process MCP-specific data structures
+            try:
+                from mcp_processor import MCPEventProcessor
+                processor = MCPEventProcessor(db)
+                dashboard_updates = await processor.process_event(event_data)
+                
+                await db.commit()
+                logger.info(f"✅ MCP event processed: {event_type}")
+                
+                # Broadcast enhanced dashboard updates
+                enhanced_event = {
+                    'type': 'mcp_activity',
+                    'timestamp': timestamp,
+                    'session_id': session_id,
+                    'event_type': event_type,
+                    'data': data,
+                    'dashboard_updates': dashboard_updates
+                }
+                await connection_manager.broadcast_to_dashboards(enhanced_event)
+                
+            except Exception as e:
+                logger.error(f"MCP processing failed: {e}")
+                # Fallback to basic processing
+                await db.commit()
+                await handle_ai_governance_event(session_id, event_type, data)
+            
     except Exception as e:
-        logger.warning(f"Failed to log audit event: {e}")
-    
-    # Handle specific event types for AI governance
-    await handle_ai_governance_event(session_id, event_type, data)
-    
-    # Broadcast to all connected dashboards for real-time updates
-    dashboard_event = {
-        'type': 'live_ai_activity',
-        'timestamp': timestamp,
-        'session_id': session_id,
-        'event_type': event_type,
-        'data': data
-    }
-    await connection_manager.broadcast_to_dashboards(dashboard_event)
+        logger.warning(f"Failed to process MCP event: {e}")
+        # Fallback to original processing
+        await handle_ai_governance_event(session_id, event_type, data)
 
 async def handle_ai_governance_event(session_id: str, event_type: str, data: dict):
     """Handle specific AI governance events"""
@@ -2163,7 +2178,7 @@ async def respond_to_approval(
         
         # Log the approval decision
         try:
-            async with get_db_session() as db:
+            async for db in get_db():
                 from database import AuditLog
                 audit_log = AuditLog(
                     ts=int(time.time()),
@@ -2198,7 +2213,7 @@ async def get_live_ai_governance_metrics():
         active_sessions = len(connection_manager.active_connections)
         
         # Get recent events from database
-        async with get_db_session() as db:
+        async for db in get_db():
             from database import AuditLog
             
             # Count recent AI governance events
@@ -2246,7 +2261,7 @@ async def get_live_ai_governance_metrics():
 async def get_project_context(project_id: str):
     """Get stored project context for continuous Claude Code sessions"""
     try:
-        async with get_db_session() as db:
+        async for db in get_db():
             from database import AuditLog
             
             # Get the most recent context save for this project
@@ -2280,7 +2295,7 @@ async def save_project_context(request: Request):
         if not project_id:
             raise HTTPException(status_code=400, detail="Project ID required")
         
-        async with get_db_session() as db:
+        async for db in get_db():
             from database import AuditLog
             
             # Store context in audit log
@@ -2318,7 +2333,7 @@ async def save_project_context(request: Request):
 async def get_project_context_summary(project_id: str):
     """Get a summary of project context for dashboard display"""
     try:
-        async with get_db_session() as db:
+        async for db in get_db():
             from database import AuditLog
             
             # Get recent context and activity for this project
@@ -2364,7 +2379,7 @@ async def get_project_context_summary(project_id: str):
 async def list_projects():
     """List all projects with saved context for dashboard"""
     try:
-        async with get_db_session() as db:
+        async for db in get_db():
             from database import AuditLog
             
             # Get all projects with saved context
