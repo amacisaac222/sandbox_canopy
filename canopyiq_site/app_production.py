@@ -413,6 +413,17 @@ async def startup_event():
               except Exception as e:
                   logger.warning(f"Database connection test failed: {e}")
           
+          # Initialize MCP tables if needed
+          try:
+              if init_db:
+                  logger.info("🔄 Initializing MCP database tables...")
+                  await init_db()
+                  logger.info("✅ MCP database tables ready")
+              else:
+                  logger.info("⚠ Database initialization not available")
+          except Exception as e:
+              logger.warning(f"MCP table initialization failed: {e}")
+          
           logger.info("🎉 CanopyIQ startup completed - ready to serve!")
           
       except Exception as e:
