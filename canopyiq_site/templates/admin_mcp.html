@@ -93,12 +93,37 @@
         <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">✓</div>
         <h3 class="font-bold text-navy-900">All Set!</h3>
       </div>
-        <p class="text-navy-700 text-sm mb-3">Restart Claude Code and you'll see:</p>
-        <div class="text-xs text-navy-600 space-y-1">
-          <div>✅ Tool usage logging</div>
-          <div>✅ Policy enforcement</div>
-          <div>✅ Human approvals</div>
-          <div>✅ Security monitoring</div>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Claude Desktop -->
+        <div class="bg-white rounded-lg p-4 border border-green-200">
+          <h4 class="font-bold text-navy-900 mb-2 flex items-center gap-2">
+            <span class="text-green-500">🖥️</span>
+            Claude Desktop
+          </h4>
+          <p class="text-navy-700 text-sm mb-3">Restart Claude Desktop and you'll see:</p>
+          <div class="text-xs text-navy-600 space-y-1">
+            <div>✅ Tool usage logging</div>
+            <div>✅ Policy enforcement</div>
+            <div>✅ Human approvals</div>
+            <div>✅ Security monitoring</div>
+          </div>
+        </div>
+
+        <!-- Claude Code CLI -->
+        <div class="bg-white rounded-lg p-4 border border-blue-200">
+          <h4 class="font-bold text-navy-900 mb-2 flex items-center gap-2">
+            <span class="text-blue-500">⌨️</span>
+            Claude Code CLI
+          </h4>
+          <p class="text-navy-700 text-sm mb-3">Use the --mcp-config flag:</p>
+          <div class="bg-navy-900 rounded p-2 font-mono text-xs text-green-400 mb-2 overflow-x-auto">
+claude --mcp-config ~/.canopyiq-claude-code.json "your prompt"
+          </div>
+          <div class="text-xs text-navy-600">
+            <div>✅ Real-time monitoring</div>
+            <div>✅ Project context tracking</div>
+          </div>
         </div>
       </div>
     </div>
@@ -137,8 +162,11 @@
         </div>
       </div>
 
-      <div class="bg-navy-900 rounded-lg p-4">
-        <h4 class="text-white font-semibold mb-2">Claude Code Configuration:</h4>
+      <!-- Claude Desktop Config -->
+      <div class="bg-navy-900 rounded-lg p-4 mb-4">
+        <h4 class="text-white font-semibold mb-2 flex items-center gap-2">
+          🖥️ Claude Desktop Configuration:
+        </h4>
         <div class="bg-navy-800 rounded p-3 font-mono text-xs text-green-400 overflow-x-auto">
 {
   "mcpServers": {
@@ -151,7 +179,27 @@
         </div>
         <button onclick="copyConfig()" 
                 class="mt-3 px-3 py-1 bg-coral-500 text-white rounded text-xs hover:bg-coral-600 transition">
-          Copy Config
+          Copy Desktop Config
+        </button>
+      </div>
+
+      <!-- Claude Code CLI Usage -->
+      <div class="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-lg p-4">
+        <h4 class="text-white font-semibold mb-3 flex items-center gap-2">
+          ⌨️ Claude Code CLI Usage:
+        </h4>
+        <div class="space-y-2">
+          <div class="text-blue-200 text-xs mb-2">Save config to file, then use --mcp-config flag:</div>
+          <div class="bg-blue-800 rounded p-2 font-mono text-xs text-cyan-300 overflow-x-auto">
+echo '{"mcpServers":{"canopyiq":{"command":"canopyiq-mcp-server","args":["--api-key","{{ mcp_config.api_key }}","--server-url","https://canopyiq.ai"]}}}' > ~/.canopyiq-claude-code.json
+          </div>
+          <div class="bg-blue-800 rounded p-2 font-mono text-xs text-cyan-300 overflow-x-auto">
+claude --mcp-config ~/.canoryiq-claude-code.json "your prompt here"
+          </div>
+        </div>
+        <button onclick="copyClaudeCodeCommands()" 
+                class="mt-3 px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition">
+          Copy CLI Commands
         </button>
       </div>
     </div>
@@ -239,6 +287,13 @@ function copyConfig() {
 }`;
   navigator.clipboard.writeText(config);
   showToast('Configuration copied to clipboard!', 'success');
+}
+
+function copyClaudeCodeCommands() {
+  const commands = `echo '{"mcpServers":{"canopyiq":{"command":"canopyiq-mcp-server","args":["--api-key","{{ mcp_config.api_key }}","--server-url","https://canopyiq.ai"]}}}' > ~/.canopyiq-claude-code.json
+claude --mcp-config ~/.canopyiq-claude-code.json "your prompt here"`;
+  navigator.clipboard.writeText(commands);
+  showToast('Claude Code CLI commands copied to clipboard!', 'success');
 }
 
 function testConnection() {

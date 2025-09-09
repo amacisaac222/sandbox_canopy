@@ -1,9 +1,51 @@
 # Connect to CanopyIQ via MCP
 
-CanopyIQ exposes an **MCP server** (Model Context Protocol) so any MCP-compatible agent can:
-- **discover** safe tools (`tools/list`)
-- **invoke** them with guardrails (`tools/call`)
-- benefit from **policy, approvals, and audit** automatically
+CanopyIQ provides enterprise AI governance for Claude through the **Model Context Protocol (MCP)**:
+- **Real-time monitoring** of all Claude tool usage  
+- **Policy enforcement** with automatic allow/deny/approval decisions
+- **Audit logging** and compliance tracking
+- **Project context continuity** across sessions
+
+**Supported Clients:**
+- 🖥️ **Claude Desktop** - Full GUI integration with real-time monitoring
+- ⌨️ **Claude Code CLI** - Command-line integration with `--mcp-config` flag
+
+---
+
+## Quick Setup
+
+### Option 1: One-Line Installer (Recommended)
+
+```bash
+npx canopyiq-setup
+```
+
+This automatically:
+- ✅ Installs the `canopyiq-mcp-server` package
+- ✅ Configures both Claude Desktop and Claude Code
+- ✅ Provides usage instructions for both platforms
+- ✅ Creates backups of existing configurations
+
+### Option 2: Claude Code CLI Only
+
+For Claude Code CLI users who want direct setup:
+
+1. **Install the MCP server:**
+   ```bash
+   npm install -g canopyiq-mcp-server
+   ```
+
+2. **Get your API key:** Visit https://canopyiq.ai/admin/mcp
+
+3. **Create configuration file:**
+   ```bash
+   echo '{"mcpServers":{"canopyiq":{"command":"canopyiq-mcp-server","args":["--api-key","YOUR_API_KEY","--server-url","https://canopyiq.ai"]}}}' > ~/.canopyiq-claude-code.json
+   ```
+
+4. **Use with Claude Code:**
+   ```bash
+   claude --mcp-config ~/.canopyiq-claude-code.json "your prompt here"
+   ```
 
 ---
 
