@@ -1,0 +1,45 @@
+{
+  "name": "canopyiq-mcp-server",
+  "version": "2.0.0",
+  "description": "Enterprise AI governance for Claude Code - full MCP protocol with security, monitoring, and approval workflows",
+  "main": "index.js",
+  "bin": {
+    "canopyiq-mcp-server": "bin/cli.js"
+  },
+  "scripts": {
+    "start": "node bin/cli.js",
+    "test": "node -e \"console.log('CanopyIQ MCP Server v2.0 package is ready!'); process.exit(0)\""
+  },
+  "keywords": [
+    "mcp",
+    "claude",
+    "ai",
+    "security",
+    "canopyiq",
+    "model-control-protocol",
+    "governance",
+    "monitoring",
+    "enterprise"
+  ],
+  "author": "CanopyIQ",
+  "license": "MIT",
+  "homepage": "https://canopyiq.ai",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/canopyiq/mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/canopyiq/mcp-server/issues"
+  },
+  "dependencies": {
+    "commander": "^11.0.0",
+    "axios": "^1.6.0",
+    "ws": "^8.14.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
